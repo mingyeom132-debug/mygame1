@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>서울 게이트 디펜스</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;user-select:none}
+body{background:#12121a;color:#fff;font-family:sans-serif;display:flex;flex-direction:column;align-items:center;height:100dvh;overflow:hidden}
+header{width:100%;max-width:420px;padding:12px;background:#1e1e2e;display:flex;justify-content:space-between;font-weight:bold;border-bottom:2px solid #3a3a52}
+#wrap{position:relative;flex:1;display:flex;align-items:center;justify-content:center;width:100%;max-width:420px}
+canvas{background:#222233;border:2px solid #44475a;border-radius:8px;touch-action:manipulation}
+#ui{width:100%;max-width:420px;background:#1e1e2e;padding:10px;display:flex;flex-direction:column;gap:8px;border-top:2px solid #3a3a52}
+.row{display:flex;gap:6px}
+.btn{flex:1;background:#282a36;border:2px solid #6272a4;border-radius:8px;padding:8px 2px;color:#fff;text-align:center;font-size:12px}
+.btn.on{border-color:#50fa7b;background:#343746}
+#go{width:100%;padding:12px;background:#ff5555;color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:bold}
+#go:disabled{background:#44475a;color:#888}
+#msg{position:absolute;top:12px;background:rgba(0,0,0,.8);padding:5px 12px;border-radius:15px;font-size:12px;color:#50fa7b;opacity:0;transition:.3s;pointer-events:none}
+</style>
+</head>
+<body>
+<header>
+  <span style="color:#8be9fd">🌀 W.<b id="w">1</b></span>
+  <span style="color:#f1fa8c">💎 <b id="g">150</b></span>
+  <span style="color:#ff5555">🛡️ <b id="h">20</b></span>
+</header>
+<div id="wrap"><div id="msg"></div><canvas id="c"></canvas></div>
+<div id="ui">
+  <div class="row">
+    <div class="btn on" onclick="sel('r',50,this)">🔫 특수기동대<br><small style="color:#f1fa8c">💎50 (연사)</small></div>
+    <div class="btn" onclick="sel('s',100,this)">🎯 마도저격수<br><small style="color:#f1fa8c">💎100 (강타)</small></div>
+    <div class="btn" onclick="sel('m',120,this)">🔮 결계술사<br><small style="color:#f1fa8c">💎120 (둔화)</small></div>
+  </div>
+  <button id="go" onclick="waveStart()">⚔️ 웨이브 시작</button>
+</div>
+<script>
+const c=document.getElementById('c'),x=c.getContext('2d'),COLS=6,ROWS=8;
+const S=Math.min(Math.floor((innerWidth-20)/COLS),Math.floor((innerHeight-200)/ROWS));
+c.width=COLS*S;c.height=ROWS*S;
+let g=150,h=20,w=1,act=0,over=0,cur={t:'r',c:50},towers=[],enemies=[],beams=[],spQ=0,spT=0;
+const M=["211110","000010","011110","010000","011110","000010","011110","030000"];
+const WP=[{x:0,y:0},{x:4,y:0},{x:4,y:2},{x:1,y:2},{x:1,y:4},{x:4,y:4},{x:4,y:6},{x:1,y:6},{x:1,y:7}];
+const msg=t=>{const m=document.getElementById('msg');m.innerText=t;m.style.opacity=1;setTimeout(()=>m.style.opacity=0,1200)};
+const ui=()=>{document.getElementById('w').innerText=w;document.getElementById('g').innerText=g;document.getElementById('h').innerText=h};
+function sel(t,cost,el){cur={t,c:cost};document.querySelectorAll('.btn').forEach(b=>b.classList.remove('on'));el.classList.add('on')}
+
+c.addEventListener('pointerdown',e=>{
+  if(over)return;
+  const r=c.getBoundingClientRect(),gx=Math.floor((e.clientX-r.left)/S),gy=Math.floor((e.clientY-r.top)/S);
+  if(gx<0||gx>=COLS||gy<0||gy>=ROWS)return;
+  if(M[gy][gx]!=='0')return msg("길 위에는 배치 불가!");
+  const ex=towers.find(t=>t.x===gx&&t.y===gy);
+  if(ex){
+    const uc=ex.lv*60;
+    if(g>=uc){g-=uc;ex.lv++;ex.dmg=Math.floor(ex.dmg*1.5);msg(`강화 성공! Lv.${ex.lv}`);ui()}
+    else msg(`💎${uc} 필요`);
+    return;
+  }
+  if(g<cur.c)return msg("마정석 부족!");
+  g-=cur.c;
+  const st=cur.t==='r'?{rng:2.2,dmg:15,cd:28,col:'#8be9fd',ic:'🔫'}:cur.t==='s'?{rng:3.8,dmg:65,cd:80,col:'#ff79c6',ic:'🎯'}:{rng:2.0,dmg:10,cd:45,col:'#bd93f9',ic:'🔮'};
+  towers.push({x:gx,y:gy,t:cur.t,lv:1,tm:0,...st});ui();
+});
+
+function waveStart(){
+  if(act||over)return;act=1;spQ=5+w*3;spT=0;
+  const b=document.getElementById('go');b.disabled=1;b.innerText=`⚔️ WAVE ${w} 방어 중...`;
+}
+
+function loop(){
+  if(!over){
+    if(act&&spQ>0&&--spT<=0){
+      const boss=(spQ===1&&w%3===0),bhp=40+w*25,st=WP[0];
+      enemies.push({x:st.x*S+S/2,y:st.y*S+S/2,wi:1,hp:boss?bhp*3.5:bhp,mhp:boss?bhp*3.5:bhp,spd:boss?.8:1.2+Math.min(w*.05,1),slw:0,rw:boss?50:12+w*2,boss});
+      spQ--;spT=Math.max(25,55-w*2);
+    }
+    for(let i=enemies.length-1;i>=0;i--){
+      let e=enemies[i],tg=WP[e.wi],tx=tg.x*S+S/2,ty=tg.y*S+S/2,dx=tx-e.x,dy=ty-e.y,d=Math.hypot(dx,dy);
+      let spd=e.slw>0?(e.slw--,e.spd*.5):e.spd;
+      if(d<spd){
+        e.x=tx;e.y=ty;
+        if(++e.wi>=WP.length){
+          h-=e.boss?5:1;enemies.splice(i,1);ui();
+          if(h<=0){h=0;ui();over=1;alert(`결계 파괴! 최종 기록: WAVE ${w}`);location.reload()}
+        }
+      }else{e.x+=dx/d*spd;e.y+=dy/d*spd}
+    }
+    towers.forEach(t=>{
+      if(--t.tm<=0){
+        let tx=t.x*S+S/2,ty=t.y*S+S/2,tgs=enemies.filter(e=>Math.hypot(e.x-tx,e.y-ty)<=t.rng*S);
+        if(tgs.length){
+          if(t.t==='m')tgs.forEach(tg=>{tg.hp-=t.dmg;tg.slw=60;beams.push({x:tx,y:ty,tx:tg.x,ty:tg.y,col:t.col,l:7})});
+          else{let tg=tgs[0];tg.hp-=t.dmg;beams.push({x:tx,y:ty,tx:tg.x,ty:tg.y,col:t.col,l:5})}
+          t.tm=t.cd;
+        }
+      }
+    });
+    for(let i=enemies.length-1;i>=0;i--)if(enemies[i].hp<=0){g+=enemies[i].rw;enemies.splice(i,1);ui()}
+    for(let i=beams.length-1;i>=0;i--)if(--beams[i].l<=0)beams.splice(i,1);
+    if(act&&spQ===0&&!enemies.length){
+      act=0;w++;g+=30+w*5;ui();
+      const b=document.getElementById('go');b.disabled=0;b.innerText=`⚔️ WAVE ${w} 시작`;
+      msg("WAVE 클리어! 보너스 획득");
+    }
+  }
+  x.clearRect(0,0,c.width,c.height);
+  x.textAlign='center';x.textBaseline='middle';
+  for(let r=0;r<ROWS;r++)for(let col=0;col<COLS;col++){
+    let px=col*S,py=r*S,v=M[r][col];
+    x.fillStyle=v==='0'?'#282a36':'#44475a';x.fillRect(px,py,S,S);
+    if(v==='0'){x.strokeStyle='#383a59';x.strokeRect(px,py,S,S)}
+    x.font=`${S*.5}px sans-serif`;
+    if(v==='2')x.fillText('🌀',px+S/2,py+S/2);
+    if(v==='3')x.fillText('💎',px+S/2,py+S/2);
+  }
+  towers.forEach(t=>{
+    let px=t.x*S+S/2,py=t.y*S+S/2;
+    x.font=`${S*.55}px sans-serif`;x.fillText(t.ic,px,py);
+    x.fillStyle='#50fa7b';x.font='bold 10px sans-serif';x.fillText(`Lv${t.lv}`,px,py+S*.35);
+  });
+  enemies.forEach(e=>{
+    x.font=`${S*(e.boss?.65:.45)}px sans-serif`;x.fillText(e.boss?'👹':'👾',e.x,e.y);
+    let bw=S*.7;x.fillStyle='#ff5555';x.fillRect(e.x-bw/2,e.y-S*.35,bw,4);
+    x.fillStyle='#50fa7b';x.fillRect(e.x-bw/2,e.y-S*.35,bw*(e.hp/e.mhp),4);
+  });
+  beams.forEach(b=>{x.strokeStyle=b.col;x.lineWidth=3;x.beginPath();x.moveTo(b.x,b.y);x.lineTo(b.tx,b.ty);x.stroke()});
+  requestAnimationFrame(loop);
+}
+ui();loop();
+</script>
+</body>
+</html>
