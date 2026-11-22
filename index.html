@@ -5,88 +5,72 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>SEOUL WALL: GOLDEN DEFENSE</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#090e18;color:#f7e9cc;font-family:system-ui,sans-serif;touch-action:manipulation}body{max-width:560px;margin:auto;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);border-inline:1px solid #29364b}
-header{display:flex;align-items:center;justify-content:space-between;gap:5px;padding:9px 10px;background:linear-gradient(110deg,#26364d,#111a2a);border-bottom:2px solid #bd9148}.logo{font-weight:1000;font-size:13px;letter-spacing:1px;color:#ffdc91}.stats{display:flex;gap:4px}.stat{font-size:11px;padding:5px 6px;border:1px solid #53627b;background:#0c1422;border-radius:7px;white-space:nowrap}.gold{color:#ffd15b}.wallhp{color:#ff9292}.wave{color:#b7d4ff}
-#msg{min-height:30px;padding:7px 8px;text-align:center;background:#101a2a;color:#c3d0e0;font-size:11px;border-bottom:1px solid #35445c}
-#arena{flex:1;min-height:0;padding:5px;background:radial-gradient(ellipse at center,#26354a,#101827);display:flex;justify-content:center}canvas{height:100%;width:100%;max-width:500px;display:block;border:2px solid #5c6572;border-radius:8px;image-rendering:pixelated;touch-action:manipulation}
-footer{padding:8px 9px calc(8px + env(safe-area-inset-bottom));background:#101725;border-top:2px solid #59677d;display:flex;flex-direction:column;gap:7px}
-#roster{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.unit{padding:7px 2px;border-radius:8px;background:#1b293c;color:#f5e8d0;border:1px solid #53647e;min-width:0}.unit.sel{border:2px solid #ffd15b;background:#34435b}.unit b{display:block;font-size:11px}.unit small{display:block;color:#b7c6d9;font-size:9px;margin-top:3px}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}.action{border:0;border-radius:8px;padding:11px 4px;font-weight:900;font-size:12px}.upgrade{background:linear-gradient(#edc45d,#a96e29);color:#281a08}.start{background:linear-gradient(#c64e50,#772d3c);color:#fff}.action:disabled{opacity:.45;filter:grayscale(1)}#hint{text-align:center;color:#8192aa;font-size:9px}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#080d17;color:#f7e9cc;font-family:system-ui,sans-serif;touch-action:manipulation}body{display:flex;flex-direction:column;padding:0;max-width:none;border:0}
+header{height:66px;flex:none;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:8px 22px;background:linear-gradient(110deg,#26364d,#111a2a);border-bottom:2px solid #bd9148}.logo{font-weight:1000;font-size:19px;letter-spacing:2px;color:#ffdc91;line-height:1.1}.logo span{font-size:10px!important;color:#b8c9dd}
+.stats{display:flex;gap:9px}.stat{font-size:14px;padding:8px 12px;border:1px solid #53627b;background:#0c1422;border-radius:7px;white-space:nowrap}.gold{color:#ffd15b}.wallhp{color:#ff9292}.wave{color:#b7d4ff}
+#msg{flex:none;min-height:34px;padding:8px 12px;text-align:center;background:#101a2a;color:#c3d0e0;font-size:13px;border-bottom:1px solid #35445c}
+#layout{flex:1;min-height:0;display:flex;gap:12px;padding:12px}#arena{flex:1;min-width:0;min-height:0;padding:0;background:radial-gradient(ellipse at center,#26354a,#101827);display:flex;justify-content:center;border:1px solid #43536c;border-radius:10px;overflow:hidden}canvas{height:100%;width:100%;display:block;image-rendering:pixelated;touch-action:manipulation}
+#panel{width:390px;flex:none;min-height:0;padding:12px;background:#101725;border:1px solid #59677d;border-radius:10px;display:flex;flex-direction:column;gap:10px}.panelhead{display:flex;justify-content:space-between;align-items:center;font-weight:900;color:#ffdc91}.panelhead small{font-size:11px;color:#93a6bf;font-weight:500}
+#roster{flex:1;min-height:0;overflow-y:auto;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:minmax(68px,auto);gap:6px;padding-right:3px;align-content:start}
+.unit{padding:7px 5px;border-radius:8px;background:#1b293c;color:#f5e8d0;border:1px solid #53647e;min-width:0;text-align:left;cursor:pointer}.unit.sel{border:2px solid #ffd15b;background:#34435b;box-shadow:0 0 12px #ffd15b33}.unit b{display:block;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.unit small{display:block;color:#b7c6d9;font-size:9px;margin-top:4px}.unit em{font-style:normal;color:#e7c47b;font-size:9px;display:block;margin-top:2px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:none}.action{border:0;border-radius:8px;padding:13px 6px;font-weight:900;font-size:13px;cursor:pointer}.upgrade{background:linear-gradient(#edc45d,#a96e29);color:#281a08}.start{background:linear-gradient(#c64e50,#772d3c);color:#fff}.action:disabled{opacity:.45;filter:grayscale(1)}#hint{text-align:center;color:#8192aa;font-size:10px;line-height:1.4}
+@media(max-width:850px){#layout{flex-direction:column}#panel{width:100%;height:36%;min-height:230px}#arena{min-height:0}#roster{grid-template-columns:repeat(5,minmax(0,1fr))}header{height:58px;padding:6px 10px}.logo{font-size:14px}.stat{font-size:11px;padding:5px 6px}}
 </style>
 </head>
 <body>
 <header><div class="logo">SEOUL WALL<br><span style="font-size:9px;color:#b8c9dd">GOLDEN DEFENSE</span></div><div class="stats"><span class="stat wave">WAVE <b id="wave">1</b></span><span class="stat gold">◆ <b id="gold">60</b></span><span class="stat wallhp">성벽 <b id="wall">100</b>%</span></div></header>
 <div id="msg">대원을 선택하고 성벽 앞 배치 슬롯을 눌러 배치하세요.</div>
-<div id="arena"><canvas id="game"></canvas></div>
-<footer><div id="roster">
-<button class="unit sel" data-kind="guard"><b>수호자</b><small>배치 ◆ 20</small></button>
-<button class="unit" data-kind="archer"><b>명사수</b><small>배치 ◆ 25</small></button>
-<button class="unit" data-kind="mage"><b>비전술사</b><small>배치 ◆ 30</small></button>
-</div><div class="actions"><button id="upgrade" class="action upgrade">◆  강화하기</button><button id="start" class="action start">웨이브 시작</button></div><div id="hint">배치된 대원을 터치해 선택 · 금괴로 최대 3회 승급</div></footer>
+<main id="layout"><div id="arena"><canvas id="game"></canvas></div><aside id="panel"><div class="panelhead">방어대 명부 <small>총 30종 · 12개 배치 슬롯</small></div><div id="roster"></div><div class="actions"><button id="upgrade" class="action upgrade">◆ 강화하기</button><button id="start" class="action start">웨이브 시작</button></div><div id="hint">대원을 선택한 뒤 전장 슬롯을 클릭해 배치하세요.<br>배치된 대원 클릭 후 강화 · 최대 3회 승급</div></aside></main>
 <script>
 'use strict';
 const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
 const $=id=>document.getElementById(id);
-let W=360,H=600,dpr=1,gold=60,wall=100,wave=1,started=false,ended=false,selectedKind='guard',selectedUnit=null,tick=0,spawnLeft=0,spawnClock=0;
-const slots=[{x:.22,y:.76},{x:.5,y:.76},{x:.78,y:.76}];
-const roster={
- guard:{cost:20,names:['성문 수호자','철벽 기사','왕실 방벽장','불굴의 성벽군주'],hp:170,damage:15,range:135,rate:48,color:'#e2b75c'},
- archer:{cost:25,names:['정찰 사수','황혼 명궁','천공의 추적자','백야의 신궁'],hp:95,damage:25,range:235,rate:58,color:'#67c6e8'},
- mage:{cost:30,names:['룬 견습생','청휘 마도사','별빛 현자','시공의 대현자'],hp:105,damage:19,range:185,rate:66,color:'#ba8cf4'}
-};
+let W=900,H=700,dpr=1,gold=180,wall=100,wave=1,started=false,ended=false,selectedKind='unit0',selectedUnit=null,tick=0,spawnLeft=0,spawnClock=0;
+const slots=Array.from({length:12},(_,i)=>({x:[.13,.37,.63,.87][i%4],y:i<4?.69:.82}));
+const classNames=['성문 수호자','황혼 명궁','룬 대마도사','창벽 기사','숲의 치유사','그림자 척후병','폭풍 검사','빙결 사제','화염 연금술사','태양 성기사','월식 암살자','천둥 사수','수정 방패병','독안개 무희','별빛 소환사','사막 유랑검객','심연 주술사','백은 창기병','붉은 매 사냥꾼','달의 무녀','강철 파괴자','서리 추적자','황금 음유시인','흑요석 수호령','번개 권투가','장미 결투사','기계 공학자','새벽의 예언자','용혈 기사','천공의 대현자'];
+const classColors=['#d8a94f','#54b8db','#a77ae8','#d16c55','#65b987','#9b83bd','#e07845','#78bde2','#df704b','#e8c85f','#8c6ab5','#59a8d0','#9aa9bd','#bc6b9c','#b69ae8','#c68b54','#7454a2','#d4dbe5','#c75b51','#78a8c9','#9c6f59','#8bc5db','#d7b86b','#68748e','#e2a04d','#ce7693','#6da6a0','#a9c7ec','#bd5b47','#b69ae8'];
+const archetypes=['기사','궁수','마도사','창병','치유사','도적'];
+const roster=Object.fromEntries(classNames.map((name,i)=>{const role=i%6,color=classColors[i];return ['unit'+i,{name,cost:25+Math.floor(i/5)*4+role*2,hp:[190,100,105,155,115,90][role],damage:[17,26,23,21,12,29][role],range:[145,245,205,165,190,125][role],rate:[48,57,66,52,72,38][role],color,role,levelNames:[name,name+' · 숙련',name+' · 정예',name+' · 전설']}]}));
 let units=[],enemies=[],shots=[],sparks=[];
 function resize(){const r=canvas.getBoundingClientRect();dpr=Math.min(2,devicePixelRatio||1);W=Math.max(240,r.width);H=Math.max(320,r.height);canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0)}
 new ResizeObserver(resize).observe(canvas);resize();
 function say(s){$('msg').textContent=s}
 function sync(){$('gold').textContent=gold;$('wall').textContent=Math.max(0,wall);$('wave').textContent=wave}
 function stats(u){const d=roster[u.kind],lv=u.level;return{hp:d.hp*(1+(lv-1)*.48),damage:d.damage*(1+(lv-1)*.55),range:d.range+(lv-1)*12,rate:Math.max(22,d.rate-(lv-1)*5)}}
+function buildRoster(){$('roster').innerHTML=Object.entries(roster).map(([kind,d],i)=>'<button class="unit '+(i===0?'sel':'')+'" data-kind="'+kind+'"><b>'+(i+1)+'. '+d.name+'</b><small>'+archetypes[d.role]+' · 배치 ◆ '+d.cost+'</small><em>공격 '+d.damage+' / 사거리 '+d.range+'</em></button>').join('');document.querySelectorAll('.unit').forEach(b=>b.onclick=()=>choose(b.dataset.kind));}
 function choose(kind){selectedKind=kind;selectedUnit=null;document.querySelectorAll('.unit').forEach(b=>b.classList.toggle('sel',b.dataset.kind===kind));$('upgrade').textContent='◆ 강화하기';}
-document.querySelectorAll('.unit').forEach(b=>b.onclick=()=>choose(b.dataset.kind));
+buildRoster();
 function posSlot(i){return{x:W*slots[i].x,y:H*slots[i].y}}
 function pointer(e){const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;let nearest=null,dist=1e9;units.forEach(u=>{let d=Math.hypot(u.x-x,u.y-y);if(d<dist){dist=d;nearest=u}});if(nearest&&dist<Math.min(45,W*.12)){selectedUnit=nearest;selectedKind=nearest.kind;document.querySelectorAll('.unit').forEach(b=>b.classList.toggle('sel',b.dataset.kind===selectedKind));$('upgrade').textContent='◆ '+(nearest.level<4?[20,35,55][nearest.level-1]+' 금괴로 승급':'최고 단계');say(nearest.name+' 선택됨 · 승급 '+(nearest.level-1)+'/3');return}
  let best=-1;dist=1e9;slots.forEach((s,i)=>{const p=posSlot(i),d=Math.hypot(p.x-x,p.y-y);if(d<dist){dist=d;best=i}});if(dist<Math.min(58,W*.16))place(best)}
 canvas.addEventListener('pointerdown',pointer);
-function place(i){if(units.some(u=>u.slot===i)){selectedUnit=units.find(u=>u.slot===i);say(selectedUnit.name+' 선택됨. 아래 강화 버튼으로 승급하세요.');$('upgrade').textContent='◆ 강화하기';return}const d=roster[selectedKind];if(gold<d.cost){say('금괴가 부족합니다. 적을 막아 금괴를 모으세요.');return}gold-=d.cost;const p=posSlot(i),u={kind:selectedKind,slot:i,x:p.x,y:p.y,level:1,hp:d.hp,cd:10,name:d.names[0]};units.push(u);selectedUnit=u;sync();say(d.names[0]+' 배치 완료!');$('upgrade').textContent='◆ 강화하기'}
-$('upgrade').onclick=()=>{if(!selectedUnit||!units.includes(selectedUnit)){say('먼저 배치된 대원을 터치해 선택하세요.');return}const u=selectedUnit;if(u.level>=4){say('이미 최고 단계입니다.');return}const cost=[20,35,55][u.level-1];if(gold<cost){say('금괴가 부족합니다. 필요 금괴: '+cost);return}gold-=cost;const old=stats(u);u.level++;const d=stats(u);u.hp+=d.hp-old.hp;u.name=roster[u.kind].names[u.level-1];say('승급 완료! '+u.name+' · 능력 강화');$('upgrade').textContent='◆ '+(u.level<4?[20,35,55][u.level-1]+' 금괴로 승급':'최고 단계');sync()};
-$('start').onclick=()=>{if(started||ended)return;started=true;spawnLeft=5+wave*2;spawnClock=20;$('start').disabled=true;$('start').textContent='전투 진행 중';say('웨이브 '+wave+' 시작! 성벽을 지켜라!')};
+function place(i){if(units.some(u=>u.slot===i)){selectedUnit=units.find(u=>u.slot===i);say(selectedUnit.name+' 선택됨. 아래 강화 버튼으로 승급하세요.');$('upgrade').textContent='◆ 강화하기';return}const d=roster[selectedKind];if(gold<d.cost){say('금괴가 부족합니다. 적을 막아 금괴를 모으세요.');return}gold-=d.cost;const p=posSlot(i),u={kind:selectedKind,slot:i,x:p.x,y:p.y,level:1,hp:d.hp,cd:10,name:d.name};units.push(u);selectedUnit=u;sync();say(d.name+' 배치 완료!');$('upgrade').textContent='◆ 강화하기'}
+$('upgrade').onclick=()=>{if(!selectedUnit||!units.includes(selectedUnit)){say('먼저 배치된 대원을 터치해 선택하세요.');return}const u=selectedUnit;if(u.level>=4){say('이미 최고 단계입니다.');return}const cost=[20,35,55][u.level-1];if(gold<cost){say('금괴가 부족합니다. 필요 금괴: '+cost);return}gold-=cost;const old=stats(u);u.level++;const d=stats(u);u.hp+=d.hp-old.hp;u.name=roster[u.kind].levelNames[u.level-1];say('승급 완료! '+u.name+' · 능력 강화');$('upgrade').textContent='◆ '+(u.level<4?[20,35,55][u.level-1]+' 금괴로 승급':'최고 단계');sync()};
+$('start').onclick=()=>{if(started||ended)return;started=true;spawnLeft=8+wave*2;spawnClock=20;$('start').disabled=true;$('start').textContent='전투 진행 중';say('웨이브 '+wave+' 시작! 성벽을 지켜라!')};
 function spawn(){const lane=W*(.15+Math.random()*.7);const boss=wave%4===0&&spawnLeft===1;enemies.push({x:lane,y:-25,hp:(boss?170:48)+wave*12,max:(boss?170:48)+wave*12,speed:boss?0.42:0.62+Math.min(1,wave*.025),size:boss?30:21,boss,hit:0});spawnLeft--;spawnClock=Math.max(35,90-wave*3)}
 function attack(){for(const u of units){const s=stats(u);if(u.cd>0){u.cd--;continue}let target=null,dist=s.range;for(const e of enemies){const d=Math.hypot(e.x-u.x,e.y-u.y);if(d<dist){dist=d;target=e}}if(target){target.hp-=s.damage;target.hit=5;shots.push({x:u.x,y:u.y-10,tx:target.x,ty:target.y,col:roster[u.kind].color,life:9});u.cd=s.rate}}}
-function update(){if(ended)return;tick++;if(started){if(spawnLeft>0&&--spawnClock<=0)spawn();attack();for(const e of enemies){e.y+=e.speed;if(e.hit>0)e.hit--}for(let i=enemies.length-1;i>=0;i--){const e=enemies[i];if(e.hp<=0){gold+=e.boss?18:5;sparks.push({x:e.x,y:e.y,t:18});enemies.splice(i,1)}else if(e.y>H*.88){wall-=e.boss?16:8;enemies.splice(i,1);say('적이 성벽에 도달했습니다! 방어선을 보강하세요.')}}if(wall<=0){wall=0;ended=true;started=false;$('start').textContent='방어 실패';say('성벽이 무너졌습니다. 새로고침해 다시 도전하세요.')}else if(spawnLeft===0&&enemies.length===0){started=false;wave++;gold+=15;$('start').disabled=false;$('start').textContent='다음 웨이브';say('방어 성공! 보너스 금괴 15개 획득. 다음 웨이브를 준비하세요.')}}sync()}
+function update(){if(ended)return;tick++;if(started){if(spawnLeft>0&&--spawnClock<=0)spawn();attack();for(const e of enemies){e.y+=e.speed;if(e.hit>0)e.hit--}for(let i=enemies.length-1;i>=0;i--){const e=enemies[i];if(e.hp<=0){gold+=e.boss?18:5;sparks.push({x:e.x,y:e.y,t:18});enemies.splice(i,1)}else if(e.y>H*.93){wall-=e.boss?16:8;enemies.splice(i,1);say('적이 성벽에 도달했습니다! 방어선을 보강하세요.')}}if(wall<=0){wall=0;ended=true;started=false;$('start').textContent='방어 실패';say('성벽이 무너졌습니다. 새로고침해 다시 도전하세요.')}else if(spawnLeft===0&&enemies.length===0){started=false;wave++;gold+=15;$('start').disabled=false;$('start').textContent='다음 웨이브';say('방어 성공! 보너스 금괴 15개 획득. 다음 웨이브를 준비하세요.')}}sync()}
 
-const pixelSprites={
- guard:[
- "......KKKK......",".....KGGGGK.....","....KGGGGGGK....","....KSSSSSSK....","...KSSSSSSSSK...","...KSSFFSSFFSK..","...KSfFSSSfFSK..","...KSSSSSSSSSK..","....KSSSSSSK....","..KKKAAAAAAKKK..",".KAAAHAAAAHAAAK.","KAAAHHAAAAHHAAAK","KAAASAAAAAASAAAK","KSSSSAAAAAASSSSK","..KSSSAAAAASSSK..","...KKK....KKK....","...KSS....SSK....","...KSS....SSK....","..KKKK....KKKK...","..KKKK....KKKK..."],
- archer:[
- "......KKKK......",".....KBBBBK.....","....KBBBBBBK....","....KSSSSSSK....","...KSSSSSSSSK...","...KSFFSSFFSK...","...KSfFSSSfFSK..","...KSSSSSSSSSK..","....KSSSSSSK....","...KKKAAAAKKK...","..KBBBHAAAHBBK..",".KBBBHAAAAHBBBK.","KBBBBSAAAAASBBBK","KSSSSSAAAAASSSSK","..KSSSAAAAASSSK..","...KKK....KKK....","...KBB....BBK....","...KBB....BBK....","..KKKK....KKKK...","..KKKK....KKKK..."],
- mage:[
- ".......KK.......","......KPPK......",".....KPPPPK.....","....KPPPPPPK....","...KSSSSSSSSK...","...KSFFSSFFSK...","...KSfFSSSfFSK..","...KSSSSSSSSSK..","....KSSSSSSK....","....KPPPPPPK....","...KPPPHPPPPK...","..KPPPHHPPPPPK..",".KPPPPSPPPPPPPK.","KSSSSSSSSSSSSSSK","..KSSSPPPPSSSK...","...KKK....KKK....","...KPP....PPK....","...KPP....PPK....","..KKKK....KKKK...","..KKKK....KKKK..."]
-};
 function drawPixelSprite(x,y,kind,level,scale=1){
- const rows=pixelSprites[kind], palettes={
- K:'#111827',S:kind==='guard'?'#4c5360':kind==='archer'?'#254d67':'#4d3478',
- A:kind==='guard'?'#b98238':kind==='archer'?'#397fa0':'#8054b5',
- H:kind==='guard'?'#f4d27c':kind==='archer'?'#8ce4f4':'#d6b2ff',
- B:'#327d9c',P:'#7650a7',G:'#e8b94f',F:'#b87555',f:'#f1c49a',E:'#fff1a6'
- };
- const p=level>=3?{...palettes,A:'#d6a94f',H:'#fff0a8'}:palettes;
- const px=2.15*scale,py=2.15*scale;
- ctx.save();ctx.translate(Math.round(x-rows[0].length*px/2),Math.round(y-rows.length*py/2));
- ctx.fillStyle='rgba(0,0,0,.35)';ctx.fillRect(3*px,rows.length*py-1,10*px,2*py);
- for(let ry=0;ry<rows.length;ry++)for(let rx=0;rx<rows[ry].length;rx++){
-  const ch=rows[ry][rx];if(ch==='.')continue;
-  let color=p[ch]||'#263247';
-  if(ch==='A'&&level===4)color='#f5d77d';
-  ctx.fillStyle=color;ctx.fillRect(rx*px,ry*py,px,py);
- }
- // distinct class equipment, facial pixels and promotion crest
- ctx.fillStyle='#111827';ctx.fillRect(7*px,6*py,px,py);ctx.fillRect(10*px,6*py,px,py);
- ctx.fillStyle='#f8e7c5';ctx.fillRect(8*px,8*py,2*px,py);
- if(kind==='guard'){ctx.fillStyle='#e8c46d';ctx.fillRect(1*px,11*py,2*px,5*py);ctx.fillRect(13*px,11*py,2*px,5*py)}
- if(kind==='archer'){ctx.fillStyle='#e7d6a8';ctx.fillRect(14*px,8*py,px,9*py);ctx.fillRect(13*px,8*py,3*px,px)}
- if(kind==='mage'){ctx.fillStyle='#ffe58d';ctx.fillRect(14*px,5*py,2*px,2*py);ctx.fillRect(15*px,3*py,px,2*py)}
- if(level>=2){ctx.fillStyle='#f7d979';ctx.fillRect(6*px,1*py,4*px,px)}
- if(level>=4){ctx.fillStyle='#fff0a8';ctx.fillRect(5*px,0,6*px,px);ctx.fillRect(7*px,-2*py,2*px,2*py)}
- ctx.restore();
+ const d=roster[kind],role=d.role,accent=level>=3?'#f7d979':d.color,px=3*scale,py=3*scale,ox=Math.round(x-9*px),oy=Math.round(y-12*py);
+ const cell=(gx,gy,color,w=1,h=1)=>{ctx.fillStyle='#101521';ctx.fillRect(ox+gx*px-1,oy+gy*py-1,w*px+2,h*py+2);ctx.fillStyle=color;ctx.fillRect(ox+gx*px,oy+gy*py,w*px,h*py)};
+ ctx.save();ctx.fillStyle='rgba(0,0,0,.38)';ctx.fillRect(x-13*scale,y+32*scale,26*scale,4*scale);
+ for(let yy=9;yy<=18;yy++){let half=yy<13?3:Math.min(7,3+Math.floor((yy-12)*.65));for(let xx=9-half;xx<=9+half;xx++)if((xx+yy+role)%3!==0)cell(xx,yy,role===5?'#27253a':role===4?'#36594c':'#30394c')}
+ for(let yy=16;yy<=21;yy++){cell(6,yy,yy>19?'#343b4a':accent,2,1);cell(11,yy,yy>19?'#343b4a':accent,2,1)}
+ cell(5,21,'#111827',4,1);cell(10,21,'#111827',4,1);
+ cell(5,9,accent,8,7);cell(4,10,accent,2,4);cell(12,10,accent,2,4);cell(6,10,'#e5d8bd',6,1);cell(7,12,'#111827',4,1);cell(8,11,'#fff0bf',2,2);cell(5,15,'#b58a52',8,1);cell(8,14,'#f3d58b',2,2);
+ cell(3,11,'#d9b18b',2,4);cell(13,11,'#d9b18b',2,4);cell(3,15,'#343b4a',2,2);cell(13,15,'#343b4a',2,2);
+ cell(6,3,'#101521',6,6);cell(7,4,'#d9aa83',4,4);cell(7,7,'#9b6250',4,1);cell(7,5,'#171a22',1,1);cell(10,5,'#171a22',1,1);cell(8,6,'#fff0d1',2,1);
+ if(role===0||role===3){cell(6,2,accent,6,2);cell(8,0,'#e7d9bd',2,2);cell(5,4,accent,2,2);cell(11,4,accent,2,2)}
+ else if(role===1){cell(5,2,'#27394d',8,2);cell(6,1,accent,6,1);cell(4,3,accent,2,1);cell(12,3,accent,2,1)}
+ else if(role===2||role===4){cell(6,1,accent,6,2);cell(7,0,'#f8e5a0',4,1);cell(5,3,accent,2,2);cell(11,3,accent,2,2)}
+ else{cell(6,2,'#252333',6,2);cell(5,3,accent,2,3);cell(11,3,accent,2,3);cell(8,1,'#e5d8bd',2,1)}
+ if(role===0){cell(1,8,'#bfc9d5',2,11);cell(0,7,accent,4,2);cell(1,6,'#f5e4b8',2,1)}
+ if(role===1){cell(15,5,'#b78b54',1,13);cell(14,4,'#e6d6b8',3,1);cell(14,6,'#e6d6b8',3,1);cell(15,3,accent,1,2)}
+ if(role===2||role===4){cell(15,7,'#5b477d',1,12);cell(14,5,accent,3,3);cell(15,4,'#fff0a8',1,1);cell(14,9,'#fff0a8',3,1)}
+ if(role===3){cell(15,2,'#c6d1dc',1,17);cell(14,1,accent,3,2);cell(14,18,'#c6d1dc',3,1)}
+ if(role===5){cell(15,10,'#d4d9e3',2,5);cell(15,8,accent,2,2);cell(14,15,'#d4d9e3',3,1)}
+ cell(8,13,accent,2,2);if(level>=2){cell(7,2,'#ffe49a',4,1);cell(8,0,'#fff0a8',2,1)}if(level>=4){cell(6,0,'#fff4bd',6,1);cell(8,-1,'#fff4bd',2,1)}ctx.restore();
 }
 function drawEnemy(e){
  const x=Math.round(e.x),y=Math.round(e.y),s=e.boss?2.1:1.55;
@@ -104,12 +88,11 @@ function drawEnemy(e){
 function draw(){ctx.clearRect(0,0,W,H);const sky=ctx.createLinearGradient(0,0,0,H);sky.addColorStop(0,'#1b2a43');sky.addColorStop(.65,'#35435a');sky.addColorStop(1,'#192435');ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);
 ctx.fillStyle='#d4c18d';for(let i=0;i<8;i++){const x=i*W/7;ctx.fillRect(x,H*.1,2,H*.56)}
 ctx.fillStyle='#26364b';ctx.fillRect(0,H*.12,W,H*.06);for(let i=0;i<9;i++){ctx.fillStyle='#60718a';ctx.fillRect(i*W/8,H*.105,W/16,H*.09)}
-ctx.fillStyle='#53647a';ctx.fillRect(0,H*.85,W,H*.15);ctx.fillStyle='#8795a8';ctx.fillRect(0,H*.85,W,5);for(let i=0;i<9;i++){ctx.fillStyle='#34465d';ctx.fillRect(i*W/8,H*.88,W/16,H*.12)}
-ctx.fillStyle='#d6b66e';ctx.font='bold 11px system-ui';ctx.textAlign='center';ctx.fillText('SEOUL LAST WALL',W/2,H*.945);
-slots.forEach((s,i)=>{const p=posSlot(i),u=units.find(v=>v.slot===i);ctx.fillStyle=u?'rgba(238,197,102,.12)':'rgba(170,190,215,.12)';ctx.strokeStyle=u?'#e5bd68':'#91a5bf';ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(p.x-28,p.y-27,56,54,8);ctx.fill();ctx.stroke();if(u){drawPixelSprite(p.x,p.y,u.kind,u.level,1.0);ctx.fillStyle='#fff';ctx.font='bold 9px system-ui';ctx.fillText(u.name,p.x,p.y+39);ctx.fillStyle='#111';ctx.fillRect(p.x-22,p.y+43,44,4);ctx.fillStyle='#68d69a';ctx.fillRect(p.x-22,p.y+43,44*Math.max(0,u.hp/stats(u).hp),4);if(selectedUnit===u){ctx.strokeStyle='#ffe18b';ctx.lineWidth=2;ctx.strokeRect(p.x-33,p.y-32,66,78)}}else{ctx.fillStyle='#b9c9dc';ctx.font='bold 10px system-ui';ctx.fillText('배치 '+(i+1),p.x,p.y+4)}})
+ctx.fillStyle='#53647a';ctx.fillRect(0,H*.91,W,H*.09);ctx.fillStyle='#8795a8';ctx.fillRect(0,H*.91,W,6);for(let i=0;i<15;i++){ctx.fillStyle='#34465d';ctx.fillRect(i*W/14,H*.925,W/28,H*.075)}ctx.fillStyle='#d6b66e';ctx.font='bold 15px system-ui';ctx.textAlign='center';ctx.fillText('SEOUL LAST WALL',W/2,H*.975);
+slots.forEach((s,i)=>{const p=posSlot(i),u=units.find(v=>v.slot===i);ctx.fillStyle=u?'rgba(238,197,102,.12)':'rgba(170,190,215,.12)';ctx.strokeStyle=u?'#e5bd68':'#91a5bf';ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(p.x-34,p.y-38,68,76,7);ctx.fill();ctx.stroke();if(u){drawPixelSprite(p.x,p.y-4,u.kind,u.level,1.0);ctx.fillStyle='#fff';ctx.font='bold 10px system-ui';ctx.fillText(u.name,p.x,p.y+43);ctx.fillStyle='#111';ctx.fillRect(p.x-25,p.y+47,50,5);ctx.fillStyle='#68d69a';ctx.fillRect(p.x-25,p.y+47,50*Math.max(0,u.hp/stats(u).hp),5);if(selectedUnit===u){ctx.strokeStyle='#ffe18b';ctx.lineWidth=3;ctx.strokeRect(p.x-39,p.y-43,78,94)}}else{ctx.fillStyle='#b9c9dc';ctx.font='bold 11px system-ui';ctx.fillText('배치 '+(i+1),p.x,p.y+4)}})
 for(const e of enemies){drawEnemy(e);ctx.fillStyle='#111';ctx.fillRect(e.x-e.size/2,e.y-e.size*.72,e.size,4);ctx.fillStyle='#f16e79';ctx.fillRect(e.x-e.size/2,e.y-e.size*.72,e.size*Math.max(0,e.hp/e.max),4)}
 for(const p of shots){ctx.strokeStyle=p.col;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.tx,p.ty);ctx.stroke();p.life--}shots=shots.filter(p=>p.life>0);for(const s of sparks){ctx.fillStyle='#ffd76a';ctx.fillRect(s.x-3,s.y-3,6,6);s.t--}sparks=sparks.filter(s=>s.t>0);
-if(!started&&!ended){ctx.fillStyle='rgba(4,9,17,.35)';ctx.fillRect(8,H*.28,W-16,35);ctx.fillStyle='#f8e4b4';ctx.font='bold 12px system-ui';ctx.fillText('대원을 배치하고 웨이브를 시작하세요',W/2,H*.28+22)}}
+if(!started&&!ended){ctx.fillStyle='rgba(4,9,17,.35)';ctx.fillRect(8,H*.28,W-16,35);ctx.fillStyle='#f8e4b4';ctx.font='bold 12px system-ui';ctx.fillText('30종의 방어대를 편성하고 성벽을 지키세요',W/2,H*.28+22)}}
 function loop(){update();draw();requestAnimationFrame(loop)}sync();loop();
 </script>
 </body>
