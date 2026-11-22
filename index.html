@@ -9,25 +9,25 @@
   body { background: #090b10; color: #e2e8f0; font-family: monospace, sans-serif; width: 100vw; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
   #rotate-warn { display: none; position: fixed; inset: 0; background: #090b10; z-index: 999; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px; }
   @media (orientation: portrait) { #rotate-warn { display: flex; } }
-  header { height: 42px; background: #11151c; border-bottom: 2px solid #1e293b; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; font-size: 13px; font-weight: bold; }
-  .hud-left, .hud-right { display: flex; align-items: center; gap: 12px; }
-  .tag { padding: 2px 8px; border-radius: 4px; background: #1e293b; border: 1px solid #334155; }
+  header { height: 38px; background: #11151c; border-bottom: 2px solid #1e293b; display: flex; justify-content: space-between; align-items: center; padding: 0 12px; font-size: 12px; font-weight: bold; }
+  .hud-left, .hud-right { display: flex; align-items: center; gap: 10px; }
+  .tag { padding: 2px 7px; border-radius: 4px; background: #1e293b; border: 1px solid #334155; }
   .dp { color: #38bdf8; } .life { color: #f43f5e; } .wave { color: #a855f7; }
-  #radio { flex: 1; margin: 0 12px; color: #94a3b8; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; border-left: 2px solid #38bdf8; padding-left: 8px; }
-  .sys-btn { background: #1e293b; color: #cbd5e1; border: 1px solid #475569; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+  #radio { flex: 1; margin: 0 10px; color: #94a3b8; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; border-left: 2px solid #38bdf8; padding-left: 8px; }
+  .sys-btn { background: #1e293b; color: #cbd5e1; border: 1px solid #475569; padding: 3px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; }
   .sys-btn.on { background: #0284c7; color: #fff; border-color: #38bdf8; }
   main { flex: 1; display: flex; position: relative; overflow: hidden; }
   #map-wrap { flex: 1; display: flex; justify-content: center; align-items: center; background: #0b0e14; }
   canvas { border: 2px solid #1e293b; image-rendering: pixelated; touch-action: manipulation; }
-    aside { width: 170px; background: #0f131a; border-left: 2px solid #1e293b; display: flex; flex-direction: column; padding: 4px 6px; gap: 3px; }
+  aside { width: 170px; background: #0f131a; border-left: 2px solid #1e293b; display: flex; flex-direction: column; padding: 4px 6px; gap: 3px; }
   .op-card { background: #161b26; border: 1px solid #2d3748; border-left: 4px solid #64748b; border-radius: 4px; padding: 3px 6px; display: flex; flex-direction: column; gap: 1px; }
-  .op-card.sel { background: #1e293b; border-color: #38bdf8; transform: translateX(-3px); }
+  .op-card.sel { background: #1e293b; border-color: #38bdf8; transform: translateX(-2px); }
   .op-card.melee { border-left-color: #f59e0b; }
   .op-card.ranged { border-left-color: #38bdf8; }
   .op-card.retreat { border-left-color: #f43f5e; }
-  .op-top { display: flex; justify-content: space-between; font-size: 12px; font-weight: bold; }
-  .op-sub { font-size: 10px; color: #94a3b8; }
-  #wave-btn { margin-top: auto; padding: 10px; background: #e11d48; color: #fff; border: none; border-radius: 4px; font-size: 13px; font-weight: bold; }
+  .op-top { display: flex; justify-content: space-between; font-size: 11px; font-weight: bold; }
+  .op-sub { font-size: 9px; color: #94a3b8; }
+  #wave-btn { margin-top: auto; padding: 7px; background: #e11d48; color: #fff; border: none; border-radius: 4px; font-size: 12px; font-weight: bold; }
   #wave-btn:disabled { background: #1e293b; color: #475569; }
 </style>
 </head>
@@ -148,6 +148,7 @@ const GRID = [
   "211111110",
   "000000000"
 ].map(row => row.split('').map(Number));
+
 const PATHS = [
   [{c:0,r:1},{c:3,r:1},{c:3,r:0},{c:5,r:0},{c:5,r:1},{c:8,r:1}],
   [{c:0,r:3},{c:7,r:3},{c:7,r:1},{c:8,r:1}]
