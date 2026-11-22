@@ -19,8 +19,8 @@
   main { flex: 1; display: flex; position: relative; overflow: hidden; }
   #map-wrap { flex: 1; display: flex; justify-content: center; align-items: center; background: #0b0e14; }
   canvas { border: 2px solid #1e293b; image-rendering: pixelated; touch-action: manipulation; }
-  aside { width: 175px; background: #0f131a; border-left: 2px solid #1e293b; display: flex; flex-direction: column; padding: 8px; gap: 6px; }
-  .op-card { background: #161b26; border: 1px solid #2d3748; border-left: 4px solid #64748b; border-radius: 4px; padding: 5px 8px; display: flex; flex-direction: column; gap: 2px; }
+    aside { width: 170px; background: #0f131a; border-left: 2px solid #1e293b; display: flex; flex-direction: column; padding: 4px 6px; gap: 3px; }
+  .op-card { background: #161b26; border: 1px solid #2d3748; border-left: 4px solid #64748b; border-radius: 4px; padding: 3px 6px; display: flex; flex-direction: column; gap: 1px; }
   .op-card.sel { background: #1e293b; border-color: #38bdf8; transform: translateX(-3px); }
   .op-card.melee { border-left-color: #f59e0b; }
   .op-card.ranged { border-left-color: #38bdf8; }
@@ -141,13 +141,13 @@ function drawPixelSprite(key, cx, cy, size) {
 }
 
 const COLS = 9, ROWS = 5;
-const GRID = [,
- ,
- ,
- ,
-  [0, 0, 0, 0, 0, 0, 0, 0, 0]
-];
-
+const GRID = [
+  "000111000",
+  "211101113",
+  "000000000",
+  "211111110",
+  "000000000"
+].map(row => row.split('').map(Number));
 const PATHS = [
   [{c:0,r:1},{c:3,r:1},{c:3,r:0},{c:5,r:0},{c:5,r:1},{c:8,r:1}],
   [{c:0,r:3},{c:7,r:3},{c:7,r:1},{c:8,r:1}]
