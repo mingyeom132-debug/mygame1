@@ -2,457 +2,196 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>SEOUL GATE: PIXEL TACTICS</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
-    body { background: #090b10; color: #e2e8f0; font-family: monospace, sans-serif; position: fixed; inset: 0; overflow: hidden; display: flex; flex-direction: column; }
-  header { padding: 8px 12px; background: #11151c; border-bottom: 2px solid #1e293b; display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: bold; }
-  .hud-grp { display: flex; align-items: center; gap: 8px; }
-  .tag { padding: 3px 8px; border-radius: 4px; background: #1e293b; border: 1px solid #334155; }
-  .dp { color: #38bdf8; } .life { color: #f43f5e; } .wave { color: #a855f7; }
-  .sys-btn { background: #1e293b; color: #cbd5e1; border: 1px solid #475569; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; }
-  .sys-btn.on { background: #0284c7; color: #fff; border-color: #38bdf8; }
-  #radio { padding: 6px 12px; background: #0d1117; border-bottom: 1px solid #1e293b; color: #94a3b8; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  #map-wrap { flex: 1; display: flex; justify-content: center; align-items: center; background: #0b0e14; padding: 6px; overflow: hidden; }
-  canvas { border: 2px solid #1e293b; image-rendering: pixelated; touch-action: manipulation; }
-  footer { background: #0f131a; border-top: 2px solid #1e293b; padding: 8px; display: flex; flex-direction: column; gap: 6px; }
-  .deck { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
-  .op-card { background: #161b26; border: 1px solid #2d3748; border-top: 3px solid #64748b; border-radius: 4px; padding: 5px 2px; text-align: center; display: flex; flex-direction: column; gap: 2px; }
-  .op-card.sel { background: #1e293b; border-color: #38bdf8; transform: translateY(-2px); }
-  .op-card.melee { border-top-color: #f59e0b; }
-  .op-card.ranged { border-top-color: #38bdf8; }
-  .op-card.retreat { border-top-color: #f43f5e; }
-  .op-name { font-size: 10px; font-weight: bold; }
-  .op-cost { font-size: 10px; color: #38bdf8; font-weight: bold; }
-  .op-sub { font-size: 8px; color: #94a3b8; }
-  #wave-btn { width: 100%; padding: 11px; background: #e11d48; color: #fff; border: none; border-radius: 4px; font-size: 14px; font-weight: bold; letter-spacing: 1px; }
-  #wave-btn:disabled { background: #1e293b; color: #475569; }
+*{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-user-select:none}
+html,body{width:100%;height:100%;overflow:hidden;background:#090b10;color:#e2e8f0;font-family:monospace,sans-serif}
+body{position:fixed;inset:0;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
+header{min-height:45px;padding:7px 10px;background:#11151c;border-bottom:2px solid #1e293b;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:bold;gap:8px}
+.hud-grp{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.tag{padding:4px 7px;border-radius:4px;background:#1e293b;border:1px solid #334155;white-space:nowrap}
+.dp{color:#38bdf8}.life{color:#fb7185}.wave{color:#c084fc}
+.sys-btn{background:#1e293b;color:#cbd5e1;border:1px solid #475569;padding:6px 11px;border-radius:4px;font-size:12px;font-weight:bold}
+.sys-btn.on{background:#0284c7;color:white;border-color:#38bdf8}
+#radio{min-height:30px;padding:7px 10px;background:#0d1117;border-bottom:1px solid #1e293b;color:#94a3b8;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#map-wrap{flex:1;min-height:0;display:flex;justify-content:center;align-items:center;background:#0b0e14;padding:5px;overflow:hidden}
+canvas{display:block;border:2px solid #1e293b;image-rendering:pixelated;touch-action:none;max-width:100%;max-height:100%}
+footer{background:#0f131a;border-top:2px solid #1e293b;padding:7px 7px calc(7px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:7px}
+.deck{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
+.op-card{min-width:0;background:#161b26;border:1px solid #2d3748;border-top:3px solid #64748b;border-radius:4px;padding:6px 1px;text-align:center;display:flex;flex-direction:column;gap:3px;justify-content:center;min-height:54px}
+.op-card.sel{background:#1e293b;border-color:#38bdf8;transform:translateY(-2px)}
+.op-card.melee{border-top-color:#f59e0b}.op-card.ranged{border-top-color:#38bdf8}.op-card.retreat{border-top-color:#f43f5e}
+.op-name{font-size:clamp(9px,2.6vw,11px);font-weight:bold;white-space:nowrap}.op-cost{font-size:10px;color:#38bdf8;font-weight:bold}.op-sub{font-size:8px;color:#94a3b8;white-space:nowrap}
+#wave-btn{width:100%;padding:12px;background:#e11d48;color:#fff;border:0;border-radius:4px;font-size:14px;font-weight:bold;letter-spacing:1px}
+#wave-btn:disabled{background:#1e293b;color:#64748b}
+#help{font-size:9px;color:#64748b;text-align:center}
 </style>
 </head>
 <body>
-
 <header>
-  <div class="hud-grp">
-    <span class="tag wave">WAVE <b id="w-txt">1</b></span>
-    <span class="tag dp">⚡<b id="dp-txt">20</b></span>
-    <span class="tag life">🛡️<b id="hp-txt">10</b></span>
-  </div>
-  <button id="spd-btn" class="sys-btn" onclick="toggleSpd()">1X</button>
+ <div class="hud-grp">
+  <span class="tag wave">WAVE <b id="w-txt">1</b></span>
+  <span class="tag dp">⚡ <b id="dp-txt">20</b></span>
+  <span class="tag life">🛡️ <b id="hp-txt">10</b></span>
+ </div>
+ <button id="spd-btn" class="sys-btn" type="button">1X</button>
 </header>
-
 <div id="radio">[상황실] 서울 제3구역 균열 감지. 오퍼레이터를 배치하십시오.</div>
-
-<div id="map-wrap"><canvas id="cv"></canvas></div>
-
+<div id="map-wrap"><canvas id="cv" aria-label="전술 게임판"></canvas></div>
 <footer>
-  <div class="deck">
-    <div class="op-card melee sel" onclick="pick('guard', 10, this)">
-      <div class="op-name">방패병</div>
-      <div class="op-cost">⚡10</div>
-      <div class="op-sub">지상·3저지</div>
-    </div>
-    <div class="op-card melee" onclick="pick('blade', 14, this)">
-      <div class="op-name">검성</div>
-      <div class="op-cost">⚡14</div>
-      <div class="op-sub">지상·일섬</div>
-    </div>
-    <div class="op-card ranged" onclick="pick('sniper', 12, this)">
-      <div class="op-name">레일건</div>
-      <div class="op-cost">⚡12</div>
-      <div class="op-sub">고지·장거리</div>
-    </div>
-    <div class="op-card ranged" onclick="pick('caster', 16, this)">
-      <div class="op-name">중력술사</div>
-      <div class="op-cost">⚡16</div>
-      <div class="op-sub">고지·범위둔화</div>
-    </div>
-    <div class="op-card retreat" onclick="pick('retreat', 0, this)">
-      <div class="op-name" style="color:#f43f5e">퇴각</div>
-      <div class="op-cost" style="color:#94a3b8">50%</div>
-      <div class="op-sub">유닛철수</div>
-    </div>
-  </div>
-  <button id="wave-btn" onclick="startWave()">작전 개시</button>
+ <div class="deck">
+  <button class="op-card melee sel" data-type="guard"><span class="op-name">방패병</span><span class="op-cost">⚡10</span><span class="op-sub">지상·3저지</span></button>
+  <button class="op-card melee" data-type="blade"><span class="op-name">검성</span><span class="op-cost">⚡14</span><span class="op-sub">지상·일섬</span></button>
+  <button class="op-card ranged" data-type="sniper"><span class="op-name">레일건</span><span class="op-cost">⚡12</span><span class="op-sub">고지·장거리</span></button>
+  <button class="op-card ranged" data-type="caster"><span class="op-name">중력술사</span><span class="op-cost">⚡16</span><span class="op-sub">고지·둔화</span></button>
+  <button class="op-card retreat" data-type="retreat"><span class="op-name" style="color:#fb7185">퇴각</span><span class="op-cost" style="color:#94a3b8">50%</span><span class="op-sub">유닛 철수</span></button>
+ </div>
+ <button id="wave-btn" type="button">작전 개시</button>
+ <div id="help">카드를 선택한 뒤 타일 터치 · 배치된 유닛을 다시 터치하면 스킬 발동</div>
 </footer>
 <script>
-const cv = document.getElementById('cv');
-const ctx = cv.getContext('2d');
-
-const PAL = {
-  '.': null, 'K': '#0f172a', 'W': '#f8fafc', 'S': '#fed7aa', 'G': '#64748b', 'D': '#334155',
-  'B': '#38bdf8', 'N': '#0284c7', 'Y': '#fbbf24', 'O': '#f59e0b', 'R': '#f43f5e', 'C': '#be123c',
-  'P': '#a855f7', 'V': '#6b21a8', 'E': '#10b981'
-};
-
-const SPRITES = {
-  guard: [
-    '....KKKK....','...KBBBBK...','...KSSSSK...','..KKDDDDKK..',
-    '.KYYDDDDDDK.','.KYYDBBBDDK.','.KYYDBBBDDK.','.KYYDDDDDDK.',
-    '..KKDDDDKK..','...KK..KK...','...KK..KK...','............'
-  ],
-  blade: [
-    '....KKKK....','...KWWWWK...','...KSSSSK..R','..KKRRRRKKR.',
-    '.KRRRRRRKR..','.KRRRRRKR...','..KRRRRK....','..KDDDDK....',
-    '...KDDK.....','..KK..KK....','..KK..KK....','............'
-  ],
-  sniper: [
-    '....KKKK....','...KNNNNK...','...KSSSSK...','..KKBBBBKK..',
-    '.KBBBBBBBBKK','.KBBBBGGGGGG','..KBBBBKK...','...KDDK.....',
-    '...KDDK.....','..KK..KK....','..KK..KK....','............'
-  ],
-  caster: [
-    '....KPPK....','...KPPPPK...','..KKSSSSKK..','.KVVPPPPVVKY',
-    '.KVVPPPPVVKY','..KVVPPVVKKP','..KVVPPVVK.P','...KVVVVK..P',
-    '...KVVVVK..P','....KKKK....','............','............'
-  ],
-  mob: [
-    '............','...KKKKKK...','..KCCCCCCK..','.KCCRRRRCCK.',
-    '.KCRYYYYRCK.','.KCCRRRRCCK.','.KCCCCCCCCK.','..KCC..CCK..',
-    '..KK....KK..','............','............','............'
-  ],
-  fast: [
-    '............','............','..KK....KK..','.KOOOKKKOOK.',
-    'KOOOOOOOOOOK','KOOYYOOYYOOK','.KOOOOOOOOOK','..KOO..OOK..',
-    '.KK......KK.','............','............','............'
-  ],
-  boss: [
-    '..KK....KK..','.KCCKKKKCCK.','KCCCCCCCCCCK','KCCRRRRRRCCK',
-    'KCRYYYYYYRCK','KCCRRRRRRCCK','KCCCCCCCCCCK','KCCKCCCCKCCK',
-    '.KK.KCCK.KK.','....KCCK....','...KK..KK...','............'
-  ]
-};
-
-function drawPixelSprite(key, cx, cy, size) {
-  const grid = SPRITES[key];
-  const px = size / 12;
-  const sx = cx - size / 2;
-  const sy = cy - size / 2;
-  for (let r = 0; r < 12; r++) {
-    for (let c = 0; c < 12; c++) {
-      const ch = grid[r][c];
-      if (PAL[ch]) {
-        ctx.fillStyle = PAL[ch];
-        ctx.fillRect(Math.floor(sx + c * px), Math.floor(sy + r * px), Math.ceil(px), Math.ceil(px));
-      }
-    }
-  }
-}
-
-// 세로 화면 전용 6x8 전술 그리드 (위에서 아래로 진격)
-const COLS = 6, ROWS = 8;
-const GRID = [
-  "020020",
-  "010010",
-  "011110",
-  "001000",
-  "011110",
-  "010010",
-  "011110",
-  "003300"
-].map(row => row.split('').map(Number));
-
-const PATHS = [
-  [{c:1,r:0},{c:1,r:2},{c:2,r:2},{c:2,r:4},{c:1,r:4},{c:1,r:6},{c:2,r:6},{c:2,r:7}],
-  [{c:4,r:0},{c:4,r:2},{c:2,r:2},{c:2,r:4},{c:4,r:4},{c:4,r:6},{c:3,r:6},{c:3,r:7}]
+'use strict';
+const cv=document.getElementById('cv'),ctx=cv.getContext('2d');
+const COLS=6,ROWS=8;
+const GRID=["020020","010010","011110","001000","011110","010010","011110","003300"].map(s=>[...s].map(Number));
+const PATHS=[
+ [{c:1,r:0},{c:1,r:2},{c:2,r:2},{c:2,r:4},{c:1,r:4},{c:1,r:6},{c:2,r:6},{c:2,r:7}],
+ [{c:4,r:0},{c:4,r:2},{c:2,r:2},{c:2,r:4},{c:4,r:4},{c:4,r:6},{c:3,r:6},{c:3,r:7}]
 ];
-
-let TS = 45;
-function resize() {
-  const wrap = document.getElementById('map-wrap');
-  TS = Math.floor(Math.min((wrap.clientWidth - 12) / COLS, (wrap.clientHeight - 12) / ROWS));
-  cv.width = COLS * TS;
-  cv.height = ROWS * TS;
+const PAL={K:'#0f172a',W:'#f8fafc',S:'#fed7aa',G:'#64748b',D:'#334155',B:'#38bdf8',N:'#0284c7',Y:'#fbbf24',O:'#f59e0b',R:'#f43f5e',C:'#be123c',P:'#a855f7',V:'#6b21a8'};
+const SPRITES={
+guard:['....KKKK....','...KBBBBK...','...KSSSSK...','..KKDDDDKK..','.KYYDDDDDDK.','.KYYDBBBDDK.','.KYYDBBBDDK.','.KYYDDDDDDK.','..KKDDDDKK..','...KK..KK...','...KK..KK...','............'],
+blade:['....KKKK....','...KWWWWK...','...KSSSSK..R','..KKRRRRKKR.','.KRRRRRRKR..','.KRRRRRKR...','..KRRRRK....','..KDDDDK....','...KDDK.....','..KK..KK....','..KK..KK....','............'],
+sniper:['....KKKK....','...KNNNNK...','...KSSSSK...','..KKBBBBKK..','.KBBBBBBBBKK','.KBBBBGGGGGG','..KBBBBKK...','...KDDK.....','...KDDK.....','..KK..KK....','..KK..KK....','............'],
+caster:['....KPPK....','...KPPPPK...','..KKSSSSKK..','.KVVPPPPVVKY','.KVVPPPPVVKY','..KVVPPVVKKP','..KVVPPVVK.P','...KVVVVK..P','...KVVVVK..P','....KKKK....','............','............'],
+mob:['............','...KKKKKK...','..KCCCCCCK..','.KCCRRRRCCK.','.KCRYYYYRCK.','.KCCRRRRCCK.','.KCCCCCCCCK.','..KCC..CCK..','..KK....KK..','............','............','............'],
+fast:['............','............','..KK....KK..','.KOOOKKKOOK.','KOOOOOOOOOOK','KOOYYOOYYOOK','.KOOOOOOOOOK','..KOO..OOK..','.KK......KK.','............','............','............'],
+boss:['..KK....KK..','.KCCKKKKCCK.','KCCCCCCCCCCK','KCCRRRRRRCCK','KCRYYYYYYRCK','KCCRRRRRRCCK','KCCCCCCCCCCK','KCCKCCCCKCCK','.KK.KCCK.KK.','....KCCK....','...KK..KK...','............']
+};
+let TS=32,dp=20,dpTimer=0,hp=10,wave=1,active=false,over=false,spd=1,tick=0;
+let selected={type:'guard',cost:10},units=[],enemies=[],projs=[],fx=[],toSpawn=0,spawnT=0;
+const defs={
+guard:{name:'중장 방패병',hp:450,atk:18,cd:45,rng:1.2,blk:3,maxSp:100,col:'#f59e0b',melee:true},
+blade:{name:'검성 각성자',hp:260,atk:42,cd:30,rng:1.3,blk:2,maxSp:80,col:'#fb7185',melee:true},
+sniper:{name:'레일건 저격',hp:120,atk:55,cd:55,rng:3,maxSp:90,col:'#38bdf8',melee:false},
+caster:{name:'중력 술사',hp:130,atk:28,cd:60,rng:2.3,maxSp:110,col:'#a855f7',melee:false}
+};
+function xy(c,r){return{x:c*TS+TS/2,y:r*TS+TS/2}}
+function resize(){
+ const wrap=document.getElementById('map-wrap');
+ const availW=Math.max(80,wrap.clientWidth-10),availH=Math.max(80,wrap.clientHeight-10);
+ TS=Math.max(8,Math.floor(Math.min(availW/COLS,availH/ROWS)));
+ cv.width=COLS*TS;cv.height=ROWS*TS;
+ for(const u of units)Object.assign(u,xy(u.c,u.r));
+ for(const e of enemies){const p=e.path[Math.min(e.wp,e.path.length-1)]; if(e.atWaypoint){Object.assign(e,xy(p.c,p.r));}}
 }
-window.addEventListener('resize', resize);
-resize();
-
-let dp = 20, dpTimer = 0, hp = 10, wave = 1, active = false, over = false, spd = 1, tick = 0;
-let sel = { type: 'guard', cost: 10 };
-let units = [], enemies = [], projs = [], fx = [];
-let toSpawn = 0, spawnT = 0;
-
-function logRadio(msg, col = '#94a3b8') {
-  const r = document.getElementById('radio');
-  r.innerText = msg; r.style.color = col;
+window.addEventListener('resize',resize);window.addEventListener('orientationchange',()=>setTimeout(resize,100));resize();
+function log(msg,color='#94a3b8'){const el=document.getElementById('radio');el.textContent=msg;el.style.color=color}
+function sync(){document.getElementById('w-txt').textContent=wave;document.getElementById('dp-txt').textContent=dp;document.getElementById('hp-txt').textContent=hp}
+function pick(type){
+ const costs={guard:10,blade:14,sniper:12,caster:16,retreat:0};
+ selected={type,cost:costs[type]};
+ document.querySelectorAll('.op-card').forEach(b=>b.classList.toggle('sel',b.dataset.type===type));
 }
-
-function toggleSpd() {
-  spd = spd === 1 ? 2 : 1;
-  const b = document.getElementById('spd-btn');
-  b.innerText = spd + 'X';
-  b.classList.toggle('on', spd === 2);
-}
-
-function pick(type, cost, el) {
-  sel = { type, cost };
-  document.querySelectorAll('.op-card').forEach(c => c.classList.remove('sel'));
-  el.classList.add('sel');
-}
-
-cv.addEventListener('pointerdown', e => {
-  if (over) return;
-  const rect = cv.getBoundingClientRect();
-  const c = Math.floor((e.clientX - rect.left) / TS);
-  const r = Math.floor((e.clientY - rect.top) / TS);
-  if (c < 0 || c >= COLS || r < 0 || r >= ROWS) return;
-
-  const existing = units.find(u => u.c === c && u.r === r);
-
-  if (sel.type === 'retreat') {
-    if (!existing) return logRadio("[경고] 퇴각할 오퍼레이터가 없습니다.", "#f43f5e");
-    dp += Math.floor(existing.cost * 0.5);
-    enemies.forEach(en => { if (en.blockedBy === existing) en.blockedBy = null; });
-    units = units.filter(u => u !== existing);
-    logRadio(`[지휘] ${existing.name} 전술 퇴각 완료.`, "#38bdf8");
-    return syncUI();
-  }
-
-  if (existing) {
-    if (existing.sp >= existing.maxSp) triggerSkill(existing);
-    else logRadio(`[상태] ${existing.name} 기력 충전 중 (${Math.floor(existing.sp/existing.maxSp*100)}%)`, "#fbbf24");
-    return;
-  }
-
-  const tile = GRID[r][c];
-  const isMelee = (sel.type === 'guard' || sel.type === 'blade');
-  if (isMelee && tile !== 1) return logRadio("[배치 불가] 근접 오퍼레이터는 어두운 지상 경로에만 배치됩니다.", "#f59e0b");
-  if (!isMelee && tile !== 0) return logRadio("[배치 불가] 원거리 오퍼레이터는 밝은 고지대 블록에만 배치됩니다.", "#38bdf8");
-  if (dp < sel.cost) return logRadio("[코스트 부족] 지휘 코스트 회복을 대기하십시오.", "#f43f5e");
-
-  dp -= sel.cost;
-  const db = {
-    guard:  { name: '중장 방패병', hp: 450, maxHp: 450, atk: 18, cd: 45, rng: 1.2, blk: 3, sp: 0, maxSp: 100, col: '#f59e0b', melee: true },
-    blade:  { name: '검성 각성자', hp: 260, maxHp: 260, atk: 42, cd: 30, rng: 1.3, blk: 2, sp: 0, maxSp: 80,  col: '#fb7185', melee: true },
-    sniper: { name: '레일건 저격', hp: 120, maxHp: 120, atk: 55, cd: 55, rng: 3.0, blk: 0, sp: 0, maxSp: 90,  col: '#38bdf8', melee: false },
-    caster: { name: '중력 술사',   hp: 130, maxHp: 130, atk: 28, cd: 60, rng: 2.3, blk: 0, sp: 0, maxSp: 110, col: '#a855f7', melee: false }
-  }[sel.type];
-
-  units.push({ c, r, x: c * TS + TS / 2, y: r * TS + TS / 2, type: sel.type, cost: sel.cost, timer: 0, skillActive: 0, ...db });
-  logRadio(`[배치] ${db.name}, 작전 구역 투입.`, "#34d399");
-  syncUI();
+document.querySelectorAll('.op-card').forEach(b=>b.addEventListener('click',()=>pick(b.dataset.type)));
+document.getElementById('spd-btn').addEventListener('click',()=>{spd=spd===1?2:1;const b=document.getElementById('spd-btn');b.textContent=spd+'X';b.classList.toggle('on',spd===2)});
+cv.addEventListener('pointerdown',e=>{
+ if(over)return;
+ const rect=cv.getBoundingClientRect(),scaleX=cv.width/rect.width,scaleY=cv.height/rect.height;
+ const c=Math.floor((e.clientX-rect.left)*scaleX/TS),r=Math.floor((e.clientY-rect.top)*scaleY/TS);
+ if(c<0||c>=COLS||r<0||r>=ROWS)return;
+ const existing=units.find(u=>u.c===c&&u.r===r);
+ if(selected.type==='retreat'){
+  if(!existing)return log('[경고] 퇴각할 오퍼레이터가 없습니다.','#fb7185');
+  dp=Math.min(99,dp+Math.floor(existing.cost*.5));
+  enemies.forEach(en=>{if(en.blockedBy===existing)en.blockedBy=null});
+  units=units.filter(u=>u!==existing);log(`[지휘] ${existing.name} 전술 퇴각 완료.`,'#38bdf8');sync();return;
+ }
+ if(existing){if(existing.sp>=existing.maxSp)triggerSkill(existing);else log(`[상태] ${existing.name} 기력 충전 중 (${Math.floor(existing.sp/existing.maxSp*100)}%)`,'#fbbf24');return}
+ const tile=GRID[r][c],melee=defs[selected.type]?.melee;
+ if(!defs[selected.type])return;
+ if(melee&&tile!==1)return log('[배치 불가] 근접 오퍼레이터는 지상 경로에만 배치할 수 있습니다.','#f59e0b');
+ if(!melee&&tile!==0)return log('[배치 불가] 원거리 오퍼레이터는 고지대에만 배치할 수 있습니다.','#38bdf8');
+ if(dp<selected.cost)return log('[코스트 부족] 지휘 코스트 회복을 기다리십시오.','#fb7185');
+ dp-=selected.cost;const d=defs[selected.type],p=xy(c,r);
+ units.push({c,r,...p,type:selected.type,cost:selected.cost,name:d.name,hp:d.hp,maxHp:d.hp,atk:d.atk,cd:d.cd,rng:d.rng,blk:d.blk||0,sp:0,maxSp:d.maxSp,col:d.col,melee:d.melee,timer:0,skillActive:0});
+ log(`[배치] ${d.name}, 작전 구역 투입.`,'#34d399');sync();
 });
-function triggerSkill(u) {
-  u.sp = 0; u.skillActive = 180;
-  fx.push({ x: u.x, y: u.y, r: 4, maxR: TS * 1.4, col: u.col, life: 18 });
-  if (u.type === 'guard') {
-    u.hp = Math.min(u.maxHp, u.hp + 200);
-    logRadio(`[오버드라이브] ${u.name}: 방어막 전개 및 내구도 복구!`, "#f59e0b");
-  } else if (u.type === 'blade') {
-    enemies.forEach(e => {
-      if (Math.hypot(e.x - u.x, e.y - u.y) <= TS * 1.8) {
-        e.hp -= u.atk * 3.5;
-        fx.push({ x: e.x, y: e.y, r: 2, maxR: TS * 0.6, col: '#fb7185', life: 14 });
-      }
-    });
-    logRadio(`[오버드라이브] ${u.name}: 공간 일섬 발동!`, "#fb7185");
-  } else if (u.type === 'sniper') {
-    logRadio(`[오버드라이브] ${u.name}: 레일건 과부하 연사 개시!`, "#38bdf8");
-  } else if (u.type === 'caster') {
-    enemies.forEach(e => {
-      if (Math.hypot(e.x - u.x, e.y - u.y) <= u.rng * TS) { e.hp -= u.atk * 2; e.slow = 180; }
-    });
-    logRadio(`[오버드라이브] ${u.name}: 중력장 붕괴! 범위 제압!`, "#a855f7");
-  }
+function triggerSkill(u){
+ u.sp=0;u.skillActive=180;fx.push({x:u.x,y:u.y,r:4,maxR:TS*1.4,col:u.col,life:18});
+ if(u.type==='guard'){u.hp=Math.min(u.maxHp,u.hp+200);log(`[오버드라이브] ${u.name}: 방어막 전개 및 내구도 복구!`,'#f59e0b')}
+ else if(u.type==='blade'){enemies.forEach(e=>{if(Math.hypot(e.x-u.x,e.y-u.y)<=TS*1.8){e.hp-=u.atk*3.5;fx.push({x:e.x,y:e.y,r:2,maxR:TS*.6,col:'#fb7185',life:14})}});log(`[오버드라이브] ${u.name}: 공간 일섬 발동!`,'#fb7185')}
+ else if(u.type==='sniper')log(`[오버드라이브] ${u.name}: 레일건 과부하 연사 개시!`,'#38bdf8');
+ else if(u.type==='caster'){enemies.forEach(e=>{if(Math.hypot(e.x-u.x,e.y-u.y)<=u.rng*TS){e.hp-=u.atk*2;e.slow=180}});log(`[오버드라이브] ${u.name}: 중력장 붕괴!`,'#a855f7')}
 }
-
-function startWave() {
-  if (active || over) return;
-  active = true; toSpawn = 7 + wave * 3; spawnT = 0;
-  document.getElementById('wave-btn').disabled = true;
-  document.getElementById('wave-btn').innerText = `교전 중 (WAVE ${wave})`;
-  logRadio(`[경보] WAVE ${wave} 균열에서 차원 괴수 출현!`, "#f43f5e");
+function startWave(){
+ if(active||over)return;
+ active=true;toSpawn=7+wave*3;spawnT=0;const b=document.getElementById('wave-btn');b.disabled=true;b.textContent=`교전 중 (WAVE ${wave})`;
+ log(`[경보] WAVE ${wave} 균열에서 차원 괴수 출현!`,'#fb7185');
 }
-
-function syncUI() {
-  document.getElementById('w-txt').innerText = wave;
-  document.getElementById('dp-txt').innerText = dp;
-  document.getElementById('hp-txt').innerText = hp;
+document.getElementById('wave-btn').addEventListener('click',startWave);
+function spawnEnemy(){
+ const path=PATHS[Math.floor(Math.random()*PATHS.length)],boss=toSpawn===1&&wave%3===0,fast=!boss&&wave>=2&&Math.random()<.3;
+ const base=110+wave*45,p=xy(path[0].c,path[0].r),maxHp=boss?base*4.5:(fast?base*.6:base);
+ enemies.push({path,wp:1,x:p.x,y:p.y,atWaypoint:true,hp:maxHp,maxHp,spd:boss?.45:(fast?1.3:.75),atk:boss?45:15+wave*3,atkCd:0,slow:0,blockedBy:null,boss,fast});
+ toSpawn--;spawnT=Math.max(30,75-wave*3);
 }
-
-function step() {
-  if (over) return;
-  tick++;
-
-  if (active && ++dpTimer >= 45) { dpTimer = 0; dp = Math.min(99, dp + 1); syncUI(); }
-
-  if (active && toSpawn > 0 && --spawnT <= 0) {
-    const path = PATHS[Math.floor(Math.random() * PATHS.length)];
-    const boss = (toSpawn === 1 && wave % 3 === 0);
-    const fast = (!boss && wave >= 2 && Math.random() < 0.3);
-    const baseHp = 110 + wave * 45;
-    enemies.push({
-      path, wp: 1, x: path.c * TS + TS / 2, y: path.r * TS + TS / 2,
-      hp: boss ? baseHp * 4.5 : (fast ? baseHp * 0.6 : baseHp),
-      maxHp: boss ? baseHp * 4.5 : (fast ? baseHp * 0.6 : baseHp),
-      spd: boss ? 0.45 : (fast ? 1.3 : 0.75),
-      atk: boss ? 45 : 15 + wave * 3,
-      atkCd: 0, slow: 0, blockedBy: null, boss, fast
-    });
-    toSpawn--; spawnT = Math.max(30, 75 - wave * 3);
+function step(){
+ if(over)return;tick++;
+ if(active&&++dpTimer>=45){dpTimer=0;dp=Math.min(99,dp+1);sync()}
+ if(active&&toSpawn>0&&--spawnT<=0)spawnEnemy();
+ for(let i=enemies.length-1;i>=0;i--){
+  const e=enemies[i];if(e.slow>0)e.slow--;
+  if(e.blockedBy){
+   if(!units.includes(e.blockedBy))e.blockedBy=null;
+   else{if(++e.atkCd>=50){e.atkCd=0;let dmg=e.atk;if(e.blockedBy.type==='guard'&&e.blockedBy.skillActive>0)dmg*=.3;e.blockedBy.hp-=dmg;
+    if(e.blockedBy.hp<=0){const dead=e.blockedBy;log(`[긴급] ${dead.name} 전투 불능!`,'#fb7185');units=units.filter(u=>u!==dead);enemies.forEach(o=>{if(o.blockedBy===dead)o.blockedBy=null})}}
+    continue}
   }
-
-  for (let i = enemies.length - 1; i >= 0; i--) {
-    const e = enemies[i];
-    if (e.slow > 0) e.slow--;
-
-    if (e.blockedBy) {
-      if (!units.includes(e.blockedBy)) e.blockedBy = null;
-      else {
-        if (++e.atkCd >= 50) {
-          e.atkCd = 0;
-          let dmg = e.atk;
-          if (e.blockedBy.type === 'guard' && e.blockedBy.skillActive > 0) dmg *= 0.3;
-          e.blockedBy.hp -= dmg;
-          if (e.blockedBy.hp <= 0) {
-            logRadio(`[긴급] ${e.blockedBy.name} 전투 불능! 방어선 돌파 위기!`, "#f43f5e");
-            units = units.filter(u => u !== e.blockedBy);
-            enemies.forEach(o => { if (o.blockedBy === e.blockedBy) o.blockedBy = null; });
-          }
-        }
-        continue;
-      }
-    }
-
-    for (const u of units) {
-      if (!u.melee) continue;
-      if (enemies.filter(o => o.blockedBy === u).length < u.blk && Math.hypot(e.x - u.x, e.y - u.y) < TS * 0.45) {
-        e.blockedBy = u; break;
-      }
-    }
-    if (e.blockedBy) continue;
-
-    const target = e.path[e.wp];
-    const tx = target.c * TS + TS / 2, ty = target.r * TS + TS / 2;
-    const dx = tx - e.x, dy = ty - e.y, dist = Math.hypot(dx, dy);
-    const curSpd = e.spd * (e.slow > 0 ? 0.5 : 1);
-
-    if (dist < curSpd) {
-      e.x = tx; e.y = ty;
-      if (++e.wp >= e.path.length) {
-        hp -= e.boss ? 3 : 1; enemies.splice(i, 1); syncUI();
-        logRadio(`[경고] 괴수가 방어 거점을 돌파했습니다!`, "#f43f5e");
-        if (hp <= 0) { over = true; alert(`방어선 붕괴. 최종 기록: WAVE ${wave}`); return location.reload(); }
-      }
-    } else { e.x += (dx / dist) * curSpd; e.y += (dy / dist) * curSpd; }
+  for(const u of units){if(!u.melee)continue;if(enemies.filter(o=>o.blockedBy===u).length<u.blk&&Math.hypot(e.x-u.x,e.y-u.y)<TS*.45){e.blockedBy=u;break}}
+  if(e.blockedBy)continue;
+  const target=e.path[e.wp];if(!target)continue;
+  const p=xy(target.c,target.r),dx=p.x-e.x,dy=p.y-e.y,dist=Math.hypot(dx,dy),speed=e.spd*(e.slow>0?.5:1);
+  if(dist<speed){e.x=p.x;e.y=p.y;e.wp++;if(e.wp>=e.path.length){hp-=e.boss?3:1;enemies.splice(i,1);sync();log('[경고] 괴수가 방어 거점을 돌파했습니다!','#fb7185');if(hp<=0){endGame();return}}}
+  else{e.x+=(dx/dist)*speed;e.y+=(dy/dist)*speed}
+ }
+ for(const u of units){
+  if(u.skillActive>0)u.skillActive--;
+  if(active&&u.sp<u.maxSp)u.sp=Math.min(u.maxSp,u.sp+.25);
+  if(u.timer>0)u.timer--;
+  if(u.timer<=0){
+   const targets=enemies.filter(e=>Math.hypot(e.x-u.x,e.y-u.y)<=u.rng*TS);
+   if(targets.length){u.sp=Math.min(u.maxSp,u.sp+8);const mult=u.skillActive>0&&u.type==='sniper'?2.2:1;
+    if(u.type==='caster'){targets.forEach(t=>{t.hp-=u.atk;t.slow=50;projs.push({x:u.x,y:u.y,tx:t.x,ty:t.y,col:u.col,life:8})})}
+    else{const t=targets.find(en=>en.blockedBy===u)||targets[0];t.hp-=u.atk*mult;projs.push({x:u.x,y:u.y,tx:t.x,ty:t.y,col:u.col,life:6,thick:mult>1})}
+    u.timer=u.skillActive>0&&u.type==='sniper'?u.cd*.5:u.cd;
+   }
   }
-
-  units.forEach(u => {
-    if (u.skillActive > 0) u.skillActive--;
-    if (active && u.sp < u.maxSp) u.sp += 0.25;
-    if (u.timer > 0) u.timer--;
-    if (u.timer <= 0) {
-      const targets = enemies.filter(e => Math.hypot(e.x - u.x, e.y - u.y) <= u.rng * TS);
-      if (targets.length > 0) {
-        u.sp = Math.min(u.maxSp, u.sp + 8);
-        const mult = (u.skillActive > 0 && u.type === 'sniper') ? 2.2 : 1;
-        if (u.type === 'caster') {
-          targets.forEach(t => { t.hp -= u.atk; t.slow = 50; projs.push({ x: u.x, y: u.y, tx: t.x, ty: t.y, col: u.col, life: 8 }); });
-        } else {
-          const t = targets.find(en => en.blockedBy === u) || targets;
-          t.hp -= u.atk * mult;
-          projs.push({ x: u.x, y: u.y, tx: t.x, ty: t.y, col: u.col, life: 6, thick: mult > 1 });
-        }
-        u.timer = (u.skillActive > 0 && u.type === 'sniper') ? u.cd * 0.5 : u.cd;
-      }
-    }
-  });
-
-  for (let i = enemies.length - 1; i >= 0; i--) {
-    if (enemies[i].hp <= 0) {
-      dp = Math.min(99, dp + (enemies[i].boss ? 10 : 2));
-      fx.push({ x: enemies[i].x, y: enemies[i].y, r: 3, maxR: TS * 0.5, col: '#f43f5e', life: 12 });
-      enemies.splice(i, 1); syncUI();
-    }
-  }
-
-  for (let i = projs.length - 1; i >= 0; i--) if (--projs[i].life <= 0) projs.splice(i, 1);
-  for (let i = fx.length - 1; i >= 0; i--) { fx[i].r += (fx[i].maxR - fx[i].r) * 0.25; if (--fx[i].life <= 0) fx.splice(i, 1); }
-
-  if (active && toSpawn === 0 && enemies.length === 0) {
-    active = false; wave++; dp = Math.min(99, dp + 12); syncUI();
-    const b = document.getElementById('wave-btn');
-    b.disabled = false; b.innerText = `WAVE ${wave} 개시`;
-    logRadio(`[상황실] WAVE ${wave - 1} 방어 성공. 다음 공세에 대비하십시오.`, "#34d399");
-  }
+ }
+ for(let i=enemies.length-1;i>=0;i--)if(enemies[i].hp<=0){dp=Math.min(99,dp+(enemies[i].boss?10:2));fx.push({x:enemies[i].x,y:enemies[i].y,r:3,maxR:TS*.5,col:'#fb7185',life:12});enemies.splice(i,1);sync()}
+ for(let i=projs.length-1;i>=0;i--)if(--projs[i].life<=0)projs.splice(i,1);
+ for(let i=fx.length-1;i>=0;i--){fx[i].r+=(fx[i].maxR-fx[i].r)*.25;if(--fx[i].life<=0)fx.splice(i,1)}
+ if(active&&toSpawn===0&&enemies.length===0){active=false;wave++;dp=Math.min(99,dp+12);sync();const b=document.getElementById('wave-btn');b.disabled=false;b.textContent=`WAVE ${wave} 개시`;log(`[상황실] WAVE ${wave-1} 방어 성공. 다음 공세에 대비하십시오.`,'#34d399')}
 }
-
-function draw() {
-  ctx.clearRect(0, 0, cv.width, cv.height);
-
-  for (let r = 0; r < ROWS; r++) {
-    for (let c = 0; c < COLS; c++) {
-      const x = c * TS, y = r * TS, t = GRID[r][c];
-      if (t === 0) {
-        ctx.fillStyle = '#1e293b'; ctx.fillRect(x + 2, y + 2, TS - 4, TS - 4);
-        ctx.fillStyle = '#334155'; ctx.fillRect(x + 2, y + 2, TS - 4, 4);
-        ctx.fillStyle = '#0f172a'; ctx.fillRect(x + 2, y + TS - 6, TS - 4, 4);
-      } else {
-        ctx.fillStyle = '#0f172a'; ctx.fillRect(x, y, TS, TS);
-        ctx.fillStyle = '#1e293b';
-        ctx.fillRect(x + TS * 0.45, y + TS * 0.45, TS * 0.1, TS * 0.1);
-      }
-      if (t === 2) {
-        ctx.fillStyle = 'rgba(244, 63, 94, 0.25)'; ctx.fillRect(x + 4, y + 4, TS - 8, TS - 8);
-        ctx.fillStyle = '#f43f5e'; ctx.font = 'bold 10px monospace'; ctx.textAlign = 'center';
-        ctx.fillText('GATE', x + TS / 2, y + TS / 2 + 4);
-      } else if (t === 3) {
-        ctx.fillStyle = 'rgba(56, 189, 248, 0.25)'; ctx.fillRect(x + 4, y + 4, TS - 8, TS - 8);
-        ctx.fillStyle = '#38bdf8'; ctx.font = 'bold 10px monospace'; ctx.textAlign = 'center';
-        ctx.fillText('CORE', x + TS / 2, y + TS / 2 + 4);
-      }
-    }
-  }
-
-  units.forEach(u => {
-    const bob = Math.sin(tick * 0.15) * 1.5;
-    if (u.sp >= u.maxSp) {
-      ctx.strokeStyle = '#fbbf24'; ctx.lineWidth = 2;
-      ctx.strokeRect(u.x - TS * 0.38, u.y - TS * 0.38, TS * 0.76, TS * 0.76);
-    }
-    drawPixelSprite(u.type, u.x, u.y + bob, TS * 0.78);
-
-    const bw = TS * 0.65;
-    ctx.fillStyle = '#090b10'; ctx.fillRect(u.x - bw / 2, u.y + TS * 0.34, bw, 6);
-    ctx.fillStyle = '#34d399'; ctx.fillRect(u.x - bw / 2, u.y + TS * 0.34, bw * (u.hp / u.maxHp), 3);
-    ctx.fillStyle = u.sp >= u.maxSp ? '#fbbf24' : '#38bdf8';
-    ctx.fillRect(u.x - bw / 2, u.y + TS * 0.34 + 3, bw * (u.sp / u.maxSp), 3);
-  });
-
-  enemies.forEach(e => {
-    const walk = Math.sin(tick * 0.25 + e.x) * 2;
-    const key = e.boss ? 'boss' : (e.fast ? 'fast' : 'mob');
-    const sz = TS * (e.boss ? 0.92 : 0.68);
-    drawPixelSprite(key, e.x, e.y + walk, sz);
-
-    if (e.slow > 0) {
-      ctx.strokeStyle = '#a855f7'; ctx.lineWidth = 2;
-      ctx.strokeRect(e.x - sz * 0.4, e.y - sz * 0.4, sz * 0.8, sz * 0.8);
-    }
-    const bw = TS * 0.6;
-    ctx.fillStyle = '#090b10'; ctx.fillRect(e.x - bw / 2, e.y - sz * 0.48, bw, 4);
-    ctx.fillStyle = '#f43f5e'; ctx.fillRect(e.x - bw / 2, e.y - sz * 0.48, bw * (e.hp / e.maxHp), 4);
-  });
-
-  projs.forEach(p => {
-    ctx.strokeStyle = p.col; ctx.lineWidth = p.thick ? 4 : 2;
-    ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p.tx, p.ty); ctx.stroke();
-  });
-  fx.forEach(f => {
-    ctx.strokeStyle = f.col; ctx.lineWidth = 2; ctx.globalAlpha = f.life / 18;
-    ctx.strokeRect(f.x - f.r, f.y - f.r, f.r * 2, f.r * 2);
-    ctx.globalAlpha = 1;
-  });
+function endGame(){over=true;active=false;const b=document.getElementById('wave-btn');b.disabled=true;b.textContent='작전 종료';log(`방어선 붕괴 · 최종 기록 WAVE ${wave}`,'#fb7185')}
+function sprite(key,cx,cy,size){
+ const grid=SPRITES[key],px=size/12,sx=cx-size/2,sy=cy-size/2;
+ for(let r=0;r<12;r++)for(let c=0;c<12;c++){const color=PAL[grid[r][c]];if(color){ctx.fillStyle=color;ctx.fillRect(Math.floor(sx+c*px),Math.floor(sy+r*px),Math.ceil(px),Math.ceil(px))}}
 }
-
-function loop() {
-  for (let i = 0; i < spd; i++) step();
-  draw();
-  requestAnimationFrame(loop);
+function draw(){
+ ctx.clearRect(0,0,cv.width,cv.height);
+ for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const x=c*TS,y=r*TS,t=GRID[r][c];
+  if(t===0){ctx.fillStyle='#1e293b';ctx.fillRect(x+2,y+2,TS-4,TS-4);ctx.fillStyle='#334155';ctx.fillRect(x+2,y+2,TS-4,4);ctx.fillStyle='#0f172a';ctx.fillRect(x+2,y+TS-6,TS-4,4)}
+  else{ctx.fillStyle='#0f172a';ctx.fillRect(x,y,TS,TS);ctx.fillStyle='#1e293b';ctx.fillRect(x+TS*.45,y+TS*.45,TS*.1,TS*.1)}
+  if(t===2||t===3){ctx.fillStyle=t===2?'rgba(244,63,94,.25)':'rgba(56,189,248,.25)';ctx.fillRect(x+4,y+4,TS-8,TS-8);ctx.fillStyle=t===2?'#fb7185':'#38bdf8';ctx.font=`bold ${Math.max(7,TS*.2)}px monospace`;ctx.textAlign='center';ctx.fillText(t===2?'GATE':'CORE',x+TS/2,y+TS/2+4)}
+ }
+ units.forEach(u=>{const bob=Math.sin(tick*.15)*1.5;if(u.sp>=u.maxSp){ctx.strokeStyle='#fbbf24';ctx.lineWidth=2;ctx.strokeRect(u.x-TS*.38,u.y-TS*.38,TS*.76,TS*.76)}sprite(u.type,u.x,u.y+bob,TS*.78);const bw=TS*.65;ctx.fillStyle='#090b10';ctx.fillRect(u.x-bw/2,u.y+TS*.34,bw,6);ctx.fillStyle='#34d399';ctx.fillRect(u.x-bw/2,u.y+TS*.34,bw*(u.hp/u.maxHp),3);ctx.fillStyle=u.sp>=u.maxSp?'#fbbf24':'#38bdf8';ctx.fillRect(u.x-bw/2,u.y+TS*.34+3,bw*(u.sp/u.maxSp),3)});
+ enemies.forEach(e=>{const walk=Math.sin(tick*.25+e.x)*2,key=e.boss?'boss':e.fast?'fast':'mob',sz=TS*(e.boss?.92:.68);sprite(key,e.x,e.y+walk,sz);if(e.slow>0){ctx.strokeStyle='#a855f7';ctx.lineWidth=2;ctx.strokeRect(e.x-sz*.4,e.y-sz*.4,sz*.8,sz*.8)}const bw=TS*.6;ctx.fillStyle='#090b10';ctx.fillRect(e.x-bw/2,e.y-sz*.48,bw,4);ctx.fillStyle='#fb7185';ctx.fillRect(e.x-bw/2,e.y-sz*.48,bw*(e.hp/e.maxHp),4)});
+ projs.forEach(p=>{ctx.strokeStyle=p.col;ctx.lineWidth=p.thick?4:2;ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.tx,p.ty);ctx.stroke()});
+ fx.forEach(f=>{ctx.strokeStyle=f.col;ctx.lineWidth=2;ctx.globalAlpha=f.life/18;ctx.strokeRect(f.x-f.r,f.y-f.r,f.r*2,f.r*2);ctx.globalAlpha=1});
 }
-
-syncUI();
-loop();
+function loop(){for(let i=0;i<spd;i++)step();draw();requestAnimationFrame(loop)}
+sync();loop();
 </script>
 </body>
 </html>
