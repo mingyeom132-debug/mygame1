@@ -85,7 +85,52 @@ function drawEnemy(e){
  ctx.fillStyle='#ffe18a';ctx.fillRect(4*s,3*s,s,s);ctx.fillRect(7*s,3*s,s,s);
  ctx.restore();
 }
-function draw(){ctx.clearRect(0,0,W,H);const sky=ctx.createLinearGradient(0,0,0,H);sky.addColorStop(0,'#1b2a43');sky.addColorStop(.65,'#35435a');sky.addColorStop(1,'#192435');ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);
+function drawRuinedCity(){
+ // 먼지 낀 석양과 무너진 도심 실루엣
+ const haze=ctx.createLinearGradient(0,H*.24,0,H*.78);
+ haze.addColorStop(0,'rgba(211,139,103,0)');
+ haze.addColorStop(.58,'rgba(177,105,83,.22)');
+ haze.addColorStop(1,'rgba(37,43,55,.1)');
+ ctx.fillStyle=haze;ctx.fillRect(0,H*.18,W,H*.62);
+ // 먼 거리의 폐허 빌딩
+ const skyline=[
+  [-.03,.43,.15,.22],[.09,.35,.12,.30],[.22,.40,.13,.25],
+  [.36,.31,.15,.34],[.53,.39,.12,.26],[.66,.33,.16,.32],
+  [.83,.40,.13,.25],[.94,.36,.12,.29]
+ ];
+ skyline.forEach(([fx,fy,fw,fh],i)=>{
+  const x=W*fx,y=H*fy,w=W*fw,h=H*fh;
+  ctx.fillStyle=i%2?'#273342':'#303744';ctx.fillRect(x,y,w,h);
+  ctx.fillStyle='#1b2634';ctx.fillRect(x+w*.12,y+h*.13,w*.76,h*.87);
+  // 깨진 옥상과 무너진 모서리
+  ctx.fillStyle='#3b4148';ctx.beginPath();ctx.moveTo(x,y+h*.12);ctx.lineTo(x+w*.2,y-h*.035);ctx.lineTo(x+w*.38,y+h*.08);ctx.lineTo(x+w*.62,y-h*.015);ctx.lineTo(x+w*.78,y+h*.1);ctx.lineTo(x+w,y+h*.04);ctx.lineTo(x+w,y+h*.18);ctx.closePath();ctx.fill();
+  ctx.fillStyle='#d49a69';
+  for(let wy=0;wy<4;wy++)for(let wx=0;wx<3;wx++){
+   if((wx*3+wy+i)%4!==1)ctx.fillRect(x+w*(.18+wx*.25),y+h*(.24+wy*.17),Math.max(2,w*.055),Math.max(3,H*.012));
+  }
+  // 일부 건물의 부서진 외벽
+  ctx.fillStyle='#151f2b';ctx.fillRect(x+w*.48,y+h*.48,w*.18,h*.52);
+ });
+ // 먼지와 연기 기둥
+ for(let i=0;i<4;i++){
+  const sx=W*(.16+i*.235),sy=H*(.34+(i%2)*.055),pulse=Math.sin(tick*.012+i)*H*.008;
+  ctx.fillStyle='rgba(28,35,44,.20)';
+  for(let j=0;j<4;j++){ctx.beginPath();ctx.ellipse(sx+(j-1.5)*W*.012,sy-j*H*.025+pulse,H*(.035+j*.009),H*(.018+j*.006),0,0,Math.PI*2);ctx.fill()}
+ }
+ // 전경의 잔해 더미와 깨진 도로
+ ctx.fillStyle='#252d38';
+ ctx.beginPath();ctx.moveTo(0,H*.79);ctx.lineTo(W*.08,H*.75);ctx.lineTo(W*.13,H*.79);ctx.lineTo(W*.19,H*.77);ctx.lineTo(W*.25,H*.83);ctx.lineTo(0,H*.85);ctx.fill();
+ ctx.beginPath();ctx.moveTo(W,H*.78);ctx.lineTo(W*.91,H*.75);ctx.lineTo(W*.86,H*.80);ctx.lineTo(W*.79,H*.77);ctx.lineTo(W*.73,H*.84);ctx.lineTo(W,H*.86);ctx.fill();
+ ctx.fillStyle='#59606a';
+ for(let i=0;i<22;i++){
+  const side=i%2===0?1:-1,fx=i%2===0?.015+(i%7)*.018:.985-(i%7)*.018;
+  const x=W*fx,y=H*(.76+(i%4)*.025),sz=3+(i%4)*2;
+  ctx.fillRect(x,y,sz*1.8,sz);ctx.fillRect(x+sz*.5,y-sz*.55,sz,sz*.7);
+ }
+ // 멀리 깔린 잔해 먼지
+ ctx.fillStyle='rgba(20,27,37,.35)';ctx.fillRect(0,H*.84,W,H*.07);
+}
+function draw(){ctx.clearRect(0,0,W,H);const sky=ctx.createLinearGradient(0,0,0,H);sky.addColorStop(0,'#202b3b');sky.addColorStop(.42,'#8a6258');sky.addColorStop(.72,'#4a4548');sky.addColorStop(1,'#192435');ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);drawRuinedCity();
 ctx.fillStyle='#d4c18d';for(let i=0;i<8;i++){const x=i*W/7;ctx.fillRect(x,H*.1,2,H*.56)}
 ctx.fillStyle='#26364b';ctx.fillRect(0,H*.12,W,H*.06);for(let i=0;i<9;i++){ctx.fillStyle='#60718a';ctx.fillRect(i*W/8,H*.105,W/16,H*.09)}
 ctx.fillStyle='#53647a';ctx.fillRect(0,H*.91,W,H*.09);ctx.fillStyle='#8795a8';ctx.fillRect(0,H*.91,W,6);for(let i=0;i<15;i++){ctx.fillStyle='#34465d';ctx.fillRect(i*W/14,H*.925,W/28,H*.075)}ctx.fillStyle='#d6b66e';ctx.font='bold 15px system-ui';ctx.textAlign='center';ctx.fillText('SEOUL LAST WALL',W/2,H*.975);
