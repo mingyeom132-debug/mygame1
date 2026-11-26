@@ -31,7 +31,7 @@
   .progress-badge { background: var(--surface); border: 1px solid var(--border); padding: 5px 12px; border-radius: 99px; font-size: 0.85rem; font-weight: 700; color: var(--text-sub); }
 
   .mode-tabs { width: 100%; max-width: 480px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; background: #e2e8f0; padding: 4px; border-radius: 12px; margin-bottom: 12px; }
-  .mode-btn { border: none; background: transparent; padding: 9px 4px; border-radius: 9px; font-size: 0.88rem; font-weight: 700; color: var(--text-sub); cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 5px; }
+  .mode-btn { border: none; background: transparent; padding: 9px 4px; border-radius: 9px; font-size: 0.85rem; font-weight: 700; color: var(--text-sub); cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 4px; }
   .mode-btn.active { background: var(--surface); color: var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
 
   .filter-bar { width: 100%; max-width: 480px; display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 14px; }
@@ -61,11 +61,6 @@
   .choice-btn.correct { background: var(--success-soft); border-color: var(--success); color: #065f46; }
   .choice-btn.wrong { background: var(--danger-soft); border-color: var(--danger); color: #991b1b; }
 
-  .spell-area { width: 100%; margin-top: 18px; display: flex; flex-direction: column; gap: 10px; }
-  .spell-input { width: 100%; padding: 14px; border: 1.5px solid var(--border); border-radius: 12px; font-size: 1.15rem; font-weight: 700; text-align: center; outline: none; background: var(--bg); }
-  .spell-input:focus { border-color: var(--primary); background: var(--surface); }
-  .spell-feedback { font-size: 0.9rem; font-weight: 700; min-height: 22px; }
-
   .bottom-actions { width: 100%; max-width: 480px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
   .action-btn { padding: 15px; border: none; border-radius: 14px; font-size: 0.95rem; font-weight: 700; cursor: pointer; color: #fff; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.15s; }
   .action-btn:active { transform: scale(0.98); }
@@ -93,13 +88,13 @@
     <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="7" y1="9" x2="17" y2="9"/><line x1="7" y1="14" x2="13" y2="14"/></svg>
     암기
   </button>
-  <button class="mode-btn" id="tab-recall" onclick="switchMode('recall')">
+  <button class="mode-btn" id="tab-recall-mean" onclick="switchMode('recall-mean')">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-    리콜
+    뜻 리콜
   </button>
-  <button class="mode-btn" id="tab-spell" onclick="switchMode('spell')">
-    <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-    스펠
+  <button class="mode-btn" id="tab-recall-word" onclick="switchMode('recall-word')">
+    <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+    영단어 리콜
   </button>
 </div>
 
@@ -681,7 +676,7 @@ function jumpTo() {
 function switchMode(mode) {
   clearTimer();
   currentMode = mode;
-  ['flash', 'recall', 'spell'].forEach(m => {
+  ['flash', 'recall-mean', 'recall-word'].forEach(m => {
     document.getElementById('tab-' + m).classList.toggle('active', m === mode);
   });
   isRevealed = false;
@@ -746,40 +741,38 @@ function render() {
         <button class="action-btn btn-known" onclick="markKnownAndNext(${item.id})">알아요</button>
       </div>
     `;
-  } else if (currentMode === 'recall') {
+  } else if (currentMode === 'recall-mean') {
     const others = allWords.filter(w => w.id !== item.id).sort(() => 0.5 - Math.random()).slice(0, 3);
     const options = [item, ...others].sort(() => 0.5 - Math.random());
     stage.innerHTML = `
       <div class="card-box" style="cursor:default; min-height:auto; padding-bottom:24px;">
-        <span class="card-tag">리콜학습</span>
+        <span class="card-tag">뜻 리콜</span>
         <button class="star-toggle ${isStarred ? 'starred' : ''}" onclick="toggleStar(${item.id})">${starSvg}</button>
         <div class="word-display" style="margin-top:20px; font-size:1.45rem;">${frontTitle}</div>
         <div class="choices-grid" id="choices">
-          ${options.map(opt => `<button class="choice-btn" onclick="checkRecall(this, ${opt.id === item.id}, ${item.id})">${opt.mean}</button>`).join('')}
+          ${options.map(opt => `<button class="choice-btn" data-id="${opt.id}" onclick="checkRecall(this, ${opt.id === item.id}, ${item.id})">${opt.mean}</button>`).join('')}
         </div>
       </div>
       <div class="bottom-actions">
         <button class="action-btn btn-next-full" onclick="nextCard()">건너뛰기</button>
       </div>
     `;
-  } else if (currentMode === 'spell') {
+  } else if (currentMode === 'recall-word') {
+    const others = allWords.filter(w => w.id !== item.id).sort(() => 0.5 - Math.random()).slice(0, 3);
+    const options = [item, ...others].sort(() => 0.5 - Math.random());
     stage.innerHTML = `
-      <div class="card-box" style="cursor:default;">
-        <span class="card-tag">스펠학습</span>
+      <div class="card-box" style="cursor:default; min-height:auto; padding-bottom:24px;">
+        <span class="card-tag">영단어 리콜</span>
         <button class="star-toggle ${isStarred ? 'starred' : ''}" onclick="toggleStar(${item.id})">${starSvg}</button>
-        <div class="word-display" style="font-size:1.4rem; color:#059669;">${item.mean}</div>
-        <div style="margin-top:8px; font-size:1.05rem; font-weight:700; color:#4f46e5;">[${item.pron}]</div>
-        <div class="spell-area">
-          <input type="text" id="spellInput" class="spell-input" placeholder="영단어 입력" autocomplete="off" autocapitalize="none" onkeyup="if(event.key==='Enter') checkSpell(${item.id})">
-          <div class="spell-feedback" id="spellFeedback"></div>
+        <div class="word-display" style="margin-top:20px; font-size:1.45rem; color:#059669;">${item.mean}</div>
+        <div class="choices-grid" id="choices">
+          ${options.map(opt => `<button class="choice-btn" data-id="${opt.id}" onclick="checkRecall(this, ${opt.id === item.id}, ${item.id})">${opt.id}. ${opt.word} <span style="color:#4f46e5;">[${opt.pron}]</span></button>`).join('')}
         </div>
       </div>
       <div class="bottom-actions">
-        <button class="action-btn btn-unknown" onclick="showSpellAnswer(${item.id})">정답 보기</button>
-        <button class="action-btn btn-known" onclick="checkSpell(${item.id})">확인</button>
+        <button class="action-btn btn-next-full" onclick="nextCard()">건너뛰기</button>
       </div>
     `;
-    setTimeout(() => { const inp = document.getElementById('spellInput'); if(inp) inp.focus(); }, 100);
   }
 }
 
@@ -794,46 +787,13 @@ function checkRecall(btn, isCorrect, id) {
   } else {
     btn.classList.add('wrong');
     buttons.forEach(b => {
-      if (b.innerText === currentList.at(idx).mean) b.classList.add('correct');
+      if (parseInt(b.getAttribute('data-id')) === id) b.classList.add('correct');
     });
     if (!starredIds.includes(id)) {
       starredIds.push(id);
       saveStars();
     }
     autoNextTimer = setTimeout(() => nextCard(), 1200);
-  }
-}
-
-function checkSpell(id) {
-  const inp = document.getElementById('spellInput');
-  const fb = document.getElementById('spellFeedback');
-  const answer = currentList.at(idx).word.trim().toLowerCase();
-  const userVal = inp.value.trim().toLowerCase();
-  if (!userVal) return;
-
-  if (userVal === answer) {
-    fb.style.color = '#059669';
-    fb.innerText = '정답입니다!';
-    clearTimer();
-    autoNextTimer = setTimeout(() => markKnownAndNext(id), 600);
-  } else {
-    fb.style.color = '#dc2626';
-    fb.innerText = '오답입니다. 다시 입력해 보세요.';
-    if (!starredIds.includes(id)) {
-      starredIds.push(id);
-      saveStars();
-    }
-  }
-}
-
-function showSpellAnswer(id) {
-  const fb = document.getElementById('spellFeedback');
-  const item = currentList.at(idx);
-  fb.style.color = '#4f46e5';
-  fb.innerText = `${item.id}. ${item.word} [${item.pron}]`;
-  if (!starredIds.includes(id)) {
-    starredIds.push(id);
-    saveStars();
   }
 }
 
