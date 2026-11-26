@@ -2,88 +2,105 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>나만의 455 영단어장</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>클래스카드 스타일 영단어 455</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif; }
-  body { background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 20px; color: #333; }
-  .header { width: 100%; max-width: 480px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-  .title { font-size: 1.2rem; font-weight: 800; color: #1a1a1a; }
-  .counter { font-size: 0.95rem; font-weight: 600; color: #555; background: #fff; padding: 5px 12px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+  :root {
+    --primary: #4f46e5;
+    --primary-light: #eef2ff;
+    --success: #10b981;
+    --danger: #ef4444;
+    --bg: #f3f4f6;
+    --card-bg: #ffffff;
+    --text-main: #111827;
+    --text-sub: #6b7280;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Pretendard', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+  body { background: var(--bg); color: var(--text-main); display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 12px; }
   
-  .controls-top { width: 100%; max-width: 480px; display: flex; gap: 8px; margin-bottom: 15px; }
-  .btn-filter { flex: 1; padding: 10px; border: none; border-radius: 10px; background: #fff; color: #555; font-weight: 600; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.2s; font-size: 0.9rem; }
-  .btn-filter.active { background: #3b82f6; color: #fff; }
+  /* 상단 헤더 */
+  .top-bar { width: 100%; max-width: 500px; display: flex; justify-content: space-between; align-items: center; padding: 8px 4px; margin-bottom: 8px; }
+  .app-title { font-size: 1.15rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 6px; }
+  .progress-badge { background: #fff; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; color: var(--text-sub); box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+
+  /* 모드 선택 탭 (클래스카드 핵심 3모드) */
+  .mode-tabs { width: 100%; max-width: 500px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; background: #e5e7eb; padding: 4px; border-radius: 12px; margin-bottom: 10px; }
+  .mode-btn { border: none; background: transparent; padding: 10px 4px; border-radius: 9px; font-size: 0.9rem; font-weight: 700; color: var(--text-sub); cursor: pointer; transition: 0.2s; }
+  .mode-btn.active { background: #fff; color: var(--primary); box-shadow: 0 2px 4px rgba(0,0,0,0.08); }
+
+  /* 필터 & 컨트롤 바 */
+  .filter-bar { width: 100%; max-width: 500px; display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 12px; }
+  .chip-btn { border: 1px solid #d1d5db; background: #fff; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; color: #374151; cursor: pointer; display: flex; align-items: center; gap: 4px; }
+  .chip-btn.active { background: #fef3c7; border-color: #f59e0b; color: #b45309; }
   
-  .card-container { width: 100%; max-width: 480px; height: 320px; perspective: 1000px; margin-bottom: 20px; cursor: pointer; }
-  .card { width: 100%; height: 100%; position: relative; transition: transform 0.5s; transform-style: preserve-3d; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
-  .card.flipped { transform: rotateY(180deg); }
+  /* 학습 카드 영역 */
+  .stage { width: 100%; max-width: 500px; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+  .card-box { background: var(--card-bg); border-radius: 20px; padding: 28px 20px; min-height: 270px; box-shadow: 0 8px 20px rgba(0,0,0,0.06); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: relative; cursor: pointer; border: 2px solid transparent; transition: 0.15s; }
+  .card-box:active { transform: scale(0.99); }
   
-  .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; border-radius: 20px; background: #fff; text-align: center; }
-  .card-back { transform: rotateY(180deg); background: #f8fafc; border: 2px solid #e2e8f0; }
-  
-  .word-num { position: absolute; top: 20px; left: 24px; font-size: 0.85rem; color: #94a3b8; font-weight: 600; }
-  .star-btn { position: absolute; top: 16px; right: 20px; font-size: 1.6rem; background: none; border: none; cursor: pointer; color: #cbd5e1; transition: 0.2s; z-index: 10; }
-  .star-btn.starred { color: #f59e0b; }
-  
-  .word-front { font-size: 1.9rem; font-weight: 800; color: #0f172a; line-height: 1.4; word-break: keep-all; }
-  .pronunciation { display: block; font-size: 1.25rem; font-weight: 600; color: #3b82f6; margin-top: 8px; }
-  .hint-text { position: absolute; bottom: 20px; font-size: 0.8rem; color: #94a3b8; }
-  
-  .word-meaning { font-size: 1.6rem; font-weight: 700; color: #1e293b; line-height: 1.5; word-break: keep-all; }
-  
-  .nav-buttons { width: 100%; max-width: 480px; display: flex; gap: 12px; margin-bottom: 15px; }
-  .btn-nav { flex: 1; padding: 15px; border: none; border-radius: 12px; background: #1e293b; color: #fff; font-size: 1rem; font-weight: 700; cursor: pointer; transition: 0.2s; }
-  .btn-nav:active { transform: scale(0.98); }
-  .btn-prev { background: #64748b; }
-  
-  .jump-box { width: 100%; max-width: 480px; display: flex; gap: 8px; justify-content: center; align-items: center; }
-  .jump-input { width: 90px; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; text-align: center; font-size: 0.95rem; }
-  .btn-jump { padding: 8px 16px; border: none; border-radius: 8px; background: #e2e8f0; color: #334155; font-weight: 600; cursor: pointer; }
+  .star-toggle { position: absolute; top: 16px; right: 18px; font-size: 1.6rem; background: none; border: none; color: #d1d5db; cursor: pointer; padding: 4px; }
+  .star-toggle.starred { color: #f59e0b; }
+  .card-tag { position: absolute; top: 20px; left: 20px; font-size: 0.78rem; font-weight: 700; color: #9ca3af; background: #f3f4f6; padding: 3px 8px; border-radius: 6px; }
+
+  .word-display { font-size: 1.65rem; font-weight: 800; color: var(--text-main); line-height: 1.4; word-break: keep-all; }
+  .pron-text { color: var(--primary); font-weight: 700; }
+  .meaning-display { font-size: 1.45rem; font-weight: 700; color: #059669; margin-top: 18px; padding-top: 18px; border-top: 1px dashed #e5e7eb; width: 100%; line-height: 1.4; word-break: keep-all; }
+  .meaning-display.hidden { visibility: hidden; }
+  .tap-guide { position: absolute; bottom: 14px; font-size: 0.78rem; color: #9ca3af; }
+
+  /* 리콜학습 (4지선다 객관식) */
+  .choices-grid { width: 100%; display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+  .choice-btn { width: 100%; padding: 14px 16px; border: 2px solid #e5e7eb; border-radius: 12px; background: #fff; font-size: 1rem; font-weight: 600; color: var(--text-main); text-align: left; cursor: pointer; transition: 0.15s; }
+  .choice-btn.correct { background: #d1fae5; border-color: var(--success); color: #065f46; }
+  .choice-btn.wrong { background: #fee2e2; border-color: var(--danger); color: #991b1b; }
+
+  /* 스펠학습 (주관식 타이핑) */
+  .spell-area { width: 100%; margin-top: 16px; display: flex; flex-direction: column; gap: 10px; }
+  .spell-input { width: 100%; padding: 14px; border: 2px solid #d1d5db; border-radius: 12px; font-size: 1.15rem; font-weight: 700; text-align: center; outline: none; }
+  .spell-input:focus { border-color: var(--primary); }
+  .spell-feedback { font-size: 0.95rem; font-weight: 700; min-height: 22px; }
+
+  /* 하단 컨트롤 버튼 (클래스카드 '알아요 / 몰라요' 스타일) */
+  .bottom-actions { width: 100%; max-width: 500px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
+  .action-btn { padding: 15px; border: none; border-radius: 14px; font-size: 1rem; font-weight: 800; cursor: pointer; color: #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+  .btn-unknown { background: #f59e0b; }
+  .btn-known { background: var(--success); }
+  .btn-next-full { grid-column: span 2; background: var(--primary); }
+
+  /* 번호 이동 바 */
+  .jump-row { width: 100%; max-width: 500px; display: flex; justify-content: center; gap: 6px; margin-top: 14px; padding-bottom: 20px; }
+  .jump-row input { width: 85px; padding: 7px; border: 1px solid #d1d5db; border-radius: 8px; text-align: center; font-size: 0.85rem; }
+  .jump-row button { padding: 7px 12px; border: none; border-radius: 8px; background: #e5e7eb; font-size: 0.85rem; font-weight: 600; color: #374151; cursor: pointer; }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="title">📘 영단어 플래시카드</div>
-  <div class="counter" id="counter">1 / 455</div>
+<div class="top-bar">
+  <div class="app-title">🗂️ 클래스카드 455</div>
+  <div class="progress-badge" id="counter">1 / 455</div>
 </div>
 
-<div class="controls-top">
-  <button class="btn-filter active" id="btnAll" onclick="setMode('all')">전체 (455)</button>
-  <button class="btn-filter" id="btnStar" onclick="setMode('star')">⭐ 못 외운 단어 (<span id="starCount">0</span>)</button>
-  <button class="btn-filter" onclick="shuffleWords()">🔀 순서 섞기</button>
+<div class="mode-tabs">
+  <button class="mode-btn active" id="tab-flash" onclick="switchMode('flash')">암기학습</button>
+  <button class="mode-btn" id="tab-recall" onclick="switchMode('recall')">리콜학습</button>
+  <button class="mode-btn" id="tab-spell" onclick="switchMode('spell')">스펠학습</button>
 </div>
 
-<div class="card-container" onclick="flipCard()">
-  <div class="card" id="card">
-    <div class="card-face card-front">
-      <span class="word-num" id="wordNum">#1</span>
-      <button class="star-btn" id="starBtn" onclick="toggleStar(event)">★</button>
-      <div class="word-front" id="wordFront">across<span class="pronunciation">[어크로스]</span></div>
-      <div class="hint-text">카드를 터치하면 뜻이 나옵니다</div>
-    </div>
-    <div class="card-face card-back">
-      <span class="word-num" id="wordNumBack">#1</span>
-      <div class="word-meaning" id="wordMeaning">가로질러, 건너서</div>
-    </div>
-  </div>
+<div class="filter-bar">
+  <button class="chip-btn" id="starFilterBtn" onclick="toggleStarFilter()">⭐ 미암기만 (<span id="starCount">0</span>)</button>
+  <button class="chip-btn" onclick="shuffleList()">🔀 순서 섞기</button>
+  <button class="chip-btn" onclick="resetList()">↺ 처음부터</button>
 </div>
 
-<div class="nav-buttons">
-  <button class="btn-nav btn-prev" onclick="prevCard()">◀ 이전 단어</button>
-  <button class="btn-nav" onclick="nextCard()">다음 단어 ▶</button>
-</div>
+<div class="stage" id="stage"></div>
 
-<div class="jump-box">
-  <input type="number" id="jumpInput" class="jump-input" placeholder="번호 입력" min="1" max="455">
-  <button class="btn-jump" onclick="jumpToWord()">이동</button>
-  <button class="btn-jump" onclick="resetOrder()">원래 순서대로</button>
+<div class="jump-row">
+  <input type="number" id="jumpNum" placeholder="번호 (1~455)" min="1" max="455">
+  <button onclick="jumpTo()">번호 이동</button>
 </div>
 
 <script>
-const rawData = `
-1	across	어크로스	가로질러, 건너서
+const rawData = `1	across	어크로스	가로질러, 건너서
 2	action	액션	행동, 활동
 3	activity	액티비티	활동
 4	addiction	어딕션	중독
@@ -537,8 +554,7 @@ const rawData = `
 452	wild	와일드	야생의
 453	wise	와이즈	현명한
 454	worth	워스	~의 가치가 있는
-455	zero	제로	영, 전무함
-`;
+455	zero	제로	영, 전무함`;
 
 const allWords = rawData.trim().split('\n').map(line => {
   const parts = line.split('\t');
@@ -546,131 +562,223 @@ const allWords = rawData.trim().split('\n').map(line => {
 });
 
 let currentList = [...allWords];
-let currentIndex = 0;
-let isFlipped = false;
-let mode = 'all';
-let starredIds = JSON.parse(localStorage.getItem('myWordStars') || '[]');
+let idx = 0;
+let currentMode = 'flash'; // flash, recall, spell
+let isRevealed = false;
+let onlyStarred = false;
+let starredIds = JSON.parse(localStorage.getItem('cc_starred_455') || '[]');
 
-function updateStarCount() {
+function saveStars() {
+  localStorage.setItem('cc_starred_455', JSON.stringify(starredIds));
   document.getElementById('starCount').innerText = starredIds.length;
 }
 
-function renderCard() {
-  if (currentList.length === 0) {
-    document.getElementById('counter').innerText = '0 / 0';
-    document.getElementById('wordNum').innerText = '';
-    document.getElementById('wordNumBack').innerText = '';
-    document.getElementById('wordFront').innerHTML = '체크된 단어가 없습니다.<span class="pronunciation">별표(★)를 눌러 추가해보세요!</span>';
-    document.getElementById('wordMeaning').innerText = '';
-    document.getElementById('starBtn').style.display = 'none';
-    return;
-  }
-  
-  document.getElementById('starBtn').style.display = 'block';
-  const item = currentList[currentIndex];
-  document.getElementById('counter').innerText = `${currentIndex + 1} / ${currentList.length}`;
-  document.getElementById('wordNum').innerText = `#${item.id}`;
-  document.getElementById('wordNumBack').innerText = `#${item.id}`;
-  
-  // 요청하신 형태: 1. across. [어크로스]
-  document.getElementById('wordFront').innerHTML = `${item.id}. ${item.word}. <span style="color: #3b82f6; font-weight: 700;">[${item.pron}]</span>`;
-  document.getElementById('wordMeaning').innerText = item.mean;
-  
-  const starBtn = document.getElementById('starBtn');
-  if (starredIds.includes(item.id)) {
-    starBtn.classList.add('starred');
-  } else {
-    starBtn.classList.remove('starred');
-  }
-  
-  isFlipped = false;
-  document.getElementById('card').classList.remove('flipped');
-}
-
-function flipCard() {
-  if (currentList.length === 0) return;
-  isFlipped = !isFlipped;
-  document.getElementById('card').classList.toggle('flipped', isFlipped);
-}
-
-function nextCard() {
-  if (currentList.length === 0) return;
-  currentIndex = (currentIndex + 1) % currentList.length;
-  renderCard();
-}
-
-function prevCard() {
-  if (currentList.length === 0) return;
-  currentIndex = (currentIndex - 1 + currentList.length) % currentList.length;
-  renderCard();
-}
-
-function toggleStar(e) {
-  e.stopPropagation();
-  if (currentList.length === 0) return;
-  const id = currentList[currentIndex].id;
+function toggleStar(id) {
   if (starredIds.includes(id)) {
-    starredIds = starredIds.filter(item => item !== id);
+    starredIds = starredIds.filter(x => x !== id);
   } else {
     starredIds.push(id);
   }
-  localStorage.setItem('myWordStars', JSON.stringify(starredIds));
-  updateStarCount();
-  
-  if (mode === 'star') {
+  saveStars();
+  if (onlyStarred) {
     currentList = allWords.filter(w => starredIds.includes(w.id));
-    if (currentIndex >= currentList.length) currentIndex = Math.max(0, currentList.length - 1);
+    if (idx >= currentList.length) idx = Math.max(0, currentList.length - 1);
   }
-  renderCard();
+  render();
 }
 
-function setMode(newMode) {
-  mode = newMode;
-  document.getElementById('btnAll').classList.toggle('active', mode === 'all');
-  document.getElementById('btnStar').classList.toggle('active', mode === 'star');
-  
-  if (mode === 'all') {
-    currentList = [...allWords];
-  } else {
-    currentList = allWords.filter(w => starredIds.includes(w.id));
-  }
-  currentIndex = 0;
-  renderCard();
+function toggleStarFilter() {
+  onlyStarred = !onlyStarred;
+  document.getElementById('starFilterBtn').classList.toggle('active', onlyStarred);
+  currentList = onlyStarred ? allWords.filter(w => starredIds.includes(w.id)) : [...allWords];
+  idx = 0;
+  render();
 }
 
-function shuffleWords() {
+function shuffleList() {
   for (let i = currentList.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [currentList[i], currentList[j]] = [currentList[j], currentList[i]];
   }
-  currentIndex = 0;
-  renderCard();
+  idx = 0;
+  render();
 }
 
-function resetOrder() {
-  setMode(mode);
+function resetList() {
+  currentList = onlyStarred ? allWords.filter(w => starredIds.includes(w.id)) : [...allWords];
+  idx = 0;
+  render();
 }
 
-function jumpToWord() {
-  const num = parseInt(document.getElementById('jumpInput').value);
-  if (!num || num < 1 || num > 455) return alert('1에서 455 사이의 번호를 입력하세요.');
-  if (mode === 'star') setMode('all');
-  const idx = currentList.findIndex(w => w.id === num);
-  if (idx !== -1) {
-    currentIndex = idx;
-    renderCard();
+function jumpTo() {
+  const num = parseInt(document.getElementById('jumpNum').value);
+  if (!num || num < 1 || num > 455) return alert('1~455 사이의 번호를 입력하세요.');
+  if (onlyStarred) {
+    onlyStarred = false;
+    document.getElementById('starFilterBtn').classList.remove('active');
+    currentList = [...allWords];
+  }
+  const found = currentList.findIndex(w => w.id === num);
+  if (found !== -1) {
+    idx = found;
+    render();
   }
 }
 
-document.addEventListener('keydown', (e) => {
-  if (document.activeElement.tagName === 'INPUT') return;
-  if (e.code === 'Space') { e.preventDefault(); flipCard(); }
-  else if (e.code === 'ArrowRight') nextCard();
-  else if (e.code === 'ArrowLeft') prevCard();
-});
+function switchMode(mode) {
+  currentMode = mode;
+  ['flash', 'recall', 'spell'].forEach(m => {
+    document.getElementById('tab-' + m).classList.toggle('active', m === mode);
+  });
+  isRevealed = false;
+  render();
+}
 
-updateStarCount();
-renderCard();
+function nextCard() {
+  if (currentList.length === 0) return;
+  idx = (idx + 1) % currentList.length;
+  isRevealed = false;
+  render();
+}
+
+function markUnknownAndNext(id) {
+  if (!starredIds.includes(id)) {
+    starredIds.push(id);
+    saveStars();
+  }
+  nextCard();
+}
+
+function markKnownAndNext(id) {
+  if (starredIds.includes(id)) {
+    starredIds = starredIds.filter(x => x !== id);
+    saveStars();
+    if (onlyStarred) {
+      currentList = allWords.filter(w => starredIds.includes(w.id));
+      if (idx >= currentList.length) idx = 0;
+      isRevealed = false;
+      render();
+      return;
+    }
+  }
+  nextCard();
+}
+
+function render() {
+  const stage = document.getElementById('stage');
+  document.getElementById('counter').innerText = currentList.length ? `${idx + 1} / ${currentList.length}` : '0 / 0';
+
+  if (currentList.length === 0) {
+    stage.innerHTML = `<div class="card-box"><div class="word-display" style="font-size:1.2rem; color:#6b7280;">미암기 단어가 없습니다!<br><br><span style="font-size:0.9rem;">별표(★)를 누르거나 '몰라요'를 누르면 여기에 모입니다.</span></div></div>`;
+    return;
+  }
+
+  const item = currentList[idx];
+  const isStarred = starredIds.includes(item.id);
+  const frontTitle = `${item.id}. ${item.word}. <span class="pron-text">[${item.pron}]</span>`;
+
+  if (currentMode === 'flash') {
+    stage.innerHTML = `
+      <div class="card-box" onclick="isRevealed = !isRevealed; render();">
+        <span class="card-tag">암기학습</span>
+        <button class="star-toggle ${isStarred ? 'starred' : ''}" onclick="event.stopPropagation(); toggleStar(${item.id})">★</button>
+        <div class="word-display">${frontTitle}</div>
+        <div class="meaning-display ${isRevealed ? '' : 'hidden'}">${item.mean}</div>
+        <div class="tap-guide">${isRevealed ? '아래 버튼으로 암기 여부를 체크하세요' : '카드를 터치하면 뜻이 보입니다'}</div>
+      </div>
+      <div class="bottom-actions">
+        <button class="action-btn btn-unknown" onclick="markUnknownAndNext(${item.id})">몰라요 (★저장)</button>
+        <button class="action-btn btn-known" onclick="markKnownAndNext(${item.id})">알아요 (다음)</button>
+      </div>
+    `;
+  } else if (currentMode === 'recall') {
+    const others = allWords.filter(w => w.id !== item.id).sort(() => 0.5 - Math.random()).slice(0, 3);
+    const options = [item, ...others].sort(() => 0.5 - Math.random());
+    stage.innerHTML = `
+      <div class="card-box" style="cursor:default; min-height:auto; padding-bottom:20px;">
+        <span class="card-tag">리콜학습</span>
+        <button class="star-toggle ${isStarred ? 'starred' : ''}" onclick="toggleStar(${item.id})">★</button>
+        <div class="word-display" style="margin-top:16px; font-size:1.45rem;">${frontTitle}</div>
+        <div class="choices-grid" id="choices">
+          ${options.map(opt => `<button class="choice-btn" onclick="checkRecall(this, ${opt.id === item.id}, ${item.id})">${opt.mean}</button>`).join('')}
+        </div>
+      </div>
+      <div class="bottom-actions">
+        <button class="action-btn btn-next-full" onclick="nextCard()">다음 문제 ▶</button>
+      </div>
+    `;
+  } else if (currentMode === 'spell') {
+    stage.innerHTML = `
+      <div class="card-box" style="cursor:default;">
+        <span class="card-tag">스펠학습</span>
+        <button class="star-toggle ${isStarred ? 'starred' : ''}" onclick="toggleStar(${item.id})">★</button>
+        <div class="word-display" style="font-size:1.45rem; color:#059669;">${item.mean}</div>
+        <div style="margin-top:8px; font-size:1.1rem; font-weight:700; color:#4f46e5;">[${item.pron}]</div>
+        <div class="spell-area">
+          <input type="text" id="spellInput" class="spell-input" placeholder="영단어 입력 후 확인" autocomplete="off" autocapitalize="none" onkeyup="if(event.key==='Enter') checkSpell(${item.id})">
+          <div class="spell-feedback" id="spellFeedback"></div>
+        </div>
+      </div>
+      <div class="bottom-actions">
+        <button class="action-btn btn-unknown" onclick="showSpellAnswer(${item.id})">정답 보기</button>
+        <button class="action-btn btn-known" onclick="checkSpell(${item.id})">확인 / 다음</button>
+      </div>
+    `;
+    setTimeout(() => { const inp = document.getElementById('spellInput'); if(inp) inp.focus(); }, 100);
+  }
+}
+
+function checkRecall(btn, isCorrect, id) {
+  const buttons = document.querySelectorAll('.choice-btn');
+  buttons.forEach(b => b.disabled = true);
+  if (isCorrect) {
+    btn.classList.add('correct');
+    setTimeout(() => markKnownAndNext(id), 650);
+  } else {
+    btn.classList.add('wrong');
+    buttons.forEach(b => {
+      if (b.innerText === currentList[idx].mean) b.classList.add('correct');
+    });
+    if (!starredIds.includes(id)) {
+      starredIds.push(id);
+      saveStars();
+    }
+  }
+}
+
+function checkSpell(id) {
+  const inp = document.getElementById('spellInput');
+  const fb = document.getElementById('spellFeedback');
+  const answer = currentList[idx].word.trim().toLowerCase();
+  const userVal = inp.value.trim().toLowerCase();
+  if (!userVal) return;
+
+  if (userVal === answer) {
+    fb.style.color = '#10b981';
+    fb.innerText = '⭕ 정답입니다!';
+    setTimeout(() => markKnownAndNext(id), 600);
+  } else {
+    fb.style.color = '#ef4444';
+    fb.innerText = `❌ 오답! 다시 입력하거나 정답 보기를 누르세요.`;
+    if (!starredIds.includes(id)) {
+      starredIds.push(id);
+      saveStars();
+    }
+  }
+}
+
+function showSpellAnswer(id) {
+  const fb = document.getElementById('spellFeedback');
+  fb.style.color = '#4f46e5';
+  fb.innerText = `정답: ${currentList[idx].id}. ${currentList[idx].word}. [${currentList[idx].pron}]`;
+  if (!starredIds.includes(id)) {
+    starredIds.push(id);
+    saveStars();
+  }
+}
+
+saveStars();
+render();
 </script>
 </body>
 </html>
