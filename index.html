@@ -22,76 +22,61 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
   body { background: var(--bg); color: var(--text-main); display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 16px; transition: padding 0.2s; }
-  
   svg { width: 15px; height: 15px; stroke-width: 2.2; stroke: currentColor; fill: none; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
-
   .mobile-banner { width: 100%; max-width: 480px; background: #1e1b4b; color: #fff; padding: 11px 14px; border-radius: 12px; margin-bottom: 12px; display: none; justify-content: space-between; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(30, 27, 75, 0.15); }
   .mobile-banner-text { font-size: 0.82rem; font-weight: 600; line-height: 1.3; }
   .mobile-banner-btns { display: flex; gap: 6px; flex-shrink: 0; }
   .btn-m-yes { background: var(--primary); color: #fff; border: none; padding: 6px 11px; border-radius: 8px; font-size: 0.78rem; font-weight: 700; cursor: pointer; }
   .btn-m-no { background: rgba(255,255,255,0.15); color: #cbd5e1; border: none; padding: 6px 9px; border-radius: 8px; font-size: 0.78rem; cursor: pointer; }
-
   .top-bar { width: 100%; max-width: 480px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
   .app-title { font-size: 1.1rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px; letter-spacing: -0.02em; }
   .logo-badge { background: var(--primary); color: #fff; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
   .top-right { display: flex; align-items: center; gap: 6px; }
   .view-switch-btn { background: var(--primary-soft); color: var(--primary); border: 1px solid #c7d2fe; padding: 5px 10px; border-radius: 99px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: none; }
   .progress-badge { background: var(--surface); border: 1px solid var(--border); padding: 5px 12px; border-radius: 99px; font-size: 0.85rem; font-weight: 700; color: var(--text-sub); }
-
   .mode-tabs { width: 100%; max-width: 480px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; background: #e2e8f0; padding: 4px; border-radius: 12px; margin-bottom: 12px; }
   .mode-btn { border: none; background: transparent; padding: 9px 2px; border-radius: 9px; font-size: 0.8rem; font-weight: 700; color: var(--text-sub); cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 3px; white-space: nowrap; }
   .mode-btn.active { background: var(--surface); color: var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-
   .filter-bar { width: 100%; max-width: 480px; display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 14px; }
   .chip-btn { border: 1px solid var(--border); background: var(--surface); padding: 7px 11px; border-radius: 10px; font-size: 0.8rem; font-weight: 600; color: var(--text-sub); cursor: pointer; display: flex; align-items: center; gap: 5px; transition: 0.15s; }
   .chip-btn:active { transform: scale(0.97); }
   .chip-btn.active { background: var(--warning-soft); border-color: #f59e0b; color: var(--warning); }
-  
   .stage { width: 100%; max-width: 480px; flex: 1; display: flex; flex-direction: column; justify-content: center; }
   .card-box { background: var(--surface); border: 1px solid var(--border); border-radius: 22px; padding: 32px 22px; min-height: 280px; box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: relative; cursor: pointer; transition: 0.15s; touch-action: pan-y; }
   .card-box:active { transform: scale(0.995); }
-  
   .star-toggle { position: absolute; top: 16px; right: 16px; background: var(--bg); border: 1px solid var(--border); width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #cbd5e1; cursor: pointer; transition: 0.15s; }
   .star-toggle svg { width: 18px; height: 18px; }
   .star-toggle.starred { background: var(--warning-soft); border-color: #fcd34d; color: #f59e0b; }
   .star-toggle.starred svg { fill: #f59e0b; }
-
   .card-tag { position: absolute; top: 20px; left: 20px; font-size: 0.75rem; font-weight: 700; color: var(--primary); background: var(--primary-soft); padding: 4px 10px; border-radius: 8px; }
-
   .word-display { font-size: 1.65rem; font-weight: 800; color: var(--text-main); line-height: 1.4; word-break: keep-all; letter-spacing: -0.02em; }
   .pron-text { color: var(--primary); font-weight: 700; }
   .meaning-display { font-size: 1.4rem; font-weight: 700; color: var(--success); margin-top: 20px; padding-top: 20px; border-top: 1px dashed var(--border); width: 100%; line-height: 1.4; word-break: keep-all; }
   .meaning-display.hidden { visibility: hidden; }
   .tap-guide { position: absolute; bottom: 16px; font-size: 0.78rem; color: #94a3b8; display: flex; align-items: center; gap: 4px; }
-
   .choices-grid { width: 100%; display: flex; flex-direction: column; gap: 8px; margin-top: 18px; }
   .choice-btn { width: 100%; padding: 14px 16px; border: 1.5px solid var(--border); border-radius: 12px; background: var(--surface); font-size: 0.98rem; font-weight: 600; color: var(--text-main); text-align: left; cursor: pointer; transition: 0.15s; }
   .choice-btn.correct { background: var(--success-soft); border-color: var(--success); color: #065f46; }
   .choice-btn.wrong { background: var(--danger-soft); border-color: var(--danger); color: #991b1b; }
-
   .exam-menu { width: 100%; display: flex; flex-direction: column; gap: 12px; }
   .exam-option-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: 16px; padding: 18px 20px; text-align: left; cursor: pointer; transition: 0.15s; display: flex; justify-content: space-between; align-items: center; }
   .exam-option-card:hover { border-color: var(--primary); background: var(--primary-soft); }
   .exam-option-title { font-size: 1.05rem; font-weight: 800; color: var(--text-main); margin-bottom: 4px; }
   .exam-option-desc { font-size: 0.82rem; color: var(--text-sub); }
   .exam-count-pill { background: var(--primary-soft); color: var(--primary); font-weight: 800; font-size: 0.85rem; padding: 6px 12px; border-radius: 99px; }
-
   .wrong-list { width: 100%; max-height: 220px; overflow-y: auto; margin-top: 16px; text-align: left; border-top: 1px solid var(--border); padding-top: 12px; display: flex; flex-direction: column; gap: 8px; }
   .wrong-item { background: var(--bg); padding: 10px 12px; border-radius: 10px; font-size: 0.88rem; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-
   .bottom-actions { width: 100%; max-width: 480px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
   .action-btn { padding: 15px; border: none; border-radius: 14px; font-size: 0.95rem; font-weight: 700; cursor: pointer; color: #fff; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.15s; }
   .action-btn:active { transform: scale(0.98); }
   .btn-unknown { background: #f59e0b; }
   .btn-known { background: var(--success); }
   .btn-next-full { grid-column: span 2; background: var(--primary); }
-
   .jump-row { width: 100%; max-width: 480px; display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-top: 16px; padding-bottom: 20px; }
   .jump-right { display: flex; gap: 6px; align-items: center; }
   .jump-row input { width: 95px; padding: 8px; border: 1px solid var(--border); border-radius: 9px; text-align: center; font-size: 0.85rem; background: var(--surface); }
   .jump-row button { padding: 8px 14px; border: 1px solid var(--border); border-radius: 9px; background: var(--surface); font-size: 0.85rem; font-weight: 600; color: var(--text-sub); cursor: pointer; transition: 0.15s; }
   .jump-row button.active { background: var(--primary-soft); border-color: var(--primary); color: var(--primary); font-weight: 700; }
-
   body.mobile-mode { padding: 10px 12px 92px 12px; }
   body.mobile-mode .stage { justify-content: flex-start; }
   body.mobile-mode .card-box { min-height: 240px; padding: 26px 18px; border-radius: 20px; }
@@ -118,7 +103,47 @@
 </div>
 
 <div class="top-bar">
-  <div class="stage" id="stage"></div>
+  <div class="app-title">
+    <span class="logo-badge"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
+    <span>VOCAB 455</span>
+  </div>
+  <div class="top-right">
+    <button class="view-switch-btn" id="viewSwitchBtn" onclick="toggleMobileMode()">기본 화면</button>
+    <div class="progress-badge" id="counter">1 / 455</div>
+  </div>
+</div>
+
+<div class="mode-tabs">
+  <button class="mode-btn active" id="tab-flash" onclick="switchMode('flash')">암기</button>
+  <button class="mode-btn" id="tab-recall-mean" onclick="switchMode('recall-mean')">뜻 리콜</button>
+  <button class="mode-btn" id="tab-recall-word" onclick="switchMode('recall-word')">영단어 리콜</button>
+  <button class="mode-btn" id="tab-exam" onclick="switchMode('exam')">단어 시험</button>
+</div>
+
+<div class="filter-bar" id="filterBar">
+  <button class="chip-btn" id="starFilterBtn" onclick="toggleStarFilter()">
+    <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+    미암기 (<span id="starCount">0</span>)
+  </button>
+  <button class="chip-btn" onclick="shuffleRemaining()">
+    <svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/><polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/><line x1="4" y1="4" x2="9" y2="9"/></svg>
+    남은 단어 섞기
+  </button>
+  <button class="chip-btn" onclick="resetList()">
+    <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+    초기화
+  </button>
+</div>
+
+<div class="stage" id="stage"></div>
+
+<div class="jump-row" id="jumpRow">
+  <button id="alwaysShowBtn" onclick="toggleAlwaysShow()">뜻 전체 확인</button>
+  <div class="jump-right">
+    <input type="number" id="jumpNum" placeholder="번호 (1~455)" min="1" max="455">
+    <button onclick="jumpTo()">이동</button>
+  </div>
+</div>
 
 <script>
 const rawData = `1|across|어크로스|가로질러, 건너서
