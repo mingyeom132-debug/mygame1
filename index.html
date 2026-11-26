@@ -593,8 +593,14 @@ const rawData = `1	across	어크로스	가로질러, 건너서
 
 const allWords = rawData.trim().split('\n').map(line => {
   const parts = line.split('\t');
-  return { id: parseInt(parts), word: parts, pron: parts, mean: parts };
+  return {
+    id: parseInt(parts.at(0)),
+    word: parts.at(1),
+    pron: parts.at(2),
+    mean: parts.at(3)
+  };
 });
+
 let currentList = [...allWords];
 let idx = 0;
 let currentMode = 'flash';
@@ -640,7 +646,6 @@ function toggleStarFilter() {
   render();
 }
 
-// 지금까지 학습한 앞부분(0 ~ idx-1)은 유지하고, 현재 위치(idx)부터 끝까지만 섞기
 function shuffleRemaining() {
   clearTimer();
   if (currentList.length - idx <= 1) return;
@@ -648,7 +653,10 @@ function shuffleRemaining() {
   const remainPart = currentList.slice(idx);
   for (let i = remainPart.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [remainPart[i], remainPart[j]] = [remainPart[j], remainPart[i]];
+    [remainPart.at(i), remainPart.at(j)];
+    const temp = remainPart.at(i);
+    remainPart.splice(i, 1, remainPart.at(j));
+    remainPart.splice(j, 1, temp);
   }
   currentList = [...donePart, ...remainPart];
   isRevealed = false;
@@ -730,9 +738,9 @@ function render() {
     return;
   }
 
-  const item = currentList[idx];
+  const item = currentList.at(idx);
   const isStarred = starredIds.includes(item.id);
-  const frontTitle = `${item.id}. ${item.word}. <span class="pron-text">[${item.pron}]</span>`;
+  const frontTitle = `${item.id}. ${item.word} <span class="pron-text">[${item.pron}]</span>`;
 
   if (currentMode === 'flash') {
     stage.innerHTML = `
@@ -796,7 +804,7 @@ function checkRecall(btn, isCorrect, id) {
   } else {
     btn.classList.add('wrong');
     buttons.forEach(b => {
-      if (b.innerText === currentList[idx].mean) b.classList.add('correct');
+      if (b.innerText === currentList.at(idx).mean) b.classList.add('correct');
     });
     if (!starredIds.includes(id)) {
       starredIds.push(id);
@@ -809,7 +817,7 @@ function checkRecall(btn, isCorrect, id) {
 function checkSpell(id) {
   const inp = document.getElementById('spellInput');
   const fb = document.getElementById('spellFeedback');
-  const answer = currentList[idx].word.trim().toLowerCase();
+  const answer = currentList.at(idx).word.trim().toLowerCase();
   const userVal = inp.value.trim().toLowerCase();
   if (!userVal) return;
 
@@ -830,8 +838,9 @@ function checkSpell(id) {
 
 function showSpellAnswer(id) {
   const fb = document.getElementById('spellFeedback');
+  const item = currentList.at(idx);
   fb.style.color = '#4f46e5';
-  fb.innerText = `${currentList[idx].id}. ${currentList[idx].word}. [${currentList[idx].pron}]`;
+  fb.innerText = `${item.id}. ${item.word} [${item.pron}]`;
   if (!starredIds.includes(id)) {
     starredIds.push(id);
     saveStars();
