@@ -23,15 +23,15 @@
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
   body { background: var(--bg); color: var(--text-main); display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 16px; }
   
-  svg { width: 16px; height: 16px; stroke-width: 2.2; stroke: currentColor; fill: none; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+  svg { width: 15px; height: 15px; stroke-width: 2.2; stroke: currentColor; fill: none; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
 
   .top-bar { width: 100%; max-width: 480px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
   .app-title { font-size: 1.1rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px; letter-spacing: -0.02em; }
   .logo-badge { background: var(--primary); color: #fff; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
   .progress-badge { background: var(--surface); border: 1px solid var(--border); padding: 5px 12px; border-radius: 99px; font-size: 0.85rem; font-weight: 700; color: var(--text-sub); }
 
-  .mode-tabs { width: 100%; max-width: 480px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; background: #e2e8f0; padding: 4px; border-radius: 12px; margin-bottom: 12px; }
-  .mode-btn { border: none; background: transparent; padding: 9px 4px; border-radius: 9px; font-size: 0.85rem; font-weight: 700; color: var(--text-sub); cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 4px; }
+  .mode-tabs { width: 100%; max-width: 480px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; background: #e2e8f0; padding: 4px; border-radius: 12px; margin-bottom: 12px; }
+  .mode-btn { border: none; background: transparent; padding: 9px 2px; border-radius: 9px; font-size: 0.8rem; font-weight: 700; color: var(--text-sub); cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 3px; white-space: nowrap; }
   .mode-btn.active { background: var(--surface); color: var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
 
   .filter-bar { width: 100%; max-width: 480px; display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 14px; }
@@ -61,6 +61,17 @@
   .choice-btn.correct { background: var(--success-soft); border-color: var(--success); color: #065f46; }
   .choice-btn.wrong { background: var(--danger-soft); border-color: var(--danger); color: #991b1b; }
 
+  /* 시험 선택 및 결과 카드 스타일 */
+  .exam-menu { width: 100%; display: flex; flex-direction: column; gap: 12px; }
+  .exam-option-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: 16px; padding: 18px 20px; text-align: left; cursor: pointer; transition: 0.15s; display: flex; justify-content: space-between; align-items: center; }
+  .exam-option-card:hover { border-color: var(--primary); background: var(--primary-soft); }
+  .exam-option-title { font-size: 1.05rem; font-weight: 800; color: var(--text-main); margin-bottom: 4px; }
+  .exam-option-desc { font-size: 0.82rem; color: var(--text-sub); }
+  .exam-count-pill { background: var(--primary-soft); color: var(--primary); font-weight: 800; font-size: 0.85rem; padding: 6px 12px; border-radius: 99px; }
+
+  .wrong-list { width: 100%; max-height: 220px; overflow-y: auto; margin-top: 16px; text-align: left; border-top: 1px solid var(--border); padding-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .wrong-item { background: var(--bg); padding: 10px 12px; border-radius: 10px; font-size: 0.88rem; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+
   .bottom-actions { width: 100%; max-width: 480px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
   .action-btn { padding: 15px; border: none; border-radius: 14px; font-size: 0.95rem; font-weight: 700; cursor: pointer; color: #fff; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.15s; }
   .action-btn:active { transform: scale(0.98); }
@@ -84,21 +95,13 @@
 </div>
 
 <div class="mode-tabs">
-  <button class="mode-btn active" id="tab-flash" onclick="switchMode('flash')">
-    <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="7" y1="9" x2="17" y2="9"/><line x1="7" y1="14" x2="13" y2="14"/></svg>
-    암기
-  </button>
-  <button class="mode-btn" id="tab-recall-mean" onclick="switchMode('recall-mean')">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-    뜻 리콜
-  </button>
-  <button class="mode-btn" id="tab-recall-word" onclick="switchMode('recall-word')">
-    <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-    영단어 리콜
-  </button>
+  <button class="mode-btn active" id="tab-flash" onclick="switchMode('flash')">암기</button>
+  <button class="mode-btn" id="tab-recall-mean" onclick="switchMode('recall-mean')">뜻 리콜</button>
+  <button class="mode-btn" id="tab-recall-word" onclick="switchMode('recall-word')">영단어 리콜</button>
+  <button class="mode-btn" id="tab-exam" onclick="switchMode('exam')">단어 시험</button>
 </div>
 
-<div class="filter-bar">
+<div class="filter-bar" id="filterBar">
   <button class="chip-btn" id="starFilterBtn" onclick="toggleStarFilter()">
     <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
     미암기 (<span id="starCount">0</span>)
@@ -115,7 +118,7 @@
 
 <div class="stage" id="stage"></div>
 
-<div class="jump-row">
+<div class="jump-row" id="jumpRow">
   <input type="number" id="jumpNum" placeholder="번호 (1~455)" min="1" max="455">
   <button onclick="jumpTo()">이동</button>
 </div>
@@ -595,6 +598,13 @@ let onlyStarred = false;
 let starredIds = JSON.parse(localStorage.getItem('cc_starred_455') || '[]');
 let autoNextTimer = null;
 
+let examType = null;
+let examList = [];
+let examIdx = 0;
+let examScore = 0;
+let examWrongList = [];
+let examFinished = false;
+
 const starSvg = `<svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
 
 function clearTimer() {
@@ -606,7 +616,8 @@ function clearTimer() {
 
 function saveStars() {
   localStorage.setItem('cc_starred_455', JSON.stringify(starredIds));
-  document.getElementById('starCount').innerText = starredIds.length;
+  const starEl = document.getElementById('starCount');
+  if (starEl) starEl.innerText = starredIds.length;
 }
 
 function toggleStar(id) {
@@ -632,17 +643,22 @@ function toggleStarFilter() {
   render();
 }
 
+function shuffleArray(arr) {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const temp = copy.at(i);
+    copy.splice(i, 1, copy.at(j));
+    copy.splice(j, 1, temp);
+  }
+  return copy;
+}
+
 function shuffleRemaining() {
   clearTimer();
   if (currentList.length - idx <= 1) return;
   const donePart = currentList.slice(0, idx);
-  const remainPart = currentList.slice(idx);
-  for (let i = remainPart.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    const temp = remainPart.at(i);
-    remainPart.splice(i, 1, remainPart.at(j));
-    remainPart.splice(j, 1, temp);
-  }
+  const remainPart = shuffleArray(currentList.slice(idx));
   currentList = [...donePart, ...remainPart];
   isRevealed = false;
   render();
@@ -676,9 +692,18 @@ function jumpTo() {
 function switchMode(mode) {
   clearTimer();
   currentMode = mode;
-  ['flash', 'recall-mean', 'recall-word'].forEach(m => {
+  ['flash', 'recall-mean', 'recall-word', 'exam'].forEach(m => {
     document.getElementById('tab-' + m).classList.toggle('active', m === mode);
   });
+
+  const isExam = (mode === 'exam');
+  document.getElementById('filterBar').style.display = isExam ? 'none' : 'flex';
+  document.getElementById('jumpRow').style.display = isExam ? 'none' : 'flex';
+
+  if (isExam) {
+    examType = null;
+    examFinished = false;
+  }
   isRevealed = false;
   render();
 }
@@ -714,8 +739,127 @@ function markKnownAndNext(id) {
   nextCard();
 }
 
+function startExam(type) {
+  clearTimer();
+  let pool = [];
+  if (type === 'all') {
+    pool = [...allWords];
+  } else if (type === 'unmemorized') {
+    pool = allWords.filter(w => starredIds.includes(w.id));
+  } else if (type === 'memorized') {
+    pool = allWords.filter(w => !starredIds.includes(w.id));
+  }
+
+  if (pool.length === 0) {
+    alert('해당 시험에 출제할 단어가 없습니다!');
+    return;
+  }
+
+  examType = type;
+  examList = shuffleArray(pool);
+  examIdx = 0;
+  examScore = 0;
+  examWrongList = [];
+  examFinished = false;
+  render();
+}
 function render() {
   const stage = document.getElementById('stage');
+
+  // 1. 단어 시험 모드 렌더링
+  if (currentMode === 'exam') {
+    if (!examType) {
+      const unmemCount = starredIds.length;
+      const memCount = allWords.length - unmemCount;
+      document.getElementById('counter').innerText = '시험 선택';
+      stage.innerHTML = `
+        <div class="exam-menu">
+          <button class="exam-option-card" onclick="startExam('all')">
+            <div>
+              <div class="exam-option-title">기본 시험</div>
+              <div class="exam-option-desc">전체 455개 단어를 무작위로 테스트합니다</div>
+            </div>
+            <span class="exam-count-pill">455문제</span>
+          </button>
+          <button class="exam-option-card" onclick="startExam('unmemorized')">
+            <div>
+              <div class="exam-option-title">미암기 시험</div>
+              <div class="exam-option-desc">⭐ 미암기 목록에 있는 단어만 집중 시험봅니다</div>
+            </div>
+            <span class="exam-count-pill" style="background:#fef3c7; color:#d97706;">${unmemCount}문제</span>
+          </button>
+          <button class="exam-option-card" onclick="startExam('memorized')">
+            <div>
+              <div class="exam-option-title">암기 시험</div>
+              <div class="exam-option-desc">미암기 단어를 제외한 암기 완료 단어만 시험봅니다</div>
+            </div>
+            <span class="exam-count-pill" style="background:#d1fae5; color:#059669;">${memCount}문제</span>
+          </button>
+        </div>
+      `;
+      return;
+    }
+
+    if (examFinished) {
+      const total = examList.length;
+      const score100 = Math.round((examScore / total) * 100);
+      const titleMap = { all: '기본 시험', unmemorized: '미암기 시험', memorized: '암기 시험' };
+      document.getElementById('counter').innerText = '시험 완료';
+      stage.innerHTML = `
+        <div class="card-box" style="cursor:default; min-height:auto;">
+          <span class="card-tag">${titleMap[examType]} 결과</span>
+          <div style="margin-top:24px; font-size:2.4rem; font-weight:900; color:#4f46e5;">${score100}점</div>
+          <div style="margin-top:6px; font-size:0.95rem; font-weight:700; color:#64748b;">총 ${total}문제 중 ${examScore}개 정답 (오답 ${examWrongList.length}개)</div>
+          ${examWrongList.length > 0 ? `
+            <div class="wrong-list">
+              <div style="font-size:0.8rem; font-weight:700; color:#dc2626; margin-bottom:2px;">틀린 단어 (⭐ 미암기 자동 저장됨)</div>
+              ${examWrongList.map(w => `
+                <div class="wrong-item">
+                  <span style="font-weight:700; color:#0f172a;">${w.id}. ${w.word} <span style="color:#4f46e5;">[${w.pron}]</span></span>
+                  <span style="color:#059669; font-weight:600; text-align:right;">${w.mean}</span>
+                </div>
+              `).join('')}
+            </div>
+          ` : `<div style="margin-top:20px; font-size:0.95rem; font-weight:700; color:#059669;">완벽합니다! 틀린 문제가 하나도 없습니다.</div>`}
+        </div>
+        <div class="bottom-actions">
+          <button class="action-btn btn-unknown" onclick="examType=null; render();">시험 목록으로</button>
+          <button class="action-btn btn-known" onclick="startExam('${examType}')">다시 시험보기</button>
+        </div>
+      `;
+      return;
+    }
+
+    const item = examList.at(examIdx);
+    const titleMap = { all: '기본 시험', unmemorized: '미암기 시험', memorized: '암기 시험' };
+    document.getElementById('counter').innerText = `${examIdx + 1} / ${examList.length}`;
+    const others = allWords.filter(w => w.id !== item.id).sort(() => 0.5 - Math.random()).slice(0, 3);
+    const options = [item, ...others].sort(() => 0.5 - Math.random());
+    const askWordToMean = (examIdx % 2 === 0);
+
+    stage.innerHTML = `
+      <div class="card-box" style="cursor:default; min-height:auto; padding-bottom:24px;">
+        <span class="card-tag">${titleMap[examType]}</span>
+        <div class="word-display" style="margin-top:20px; font-size:1.45rem; color:${askWordToMean ? '#0f172a' : '#059669'};">
+          ${askWordToMean ? `${item.id}. ${item.word} <span class="pron-text">[${item.pron}]</span>` : item.mean}
+        </div>
+        <div class="choices-grid" id="choices">
+          ${options.map(opt => `
+            <button class="choice-btn" data-id="${opt.id}" onclick="checkExamAnswer(this, ${opt.id === item.id})">
+              ${askWordToMean ? opt.mean : `${opt.id}. ${opt.word} <span style="color:#4f46e5;">[${opt.pron}]</span>`}
+            </button>
+          `).join('')}
+        </div>
+      </div>
+      <div class="bottom-actions">
+        <button class="action-btn btn-unknown" onclick="examType=null; clearTimer(); render();">시험 중단</button>
+        <button class="action-btn btn-known" onclick="finishExamEarly()">지금 채점하기</button>
+      </div>
+    `;
+    return;
+  }
+
+  // 2. 일반 학습 모드 (암기 / 뜻 리콜 / 영단어 리콜)
   document.getElementById('counter').innerText = currentList.length ? `${idx + 1} / ${currentList.length}` : '0 / 0';
 
   if (currentList.length === 0) {
@@ -795,6 +939,43 @@ function checkRecall(btn, isCorrect, id) {
     }
     autoNextTimer = setTimeout(() => nextCard(), 1200);
   }
+}
+
+function checkExamAnswer(btn, isCorrect) {
+  const buttons = document.querySelectorAll('.choice-btn');
+  buttons.forEach(b => b.disabled = true);
+  clearTimer();
+  const currentItem = examList.at(examIdx);
+
+  if (isCorrect) {
+    btn.classList.add('correct');
+    examScore++;
+  } else {
+    btn.classList.add('wrong');
+    buttons.forEach(b => {
+      if (parseInt(b.getAttribute('data-id')) === currentItem.id) b.classList.add('correct');
+    });
+    examWrongList.push(currentItem);
+    if (!starredIds.includes(currentItem.id)) {
+      starredIds.push(currentItem.id);
+      saveStars();
+    }
+  }
+
+  autoNextTimer = setTimeout(() => {
+    examIdx++;
+    if (examIdx >= examList.length) {
+      examFinished = true;
+    }
+    render();
+  }, isCorrect ? 500 : 1100);
+}
+
+function finishExamEarly() {
+  clearTimer();
+  examList = examList.slice(0, Math.max(1, examIdx));
+  examFinished = true;
+  render();
 }
 
 saveStars();
