@@ -61,7 +61,6 @@
   .choice-btn.correct { background: var(--success-soft); border-color: var(--success); color: #065f46; }
   .choice-btn.wrong { background: var(--danger-soft); border-color: var(--danger); color: #991b1b; }
 
-  /* 시험 선택 및 결과 카드 스타일 */
   .exam-menu { width: 100%; display: flex; flex-direction: column; gap: 12px; }
   .exam-option-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: 16px; padding: 18px 20px; text-align: left; cursor: pointer; transition: 0.15s; display: flex; justify-content: space-between; align-items: center; }
   .exam-option-card:hover { border-color: var(--primary); background: var(--primary-soft); }
@@ -79,9 +78,11 @@
   .btn-known { background: var(--success); }
   .btn-next-full { grid-column: span 2; background: var(--primary); }
 
-  .jump-row { width: 100%; max-width: 480px; display: flex; justify-content: center; gap: 6px; margin-top: 16px; padding-bottom: 20px; }
+  .jump-row { width: 100%; max-width: 480px; display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-top: 16px; padding-bottom: 20px; }
+  .jump-right { display: flex; gap: 6px; align-items: center; }
   .jump-row input { width: 95px; padding: 8px; border: 1px solid var(--border); border-radius: 9px; text-align: center; font-size: 0.85rem; background: var(--surface); }
-  .jump-row button { padding: 8px 14px; border: 1px solid var(--border); border-radius: 9px; background: var(--surface); font-size: 0.85rem; font-weight: 600; color: var(--text-sub); cursor: pointer; }
+  .jump-row button { padding: 8px 14px; border: 1px solid var(--border); border-radius: 9px; background: var(--surface); font-size: 0.85rem; font-weight: 600; color: var(--text-sub); cursor: pointer; transition: 0.15s; }
+  .jump-row button.active { background: var(--primary-soft); border-color: var(--primary); color: var(--primary); font-weight: 700; }
 </style>
 </head>
 <body>
@@ -119,8 +120,11 @@
 <div class="stage" id="stage"></div>
 
 <div class="jump-row" id="jumpRow">
-  <input type="number" id="jumpNum" placeholder="번호 (1~455)" min="1" max="455">
-  <button onclick="jumpTo()">이동</button>
+  <button id="alwaysShowBtn" onclick="toggleAlwaysShow()">뜻 전체 확인</button>
+  <div class="jump-right">
+    <input type="number" id="jumpNum" placeholder="번호 (1~455)" min="1" max="455">
+    <button onclick="jumpTo()">이동</button>
+  </div>
 </div>
 
 <script>
@@ -594,6 +598,7 @@ let currentList = [...allWords];
 let idx = 0;
 let currentMode = 'flash';
 let isRevealed = false;
+let alwaysShowMean = false;
 let onlyStarred = false;
 let starredIds = JSON.parse(localStorage.getItem('cc_starred_455') || '[]');
 let autoNextTimer = null;
@@ -618,6 +623,13 @@ function saveStars() {
   localStorage.setItem('cc_starred_455', JSON.stringify(starredIds));
   const starEl = document.getElementById('starCount');
   if (starEl) starEl.innerText = starredIds.length;
+}
+
+function toggleAlwaysShow() {
+  alwaysShowMean = !alwaysShowMean;
+  const btn = document.getElementById('alwaysShowBtn');
+  if (btn) btn.classList.toggle('active', alwaysShowMean);
+  render();
 }
 
 function toggleStar(id) {
@@ -699,6 +711,9 @@ function switchMode(mode) {
   const isExam = (mode === 'exam');
   document.getElementById('filterBar').style.display = isExam ? 'none' : 'flex';
   document.getElementById('jumpRow').style.display = isExam ? 'none' : 'flex';
+
+  const alwaysBtn = document.getElementById('alwaysShowBtn');
+  if (alwaysBtn) alwaysBtn.style.visibility = (mode === 'flash') ? 'visible' : 'hidden';
 
   if (isExam) {
     examType = null;
@@ -872,13 +887,14 @@ function render() {
   const frontTitle = `${item.id}. ${item.word} <span class="pron-text">[${item.pron}]</span>`;
 
   if (currentMode === 'flash') {
+    const showMean = isRevealed || alwaysShowMean;
     stage.innerHTML = `
-      <div class="card-box" onclick="isRevealed = !isRevealed; render();">
+      <div class="card-box" onclick="if(!alwaysShowMean){ isRevealed = !isRevealed; render(); }">
         <span class="card-tag">암기학습</span>
         <button class="star-toggle ${isStarred ? 'starred' : ''}" onclick="event.stopPropagation(); toggleStar(${item.id})">${starSvg}</button>
         <div class="word-display">${frontTitle}</div>
-        <div class="meaning-display ${isRevealed ? '' : 'hidden'}">${item.mean}</div>
-        <div class="tap-guide">${isRevealed ? '아래 버튼으로 암기 여부를 선택하세요' : '카드를 터치해 뜻 확인'}</div>
+        <div class="meaning-display ${showMean ? '' : 'hidden'}">${item.mean}</div>
+        <div class="tap-guide">${showMean ? '아래 버튼으로 암기 여부를 선택하세요' : '카드를 터치해 뜻 확인'}</div>
       </div>
       <div class="bottom-actions">
         <button class="action-btn btn-unknown" onclick="markUnknownAndNext(${item.id})">몰라요</button>
