@@ -3,11 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Classcard Pro 455</title>
+<title>VOCAB 455</title>
 <style>
   :root {
     --primary: #4f46e5;
-    --primary-hover: #4338ca;
     --primary-soft: #eef2ff;
     --success: #059669;
     --success-soft: #d1fae5;
@@ -26,24 +25,20 @@
   
   svg { width: 16px; height: 16px; stroke-width: 2.2; stroke: currentColor; fill: none; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
 
-  /* 상단 헤더 */
   .top-bar { width: 100%; max-width: 480px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
   .app-title { font-size: 1.1rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px; letter-spacing: -0.02em; }
   .logo-badge { background: var(--primary); color: #fff; width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
   .progress-badge { background: var(--surface); border: 1px solid var(--border); padding: 5px 12px; border-radius: 99px; font-size: 0.85rem; font-weight: 700; color: var(--text-sub); }
 
-  /* 모드 선택 탭 */
   .mode-tabs { width: 100%; max-width: 480px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; background: #e2e8f0; padding: 4px; border-radius: 12px; margin-bottom: 12px; }
   .mode-btn { border: none; background: transparent; padding: 9px 4px; border-radius: 9px; font-size: 0.88rem; font-weight: 700; color: var(--text-sub); cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 5px; }
   .mode-btn.active { background: var(--surface); color: var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
 
-  /* 필터 & 컨트롤 바 */
   .filter-bar { width: 100%; max-width: 480px; display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 14px; }
   .chip-btn { border: 1px solid var(--border); background: var(--surface); padding: 7px 11px; border-radius: 10px; font-size: 0.8rem; font-weight: 600; color: var(--text-sub); cursor: pointer; display: flex; align-items: center; gap: 5px; transition: 0.15s; }
   .chip-btn:active { transform: scale(0.97); }
   .chip-btn.active { background: var(--warning-soft); border-color: #f59e0b; color: var(--warning); }
   
-  /* 학습 카드 영역 */
   .stage { width: 100%; max-width: 480px; flex: 1; display: flex; flex-direction: column; justify-content: center; }
   .card-box { background: var(--surface); border: 1px solid var(--border); border-radius: 22px; padding: 32px 22px; min-height: 280px; box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: relative; cursor: pointer; transition: 0.15s; }
   .card-box:active { transform: scale(0.995); }
@@ -61,19 +56,16 @@
   .meaning-display.hidden { visibility: hidden; }
   .tap-guide { position: absolute; bottom: 16px; font-size: 0.78rem; color: #94a3b8; display: flex; align-items: center; gap: 4px; }
 
-  /* 리콜학습 (4지선다) */
   .choices-grid { width: 100%; display: flex; flex-direction: column; gap: 8px; margin-top: 18px; }
   .choice-btn { width: 100%; padding: 14px 16px; border: 1.5px solid var(--border); border-radius: 12px; background: var(--surface); font-size: 0.98rem; font-weight: 600; color: var(--text-main); text-align: left; cursor: pointer; transition: 0.15s; }
   .choice-btn.correct { background: var(--success-soft); border-color: var(--success); color: #065f46; }
   .choice-btn.wrong { background: var(--danger-soft); border-color: var(--danger); color: #991b1b; }
 
-  /* 스펠학습 */
   .spell-area { width: 100%; margin-top: 18px; display: flex; flex-direction: column; gap: 10px; }
   .spell-input { width: 100%; padding: 14px; border: 1.5px solid var(--border); border-radius: 12px; font-size: 1.15rem; font-weight: 700; text-align: center; outline: none; background: var(--bg); }
   .spell-input:focus { border-color: var(--primary); background: var(--surface); }
   .spell-feedback { font-size: 0.9rem; font-weight: 700; min-height: 22px; }
 
-  /* 하단 액션 버튼 */
   .bottom-actions { width: 100%; max-width: 480px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 14px; }
   .action-btn { padding: 15px; border: none; border-radius: 14px; font-size: 0.95rem; font-weight: 700; cursor: pointer; color: #fff; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.15s; }
   .action-btn:active { transform: scale(0.98); }
@@ -81,7 +73,6 @@
   .btn-known { background: var(--success); }
   .btn-next-full { grid-column: span 2; background: var(--primary); }
 
-  /* 번호 이동 바 */
   .jump-row { width: 100%; max-width: 480px; display: flex; justify-content: center; gap: 6px; margin-top: 16px; padding-bottom: 20px; }
   .jump-row input { width: 95px; padding: 8px; border: 1px solid var(--border); border-radius: 9px; text-align: center; font-size: 0.85rem; background: var(--surface); }
   .jump-row button { padding: 8px 14px; border: 1px solid var(--border); border-radius: 9px; background: var(--surface); font-size: 0.85rem; font-weight: 600; color: var(--text-sub); cursor: pointer; }
@@ -135,464 +126,464 @@
 </div>
 
 <script>
-const rawData = `1	across	어크로스	가로질러, 건너서
-2	action	액션	행동, 활동
-3	activity	액티비티	활동
-4	addiction	어딕션	중독
-5	addition	어디션	추가, 덧붙임
-6	adjust	어저스트	적응하다, 조정하다
-7	administrator	어드미니스트레이터	관리자, 행정관
-8	adopt	어답트	채택하다, 도입하다
-9	advance	어드밴스	발전하다, 나아가다
-10	advantage	어드밴티지	장점, 이점
-11	advertise	애드버타이즈	광고하다
-12	affect	어펙트	영향을 미치다
-13	aggressive	어그레시브	공격적인, 적극적인
-14	allow	얼라우	허락하다, 가능하게 하다
-15	along	얼롱	~을 따라서
-16	alternative	올터너티브	대안, 대체물
-17	among	어멍	~사이에, ~중에
-18	amount	어마운트	양, 액수
-19	angle	앵글	각도
-20	anxiety	애그자이어티	불안, 염려
-21	appreciate	어프리시에이트	감상하다, 진가를 알아보다
-22	arcade	아케이드	오락실
-23	argue	아규	주장하다
-24	argument	아규먼트	주장, 논쟁
-25	artificial	아티피셜	인공의
-26	assign	어사인	배정하다, 할당하다
-27	astronomy	어스트로노미	천문학
-28	attention	어텐션	관심, 주의
-29	attract	어트랙트	끌어들이다, 매료시키다
-30	audiobook	오디오북	오디오북(듣는 책)
-31	automate	오토메이트	자동화하다
-32	avoid	어보이드	피하다, 방지하다
-33	backdrop	백드롭	배경막, 배경
-34	ban	밴	금지, 금지하다
-35	banking	뱅킹	은행 업무, 금융
-36	based on	베이스드 온	~에 근거하여, ~을 바탕으로
-37	behavior	비헤이비어	행동
-38	behind the scenes	비하인드 더 씬즈	무대 뒤에서, 보이지 않는 곳에서
-39	beneficial	베네피셜	유익한, 이로운
-40	benefit	베너핏	혜택, 이점
-41	bin	빈	통, 쓰레기통
-42	blink	블링크	깜빡이다
-43	booth	부스	부스, 간이 천막
-44	boring	보링	지루한
-45	borrow	바로우	빌리다
-46	botanical	보태니컬	식물의
-47	brand	브랜드	브랜드, 상표
-48	brightness	브라이트니스	밝기
-49	buzz	버즈	윙윙거리다, 활기차다
-50	calm	캄	차분한, 고요한
-51	calorie	칼로리	열량, 칼로리
-52	campaign	캠페인	캠페인, 운동
-53	campus	캠퍼스	캠퍼스, 교정
-54	carbon	카본	탄소
-55	careful	케어풀	세심한, 신중한
-56	careless	케어리스	부주의한
-57	caring	케어링	돌보는, 배려하는
-58	cause	코즈	야기하다, 원인이 되다
-59	challenge	챌린지	어려움, 도전 과제
-60	charge	차지	충전하다
-61	cherish	체리시	소중히 여기다
-62	choice	초이스	선택
-63	chronic	크로닉	만성적인
-64	click	클릭	찰칵 소리를 내다, 클릭하다
-65	climate	클라이밋	기후
-66	cloth	클로스	천, 직물
-67	code	코드	코딩하다, 부호화하다
-68	coding	코딩	코딩
-69	combat	컴뱃	싸우다, 방지하다
-70	combine	컴바인	결합하다
-71	commercial	커머셜	상업의
-72	commitment	커미트먼트	헌신, 전념, 약속
-73	communicate	커뮤니케이트	의사소통하다
-74	community	커뮤니티	공동체, 지역 사회
-75	commute	커뮤트	통근하다, 통학하다
-76	companionship	컴패니언십	우정, 동반자 관계
-77	compare	컴페어	비교하다
-78	complete	컴플리트	완전한
-79	completely	컴플리틀리	완전히
-80	compost	콤포스트	퇴비를 만들다
-81	comprehension	컴프리헨션	이해, 독해
-82	concentration	컨센트레이션	집중력
-83	concept	컨셉	개념
-84	condition	컨디션	상태, 질환
-85	conflict	컨플릭트	충돌하다, 갈등
-86	confuse	컨퓨즈	혼란스럽게 하다
-87	congestion	컨제스천	혼잡
-88	connectivity	커넥티비티	연결성
-89	conscious	컨셔스	의식적인
-90	consequently	컨시퀀틀리	그 결과, 따라서
-91	consider	컨시더	고려하다, 숙고하다
-92	considerable	컨시더러블	상당한
-93	constant	콘스턴트	끊임없는, 지속적인
-94	construction	컨스트럭션	건설, 공사
-95	consume	컨슘	소비하다
-96	content	콘텐츠	내용물, 콘텐츠
-97	continue	컨티뉴	계속하다
-98	convenience	컨비니언스	편리함
-99	conventional	컨벤셔널	기존의, 전통적인
-100	conversation	컨버세이션	대화
-101	cooperation	코오퍼레이션	협력, 협동
-102	costly	코스트리	비용이 많이 드는
-103	courtyard	코트야드	안뜰, 운동장
-104	cozy	코지	아늑한, 포근한
-105	create	크리에이트	창조하다
-106	creation	크리에이션	창조, 창작
-107	creativity	크리에이티비티	창의성
-108	creature	크리처	생물, 생명체
-109	crisis	크라이시스	위기
-110	crowded	크라우디드	붐비는, 혼잡한
-111	curious	큐리어스	호기심이 많은
-112	curricular	커리큘러	교육 과정의
-113	customer	커스터머	손님, 고객
-114	debate	디베이트	논쟁, 토론
-115	debug	디버그	(오류를) 수정하다, 디버깅하다
-116	decision	디시전	결정
-117	decompose	디컴포즈	분해되다
-118	decrease	디크리스	감소시키다, 줄어들다
-119	delay	딜레이	지연시키다
-120	demand	디맨드	요구하다, 필요로 하다
-121	depend	디펜드	의존하다, 달려 있다
-122	designer	디자이너	디자이너, 유명 브랜드의
-123	develop	디벨롭	발달시키다, 개발하다
-124	development	디벨롭먼트	발달, 개발
-125	device	디바이스	기기, 장치
-126	diet	다이어트	식단, 식습관
-127	digital	디지털	디지털의
-128	digitally	디지털리	디지털 방식으로
-129	disadvantage	디스어드밴티지	단점, 불이익
-130	discover	디스커버	발견하다
-131	discussion	디스커션	토론
-132	display	디스플레이	전시, 진열
-133	disposable	디스포저블	일회용의
-134	disrupt	디스럽트	방해하다
-135	distinct	디스팅트	뚜렷한, 별개의
-136	distract	디스트랙트	산만하게 하다
-137	distraction-free	디스트랙션 프리	방해 요소가 없는
-138	dome	돔	돔, 반구형 지붕
-139	domestic	도메스틱	가정의, 길들여진
-140	download	다운로드	다운로드하다, 내려받다
-141	downtown	다운타운	시내의, 도심의
-142	dress code	드레스 코드	복장 규정
-143	e-reader	이리더	전자책 단말기
-144	ease	이즈	덜어주다, 완화하다
-145	eco	에코	생태, 친환경의
-146	ecosystem	에코시스템	생태계
-147	edit	에딧	편집하다, 수정하다
-148	educate	에듀케이트	교육하다
-149	educator	에듀케이터	교육자
-150	effect	이펙트	영향, 효과
-151	efficient	이피션트	효율적인
-152	effort	에포트	노력
-153	electric	일렉트릭	전기의
-154	electricity	일렉트리시티	전기
-155	electronic	일렉트로닉	전자의
-156	emergency	이머전시	비상, 응급
-157	emerge	이머지	나타나다, 부상하다
-158	emotional	이모셔널	정서적인, 감정적인
-159	empathy	엠퍼시	공감, 감정 이입
-160	encourage	엔커리지	격려하다
-161	energetic	에너제틱	활기찬
-162	enforce	인포스	시행하다, 집행하다
-163	enthusiastic	인뚜지애스틱	열정적인
-164	environment	인바이런먼트	환경
-165	environmental	인바이런멘털	환경의
-166	equality	이퀄리티	평등
-167	equipment	이큅먼트	장비
-168	especially	이스페셜리	특히
-169	exhibit	이그지빗	전시품, 전시하다
-170	expand	익스팬드	확장하다, 넓히다
-171	expensive	익스펜시브	비싼
-172	experience	익스피리언스	경험
-173	expert	엑스퍼트	전문가
-174	explore	익스플로어	탐험하다, 탐구하다
-175	exposure	익스포저	노출
-176	express	익스프레스	표현하다
-177	facility	퍼실리티	시설
-178	fashion	패션	패션, 유행
-179	fatigue	퍼티그	피로, 피곤
-180	feed	피드	먹이를 주다
-181	fence	펜스	울타리, 담장
-182	final	파이널	최종의, 마지막의
-183	flexible	플렉서블	유연한
-184	font	폰트	글꼴, 폰트
-185	format	포맷	형식, 형태
-186	fossil	포실	화석
-187	freedom	프리덤	자유
-188	freely	프릴리	자유롭게
-189	fuel	퓨얼	연료
-190	furthermore	퍼더모어	게다가, 더욱이
-191	futuristic	퓨처리스틱	미래 지향적인, 초현대적인
-192	gallery	갤러리	미술관, 화랑
-193	gaze	게이즈	응시하다, 바라보다
-194	generation	제너레이션	세대
-195	gentle	젠틀	부드러운, 온화한
-196	global	글로벌	세계적인, 지구의
-197	grammar	그래머	문법
-198	grant	그랜트	보조금
-199	greet	그리트	맞이하다, 인사하다
-200	groom	그룸	털을 손질하다
-201	growth	그로스	성장, 증가
-202	guidance	가이던스	지도, 안내
-203	habit	해빗	습관
-204	hands-on	핸즈온	직접 해보는, 체험하는
-205	harm	함	해치다, 해를 끼치다
-206	historical	히스토리컬	역사적인
-207	household	하우스홀드	가정, 가구
-208	hybrid	하이브리드	혼합의, 하이브리드
-209	ignore	이그노어	무시하다
-210	implement	임플리먼트	시행하다, 실행하다
-211	improve	임프루브	향상시키다
-212	incoming	인커밍	들어오는, 수신되는
-213	increase	인크리스	증가시키다
-214	incredible	인크레더블	놀라운, 믿을 수 없는
-215	independent	인디펜던트	독립적인
-216	individual	인디비주얼	개인, 개개인
-217	indoor	인도어	실내의
-218	infrastructure	인프라스트럭처	기반 시설, 인프라
-219	ingredient	인그리디언트	재료, 성분
-220	initial	이니셜	초기의
-221	innovation	이노베이션	혁신
-222	inspire	인스파이어	영감을 주다
-223	instant	인스턴트	즉각적인
-224	integrate	인티그레이트	통합하다
-225	intelligence	인텔리전스	지능
-226	interact	인터랙트	상호작용하다
-227	interactive	인터랙티브	상호 작용하는, 체험형의
-228	investment	인베스트먼트	투자
-229	involve	인볼브	수반하다, 포함하다
-230	judge	저지	판단하다
-231	jumper	점퍼	점퍼 (연결선)
-232	kit	키트	세트, 도구 모음
-233	lab	랩	실험실, 실습실
-234	lack	랙	부족, 결핍
-235	landfill	랜드필	쓰레기 매립지
-236	laziness	레이지니스	게으름
-237	lecture	렉처	강의
-238	lecture-style	렉처 스타일	강의 형식의
-239	lens	렌즈	렌즈
-240	librarian	라이브러리언	사서
-241	lifestyle	라이프스타일	생활 방식
-242	lighting	라이팅	조명
-243	lightweight	라이트웨이트	가벼운
-244	likely	라이클리	~할 것 같은, ~할 가능성이 있는
-245	limit	리밋	제한하다
-246	line-following	라인 팔로잉	선을 따라가는
-247	litter	리터	쓰레기
-248	lively	라이블리	활기찬
-249	local	로컬	지역의
-250	locker	로커	사물함
-251	logical	로지컬	논리적인
-252	lower	로어	낮추다, 줄이다
-253	lush	러시	무성한, 우거진
-254	major	메이저	주요한, 중대한
-255	manage	매니지	운영하다, 관리하다
-256	marine	마린	해양의
-257	massive	매시브	거대한, 엄청난
-258	meaningful	미닝풀	의미 있는
-259	media	미디어	미디어, 매체
-260	medical	메디컬	의료의, 의학의
-261	mental	멘털	정신의, 마음의
-262	method	메서드	방법, 방식
-263	microcontroller	마이크로컨트롤러	마이크로컨트롤러 (소형 제어 장치)
-264	mindful	마인드풀	유념하는
-265	minimize	미니마이즈	최소화하다
-266	monitor	모니터	감시하다, 추적 관찰하다
-267	mystery	미스터리	신비
-268	native	네이티브	토종의, 자생의
-269	natural	내추럴	자연의
-270	navigation	내비게이션	내비게이션, 길 안내
-271	negative	네거티브	부정적인
-272	neither	니더	어느 쪽도 ~아닌
-273	newly	뉼리	새롭게, 최근에
-274	notification	노티피케이션	알림
-275	nutrition	뉴트리션	영양
-276	oasis	오아시스	오아시스
-277	obesity	오비시티	비만
-278	observatory	옵저버토리	천문대, 관측소
-279	offer	오퍼	제공하다
-280	ongoing	온고잉	계속 진행 중인
-281	operate	오퍼레이트	운영하다, 작동하다
-282	opportunity	오퍼튜니티	기회
-283	organization	오거나이제이션	조직, 정리, 구성
-284	organize	오거나이즈	조직하다
-285	outdated	아웃데이티드	구식의, 낡은
-286	outdoor	아웃도어	야외의
-287	outfit	아웃핏	복장, 옷차림
-288	packaging	패키징	포장, 포장재
-289	participate	파티시페이트	참여하다
-290	path	패스	길, 오솔길
-291	patience	페이션스	인내심
-292	peaceful	피스풀	평화로운
-293	peer	피어	또래, 동료
-294	personal	퍼스널	개인의
-295	personality	퍼스낼리티	개성, 성격
-296	perspective	퍼스펙티브	관점, 시각
-297	photography	포토그래피	사진술, 사진 촬영
-298	physical	피지컬	신체의
-299	planning	플래닝	계획 세우기
-300	pollute	폴루트	오염시키다
-301	portability	포터빌리티	휴대성
-302	pose	포즈	(위협 등을) 제기하다, 일으키다
-303	potential	포텐셜	잠재적인, 예비의
-304	power	파워	힘, 능력
-305	practical	프랙티컬	실용적인, 현실적인
-306	prefer	프리퍼	선호하다
-307	preference	프레퍼런스	선호, 취향
-308	presence	프레즌스	존재, 있음
-309	present	프레젠트	제시하다, 야기하다
-310	preserve	프리저브	보존하다
-311	president	프레지던트	회장, 대표
-312	pressure	프레셔	압력, 혈압
-313	prevent	프리벤트	막다, 예방하다
-314	pride	프라이드	자부심, 자긍심
-315	prioritize	프라이오러타이즈	우선시하다
-316	problem-solving	프라블럼 솔빙	문제 해결의
-317	process	프로세스	가공하다, 처리하다
-318	productivity	프로덕티비티	생산성
-319	professional	프로페셔널	전문가, 직장인
-320	program	프로그램	프로그래밍하다
-321	project	프로젝트	프로젝트, 과제
-322	promote	프로모트	장려하다, 홍보하다
-323	proper	프로퍼	적절한, 올바른
-324	property	프로퍼티	재산, 소유물
-325	protect	프로텍트	보호하다
-326	provide	프로바이드	제공하다
-327	public	퍼블릭	공공의, 대중의
-328	punishment	퍼니시먼트	처벌, 벌
-329	ranger	레인저	공원 관리원, 산림 감시원
-330	rapid	래피드	빠른
-331	rather than	래더 댄	~하기보다는
-332	real-world	리얼 월드	현실 세계의
-333	realize	리얼라이즈	깨닫다
-334	recent	리슨트	최근의
-335	record	레코드	기록하다, 녹화하다
-336	recycle	리사이클	재활용하다
-337	reduce	리듀스	줄이다, 감소시키다
-338	regarding	리가딩	~에 관하여
-339	regular	레귤러	정규의, 규칙적인
-340	regulation	레귤레이션	규제, 규정
-341	relationship	릴레이션십	관계
-342	reliable	릴라이어블	믿을 수 있는, 신뢰할 만한
-343	reliance	릴라이언스	의존
-344	remote	리모트	원격의
-345	reorganize	리오거나이즈	재편성하다, 재구성하다
-346	repair	리페어	수리, 보수
-347	replace	리플레이스	대체하다
-348	responsibility	리스폰서빌리티	책임감
-349	responsible	리스폰시블	책임감 있는
-350	result	리절트	결과
-351	reusable	리유저블	재사용할 수 있는
-352	review	리뷰	복습하다, 검토하다
-353	reward	리워드	보상, 보상을 주다
-354	rewarding	리워딩	보람 있는
-355	ring	링	(종이) 울리다
-356	risk	리스크	위험
-357	robotic	로보틱	로봇의
-358	robotics	로보틱스	로봇 공학
-359	roof	루프	지붕, 옥상
-360	safely	세이플리	안전하게
-361	salary	샐러리	급여, 봉급
-362	scientific	사이언티픽	과학적인
-363	scroll	스크롤	(화면을) 위아래로 넘기다
-364	secondary	세컨더리	부차적인, 중등의
-365	secure	시큐어	확보하다, 안전한
-366	seedling	시들링	묘목, 모종
-367	self	셀프	자기 자신, 자아
-368	sense	센스	감각, 의식
-369	sensor	센서	센서, 감지기
-370	serve	서브	역할을 하다, 봉사하다
-371	session	세션	시간, 활동
-372	several	세버럴	몇몇의, 여러 가지의
-373	severe	시비어	심각한, 극심한
-374	shift	시프트	전환하다, 옮기다
-375	shorten	쇼튼	짧게 하다, 단축하다
-376	shutter	셔터	셔터
-377	significant	시그니피컨트	상당한, 중요한
-378	simplify	심플리파이	단순화하다, 간소화하다
-379	single	싱글	단 하나의, 단일의
-380	skill	스킬	기술, 능력
-381	skip	스킵	거르다, 건너뛰다
-382	social media	소셜 미디어	소셜 미디어, SNS
-383	society	소사이어티	사회
-384	software	소프트웨어	소프트웨어
-385	soil	소일	흙, 토양
-386	solar	솔라	태양의, 태양열을 이용하는
-387	solution	솔루션	해결책
-388	sort	소트	분류하다, 정리하다
-389	staff	스태프	직원
-390	stainless	스테인리스	녹슬지 않는, 스테인리스의
-391	stand	스탠드	받침대, 거치대
-392	station	스테이션	구역, 정거장
-393	step up	스텝 업	나서다, 조치를 취하다
-394	store	스토어	보관하다, 저장하다
-395	strain	스트레인	피로, 긴장, 부담
-396	straw	스트로	빨대
-397	stress	스트레스	스트레스
-398	strict	스트릭트	엄격한
-399	strongly	스트롱글리	강하게, 강력히
-400	structure	스트럭처	구조, 구조화하다
-401	struggle	스트러글	애쓰다, 고군분투하다
-402	substantial	서브스탠셜	상당한, 실질적인
-403	sugary	슈거리	설탕이 많이 든, 단
-404	suitable	수터블	적합한, 알맞은
-405	sunset	선셋	일몰, 노을
-406	support	서포트	지지하다, 응원하다
-407	surround	서라운드	둘러싸다
-408	sustainable	서스테이너블	지속 가능한
-409	tablet	태블릿	태블릿 PC
-410	tackle	태클	(문제 등을) 다루다, 해결하다
-411	tap	탭	가볍게 두드림, 터치
-412	task	태스크	일, 과업
-413	tech	테크	기술
-414	technical	테크니컬	기술적인
-415	technology	테크놀로지	기술
-416	telescope	텔레스코프	망원경
-417	temporary	템퍼러리	일시적인
-418	tempt	템프트	유혹하다
-419	thoughtful	소트풀	사려 깊은, 신중한
-420	threat	트렛트	위협
-421	topic	토픽	주제
-422	toward	토워드	~을 향하여, ~에 대하여
-423	track	트랙	트랙, 경로
-424	training	트레이닝	훈련, 교육
-425	transform	트랜스폼	변모시키다, 탈바꿈하다
-426	transition	트랜지션	전환, 변화
-427	transportation	트랜스포테이션	교통, 수송
-428	traveler	트래블러	여행자
-429	trend	트렌드	유행, 추세
-430	tripod	트라이포드	삼각대
-431	tumbler	텀블러	텀블러
-432	turn off	턴 오프	끄다
-433	tutor	튜터	개인 교사, 튜터
-434	typical	티피컬	전형적인, 일반적인
-435	ultimate	얼티밋	궁극적인
-436	unconditional	언컨디셔널	무조건적인
-437	understand	언더스탠드	이해하다
-438	unhealthy	언헬시	건강에 해로운
-439	unique	유니크	독특한, 유일무이한
-440	universe	유니버스	우주
-441	unlike	언라이크	~와는 달리
-442	user	유저	사용자
-443	usual	유주얼	평소의, 보통의
-444	utilize	유틸라이즈	활용하다, 이용하다
-445	vast	배스트	방대한, 막대한
-446	vertical	버티컬	수직의
-447	view	뷰	시야, 보다
-448	waste	웨이스트	쓰레기, 낭비
-449	whenever	웬에버	~할 때마다 언제든지
-450	whirring	워링	윙윙거리는
-451	whole	홀	전체의, 가공하지 않은
-452	wild	와일드	야생의
-453	wise	와이즈	현명한
-454	worth	워스	~의 가치가 있는
-455	zero	제로	영, 전무함`;
+const rawData = `1|across|어크로스|가로질러, 건너서
+2|action|액션|행동, 활동
+3|activity|액티비티|활동
+4|addiction|어딕션|중독
+5|addition|어디션|추가, 덧붙임
+6|adjust|어저스트|적응하다, 조정하다
+7|administrator|어드미니스트레이터|관리자, 행정관
+8|adopt|어답트|채택하다, 도입하다
+9|advance|어드밴스|발전하다, 나아가다
+10|advantage|어드밴티지|장점, 이점
+11|advertise|애드버타이즈|광고하다
+12|affect|어펙트|영향을 미치다
+13|aggressive|어그레시브|공격적인, 적극적인
+14|allow|얼라우|허락하다, 가능하게 하다
+15|along|얼롱|~을 따라서
+16|alternative|올터너티브|대안, 대체물
+17|among|어멍|~사이에, ~중에
+18|amount|어마운트|양, 액수
+19|angle|앵글|각도
+20|anxiety|애그자이어티|불안, 염려
+21|appreciate|어프리시에이트|감상하다, 진가를 알아보다
+22|arcade|아케이드|오락실
+23|argue|아규|주장하다
+24|argument|아규먼트|주장, 논쟁
+25|artificial|아티피셜|인공의
+26|assign|어사인|배정하다, 할당하다
+27|astronomy|어스트로노미|천문학
+28|attention|어텐션|관심, 주의
+29|attract|어트랙트|끌어들이다, 매료시키다
+30|audiobook|오디오북|오디오북(듣는 책)
+31|automate|오토메이트|자동화하다
+32|avoid|어보이드|피하다, 방지하다
+33|backdrop|백드롭|배경막, 배경
+34|ban|밴|금지, 금지하다
+35|banking|뱅킹|은행 업무, 금융
+36|based on|베이스드 온|~에 근거하여, ~을 바탕으로
+37|behavior|비헤이비어|행동
+38|behind the scenes|비하인드 더 씬즈|무대 뒤에서, 보이지 않는 곳에서
+39|beneficial|베네피셜|유익한, 이로운
+40|benefit|베너핏|혜택, 이점
+41|bin|빈|통, 쓰레기통
+42|blink|블링크|깜빡이다
+43|booth|부스|부스, 간이 천막
+44|boring|보링|지루한
+45|borrow|바로우|빌리다
+46|botanical|보태니컬|식물의
+47|brand|브랜드|브랜드, 상표
+48|brightness|브라이트니스|밝기
+49|buzz|버즈|윙윙거리다, 활기차다
+50|calm|캄|차분한, 고요한
+51|calorie|칼로리|열량, 칼로리
+52|campaign|캠페인|캠페인, 운동
+53|campus|캠퍼스|캠퍼스, 교정
+54|carbon|카본|탄소
+55|careful|케어풀|세심한, 신중한
+56|careless|케어리스|부주의한
+57|caring|케어링|돌보는, 배려하는
+58|cause|코즈|야기하다, 원인이 되다
+59|challenge|챌린지|어려움, 도전 과제
+60|charge|차지|충전하다
+61|cherish|체리시|소중히 여기다
+62|choice|초이스|선택
+63|chronic|크로닉|만성적인
+64|click|클릭|찰칵 소리를 내다, 클릭하다
+65|climate|클라이밋|기후
+66|cloth|클로스|천, 직물
+67|code|코드|코딩하다, 부호화하다
+68|coding|코딩|코딩
+69|combat|컴뱃|싸우다, 방지하다
+70|combine|컴바인|결합하다
+71|commercial|커머셜|상업의
+72|commitment|커미트먼트|헌신, 전념, 약속
+73|communicate|커뮤니케이트|의사소통하다
+74|community|커뮤니티|공동체, 지역 사회
+75|commute|커뮤트|통근하다, 통학하다
+76|companionship|컴패니언십|우정, 동반자 관계
+77|compare|컴페어|비교하다
+78|complete|컴플리트|완전한
+79|completely|컴플리틀리|완전히
+80|compost|콤포스트|퇴비를 만들다
+81|comprehension|컴프리헨션|이해, 독해
+82|concentration|컨센트레이션|집중력
+83|concept|컨셉|개념
+84|condition|컨디션|상태, 질환
+85|conflict|컨플릭트|충돌하다, 갈등
+86|confuse|컨퓨즈|혼란스럽게 하다
+87|congestion|컨제스천|혼잡
+88|connectivity|커넥티비티|연결성
+89|conscious|컨셔스|의식적인
+90|consequently|컨시퀀틀리|그 결과, 따라서
+91|consider|컨시더|고려하다, 숙고하다
+92|considerable|컨시더러블|상당한
+93|constant|콘스턴트|끊임없는, 지속적인
+94|construction|컨스트럭션|건설, 공사
+95|consume|컨슘|소비하다
+96|content|콘텐츠|내용물, 콘텐츠
+97|continue|컨티뉴|계속하다
+98|convenience|컨비니언스|편리함
+99|conventional|컨벤셔널|기존의, 전통적인
+100|conversation|컨버세이션|대화
+101|cooperation|코오퍼레이션|협력, 협동
+102|costly|코스트리|비용이 많이 드는
+103|courtyard|코트야드|안뜰, 운동장
+104|cozy|코지|아늑한, 포근한
+105|create|크리에이트|창조하다
+106|creation|크리에이션|창조, 창작
+107|creativity|크리에이티비티|창의성
+108|creature|크리처|생물, 생명체
+109|crisis|크라이시스|위기
+110|crowded|크라우디드|붐비는, 혼잡한
+111|curious|큐리어스|호기심이 많은
+112|curricular|커리큘러|교육 과정의
+113|customer|커스터머|손님, 고객
+114|debate|디베이트|논쟁, 토론
+115|debug|디버그|(오류를) 수정하다, 디버깅하다
+116|decision|디시전|결정
+117|decompose|디컴포즈|분해되다
+118|decrease|디크리스|감소시키다, 줄어들다
+119|delay|딜레이|지연시키다
+120|demand|디맨드|요구하다, 필요로 하다
+121|depend|디펜드|의존하다, 달려 있다
+122|designer|디자이너|디자이너, 유명 브랜드의
+123|develop|디벨롭|발달시키다, 개발하다
+124|development|디벨롭먼트|발달, 개발
+125|device|디바이스|기기, 장치
+126|diet|다이어트|식단, 식습관
+127|digital|디지털|디지털의
+128|digitally|디지털리|디지털 방식으로
+129|disadvantage|디스어드밴티지|단점, 불이익
+130|discover|디스커버|발견하다
+131|discussion|디스커션|토론
+132|display|디스플레이|전시, 진열
+133|disposable|디스포저블|일회용의
+134|disrupt|디스럽트|방해하다
+135|distinct|디스팅트|뚜렷한, 별개의
+136|distract|디스트랙트|산만하게 하다
+137|distraction-free|디스트랙션 프리|방해 요소가 없는
+138|dome|돔|돔, 반구형 지붕
+139|domestic|도메스틱|가정의, 길들여진
+140|download|다운로드|다운로드하다, 내려받다
+141|downtown|다운타운|시내의, 도심의
+142|dress code|드레스 코드|복장 규정
+143|e-reader|이리더|전자책 단말기
+144|ease|이즈|덜어주다, 완화하다
+145|eco|에코|생태, 친환경의
+146|ecosystem|에코시스템|생태계
+147|edit|에딧|편집하다, 수정하다
+148|educate|에듀케이트|교육하다
+149|educator|에듀케이터|교육자
+150|effect|이펙트|영향, 효과
+151|efficient|이피션트|효율적인
+152|effort|에포트|노력
+153|electric|일렉트릭|전기의
+154|electricity|일렉트리시티|전기
+155|electronic|일렉트로닉|전자의
+156|emergency|이머전시|비상, 응급
+157|emerge|이머지|나타나다, 부상하다
+158|emotional|이모셔널|정서적인, 감정적인
+159|empathy|엠퍼시|공감, 감정 이입
+160|encourage|엔커리지|격려하다
+161|energetic|에너제틱|활기찬
+162|enforce|인포스|시행하다, 집행하다
+163|enthusiastic|인뚜지애스틱|열정적인
+164|environment|인바이런먼트|환경
+165|environmental|인바이런멘털|환경의
+166|equality|이퀄리티|평등
+167|equipment|이큅먼트|장비
+168|especially|이스페셜리|특히
+169|exhibit|이그지빗|전시품, 전시하다
+170|expand|익스팬드|확장하다, 넓히다
+171|expensive|익스펜시브|비싼
+172|experience|익스피리언스|경험
+173|expert|엑스퍼트|전문가
+174|explore|익스플로어|탐험하다, 탐구하다
+175|exposure|익스포저|노출
+176|express|익스프레스|표현하다
+177|facility|퍼실리티|시설
+178|fashion|패션|패션, 유행
+179|fatigue|퍼티그|피로, 피곤
+180|feed|피드|먹이를 주다
+181|fence|펜스|울타리, 담장
+182|final|파이널|최종의, 마지막의
+183|flexible|플렉서블|유연한
+184|font|폰트|글꼴, 폰트
+185|format|포맷|형식, 형태
+186|fossil|포실|화석
+187|freedom|프리덤|자유
+188|freely|프릴리|자유롭게
+189|fuel|퓨얼|연료
+190|furthermore|퍼더모어|게다가, 더욱이
+191|futuristic|퓨처리스틱|미래 지향적인, 초현대적인
+192|gallery|갤러리|미술관, 화랑
+193|gaze|게이즈|응시하다, 바라보다
+194|generation|제너레이션|세대
+195|gentle|젠틀|부드러운, 온화한
+196|global|글로벌|세계적인, 지구의
+197|grammar|그래머|문법
+198|grant|그랜트|보조금
+199|greet|그리트|맞이하다, 인사하다
+200|groom|그룸|털을 손질하다
+201|growth|그로스|성장, 증가
+202|guidance|가이던스|지도, 안내
+203|habit|해빗|습관
+204|hands-on|핸즈온|직접 해보는, 체험하는
+205|harm|함|해치다, 해를 끼치다
+206|historical|히스토리컬|역사적인
+207|household|하우스홀드|가정, 가구
+208|hybrid|하이브리드|혼합의, 하이브리드
+209|ignore|이그노어|무시하다
+210|implement|임플리먼트|시행하다, 실행하다
+211|improve|임프루브|향상시키다
+212|incoming|인커밍|들어오는, 수신되는
+213|increase|인크리스|증가시키다
+214|incredible|인크레더블|놀라운, 믿을 수 없는
+215|independent|인디펜던트|독립적인
+216|individual|인디비주얼|개인, 개개인
+217|indoor|인도어|실내의
+218|infrastructure|인프라스트럭처|기반 시설, 인프라
+219|ingredient|인그리디언트|재료, 성분
+220|initial|이니셜|초기의
+221|innovation|이노베이션|혁신
+222|inspire|인스파이어|영감을 주다
+223|instant|인스턴트|즉각적인
+224|integrate|인티그레이트|통합하다
+225|intelligence|인텔리전스|지능
+226|interact|인터랙트|상호작용하다
+227|interactive|인터랙티브|상호 작용하는, 체험형의
+228|investment|인베스트먼트|투자
+229|involve|인볼브|수반하다, 포함하다
+230|judge|저지|판단하다
+231|jumper|점퍼|점퍼 (연결선)
+232|kit|키트|세트, 도구 모음
+233|lab|랩|실험실, 실습실
+234|lack|랙|부족, 결핍
+235|landfill|랜드필|쓰레기 매립지
+236|laziness|레이지니스|게으름
+237|lecture|렉처|강의
+238|lecture-style|렉처 스타일|강의 형식의
+239|lens|렌즈|렌즈
+240|librarian|라이브러리언|사서
+241|lifestyle|라이프스타일|생활 방식
+242|lighting|라이팅|조명
+243|lightweight|라이트웨이트|가벼운
+244|likely|라이클리|~할 것 같은, ~할 가능성이 있는
+245|limit|리밋|제한하다
+246|line-following|라인 팔로잉|선을 따라가는
+247|litter|리터|쓰레기
+248|lively|라이블리|활기찬
+249|local|로컬|지역의
+250|locker|로커|사물함
+251|logical|로지컬|논리적인
+252|lower|로어|낮추다, 줄이다
+253|lush|러시|무성한, 우거진
+254|major|메이저|주요한, 중대한
+255|manage|매니지|운영하다, 관리하다
+256|marine|마린|해양의
+257|massive|매시브|거대한, 엄청난
+258|meaningful|미닝풀|의미 있는
+259|media|미디어|미디어, 매체
+260|medical|메디컬|의료의, 의학의
+261|mental|멘털|정신의, 마음의
+262|method|메서드|방법, 방식
+263|microcontroller|마이크로컨트롤러|마이크로컨트롤러 (소형 제어 장치)
+264|mindful|마인드풀|유념하는
+265|minimize|미니마이즈|최소화하다
+266|monitor|모니터|감시하다, 추적 관찰하다
+267|mystery|미스터리|신비
+268|native|네이티브|토종의, 자생의
+269|natural|내추럴|자연의
+270|navigation|내비게이션|내비게이션, 길 안내
+271|negative|네거티브|부정적인
+272|neither|니더|어느 쪽도 ~아닌
+273|newly|뉼리|새롭게, 최근에
+274|notification|노티피케이션|알림
+275|nutrition|뉴트리션|영양
+276|oasis|오아시스|오아시스
+277|obesity|오비시티|비만
+278|observatory|옵저버토리|천문대, 관측소
+279|offer|오퍼|제공하다
+280|ongoing|온고잉|계속 진행 중인
+281|operate|오퍼레이트|운영하다, 작동하다
+282|opportunity|오퍼튜니티|기회
+283|organization|오거나이제이션|조직, 정리, 구성
+284|organize|오거나이즈|조직하다
+285|outdated|아웃데이티드|구식의, 낡은
+286|outdoor|아웃도어|야외의
+287|outfit|아웃핏|복장, 옷차림
+288|packaging|패키징|포장, 포장재
+289|participate|파티시페이트|참여하다
+290|path|패스|길, 오솔길
+291|patience|페이션스|인내심
+292|peaceful|피스풀|평화로운
+293|peer|피어|또래, 동료
+294|personal|퍼스널|개인의
+295|personality|퍼스낼리티|개성, 성격
+296|perspective|퍼스펙티브|관점, 시각
+297|photography|포토그래피|사진술, 사진 촬영
+298|physical|피지컬|신체의
+299|planning|플래닝|계획 세우기
+300|pollute|폴루트|오염시키다
+301|portability|포터빌리티|휴대성
+302|pose|포즈|(위협 등을) 제기하다, 일으키다
+303|potential|포텐셜|잠재적인, 예비의
+304|power|파워|힘, 능력
+305|practical|프랙티컬|실용적인, 현실적인
+306|prefer|프리퍼|선호하다
+307|preference|프레퍼런스|선호, 취향
+308|presence|프레즌스|존재, 있음
+309|present|프레젠트|제시하다, 야기하다
+310|preserve|프리저브|보존하다
+311|president|프레지던트|회장, 대표
+312|pressure|프레셔|압력, 혈압
+313|prevent|프리벤트|막다, 예방하다
+314|pride|프라이드|자부심, 자긍심
+315|prioritize|프라이오러타이즈|우선시하다
+316|problem-solving|프라블럼 솔빙|문제 해결의
+317|process|프로세스|가공하다, 처리하다
+318|productivity|프로덕티비티|생산성
+319|professional|프로페셔널|전문가, 직장인
+320|program|프로그램|프로그래밍하다
+321|project|프로젝트|프로젝트, 과제
+322|promote|프로모트|장려하다, 홍보하다
+323|proper|프로퍼|적절한, 올바른
+324|property|프로퍼티|재산, 소유물
+325|protect|프로텍트|보호하다
+326|provide|프로바이드|제공하다
+327|public|퍼블릭|공공의, 대중의
+328|punishment|퍼니시먼트|처벌, 벌
+329|ranger|레인저|공원 관리원, 산림 감시원
+330|rapid|래피드|빠른
+331|rather than|래더 댄|~하기보다는
+332|real-world|리얼 월드|현실 세계의
+333|realize|리얼라이즈|깨닫다
+334|recent|리슨트|최근의
+335|record|레코드|기록하다, 녹화하다
+336|recycle|리사이클|재활용하다
+337|reduce|리듀스|줄이다, 감소시키다
+338|regarding|리가딩|~에 관하여
+339|regular|레귤러|정규의, 규칙적인
+340|regulation|레귤레이션|규제, 규정
+341|relationship|릴레이션십|관계
+342|reliable|릴라이어블|믿을 수 있는, 신뢰할 만한
+343|reliance|릴라이언스|의존
+344|remote|리모트|원격의
+345|reorganize|리오거나이즈|재편성하다, 재구성하다
+346|repair|리페어|수리, 보수
+347|replace|리플레이스|대체하다
+348|responsibility|리스폰서빌리티|책임감
+349|responsible|리스폰시블|책임감 있는
+350|result|리절트|결과
+351|reusable|리유저블|재사용할 수 있는
+352|review|리뷰|복습하다, 검토하다
+353|reward|리워드|보상, 보상을 주다
+354|rewarding|리워딩|보람 있는
+355|ring|링|(종이) 울리다
+356|risk|리스크|위험
+357|robotic|로보틱|로봇의
+358|robotics|로보틱스|로봇 공학
+359|roof|루프|지붕, 옥상
+360|safely|세이플리|안전하게
+361|salary|샐러리|급여, 봉급
+362|scientific|사이언티픽|과학적인
+363|scroll|스크롤|(화면을) 위아래로 넘기다
+364|secondary|세컨더리|부차적인, 중등의
+365|secure|시큐어|확보하다, 안전한
+366|seedling|시들링|묘목, 모종
+367|self|셀프|자기 자신, 자아
+368|sense|센스|감각, 의식
+369|sensor|센서|센서, 감지기
+370|serve|서브|역할을 하다, 봉사하다
+371|session|세션|시간, 활동
+372|several|세버럴|몇몇의, 여러 가지의
+373|severe|시비어|심각한, 극심한
+374|shift|시프트|전환하다, 옮기다
+375|shorten|쇼튼|짧게 하다, 단축하다
+376|shutter|셔터|셔터
+377|significant|시그니피컨트|상당한, 중요한
+378|simplify|심플리파이|단순화하다, 간소화하다
+379|single|싱글|단 하나의, 단일의
+380|skill|스킬|기술, 능력
+381|skip|스킵|거르다, 건너뛰다
+382|social media|소셜 미디어|소셜 미디어, SNS
+383|society|소사이어티|사회
+384|software|소프트웨어|소프트웨어
+385|soil|소일|흙, 토양
+386|solar|솔라|태양의, 태양열을 이용하는
+387|solution|솔루션|해결책
+388|sort|소트|분류하다, 정리하다
+389|staff|스태프|직원
+390|stainless|스테인리스|녹슬지 않는, 스테인리스의
+391|stand|스탠드|받침대, 거치대
+392|station|스테이션|구역, 정거장
+393|step up|스텝 업|나서다, 조치를 취하다
+394|store|스토어|보관하다, 저장하다
+395|strain|스트레인|피로, 긴장, 부담
+396|straw|스트로|빨대
+397|stress|스트레스|스트레스
+398|strict|스트릭트|엄격한
+399|strongly|스트롱글리|강하게, 강력히
+400|structure|스트럭처|구조, 구조화하다
+401|struggle|스트러글|애쓰다, 고군분투하다
+402|substantial|서브스탠셜|상당한, 실질적인
+403|sugary|슈거리|설탕이 많이 든, 단
+404|suitable|수터블|적합한, 알맞은
+405|sunset|선셋|일몰, 노을
+406|support|서포트|지지하다, 응원하다
+407|surround|서라운드|둘러싸다
+408|sustainable|서스테이너블|지속 가능한
+409|tablet|태블릿|태블릿 PC
+410|tackle|태클|(문제 등을) 다루다, 해결하다
+411|tap|탭|가볍게 두드림, 터치
+412|task|태스크|일, 과업
+413|tech|테크|기술
+414|technical|테크니컬|기술적인
+415|technology|테크놀로지|기술
+416|telescope|텔레스코프|망원경
+417|temporary|템퍼러리|일시적인
+418|tempt|템프트|유혹하다
+419|thoughtful|소트풀|사려 깊은, 신중한
+420|threat|트렛트|위협
+421|topic|토픽|주제
+422|toward|토워드|~을 향하여, ~에 대하여
+423|track|트랙|트랙, 경로
+424|training|트레이닝|훈련, 교육
+425|transform|트랜스폼|변모시키다, 탈바꿈하다
+426|transition|트랜지션|전환, 변화
+427|transportation|트랜스포테이션|교통, 수송
+428|traveler|트래블러|여행자
+429|trend|트렌드|유행, 추세
+430|tripod|트라이포드|삼각대
+431|tumbler|텀블러|텀블러
+432|turn off|턴 오프|끄다
+433|tutor|튜터|개인 교사, 튜터
+434|typical|티피컬|전형적인, 일반적인
+435|ultimate|얼티밋|궁극적인
+436|unconditional|언컨디셔널|무조건적인
+437|understand|언더스탠드|이해하다
+438|unhealthy|언헬시|건강에 해로운
+439|unique|유니크|독특한, 유일무이한
+440|universe|유니버스|우주
+441|unlike|언라이크|~와는 달리
+442|user|유저|사용자
+443|usual|유주얼|평소의, 보통의
+444|utilize|유틸라이즈|활용하다, 이용하다
+445|vast|배스트|방대한, 막대한
+446|vertical|버티컬|수직의
+447|view|뷰|시야, 보다
+448|waste|웨이스트|쓰레기, 낭비
+449|whenever|웬에버|~할 때마다 언제든지
+450|whirring|워링|윙윙거리는
+451|whole|홀|전체의, 가공하지 않은
+452|wild|와일드|야생의
+453|wise|와이즈|현명한
+454|worth|워스|~의 가치가 있는
+455|zero|제로|영, 전무함`;
 
 const allWords = rawData.trim().split('\n').map(line => {
-  const parts = line.split('\t');
+  const parts = line.split('|');
   return {
     id: parseInt(parts.at(0)),
     word: parts.at(1),
@@ -653,7 +644,6 @@ function shuffleRemaining() {
   const remainPart = currentList.slice(idx);
   for (let i = remainPart.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [remainPart.at(i), remainPart.at(j)];
     const temp = remainPart.at(i);
     remainPart.splice(i, 1, remainPart.at(j));
     remainPart.splice(j, 1, temp);
