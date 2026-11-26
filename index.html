@@ -595,7 +595,6 @@ const allWords = rawData.trim().split('\n').map(line => {
   const parts = line.split('\t');
   return { id: parseInt(parts), word: parts, pron: parts, mean: parts };
 });
-
 let currentList = [...allWords];
 let idx = 0;
 let currentMode = 'flash';
