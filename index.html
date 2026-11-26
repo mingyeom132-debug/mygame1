@@ -542,7 +542,7 @@ const rawData = `
 
 const allWords = rawData.trim().split('\n').map(line => {
   const parts = line.split('\t');
-  return { id: parseInt(parts), word: parts, pron: parts, mean: parts };
+  return { id: parseInt(parts[0]), word: parts[1], pron: parts[2], mean: parts[3] };
 });
 
 let currentList = [...allWords];
@@ -571,7 +571,9 @@ function renderCard() {
   document.getElementById('counter').innerText = `${currentIndex + 1} / ${currentList.length}`;
   document.getElementById('wordNum').innerText = `#${item.id}`;
   document.getElementById('wordNumBack').innerText = `#${item.id}`;
-  document.getElementById('wordFront').innerHTML = `${item.word} <span class="pronunciation">[${item.pron}]</span>`;
+  
+  // 요청하신 형태: 1. across. [어크로스]
+  document.getElementById('wordFront').innerHTML = `${item.id}. ${item.word}. <span style="color: #3b82f6; font-weight: 700;">[${item.pron}]</span>`;
   document.getElementById('wordMeaning').innerText = item.mean;
   
   const starBtn = document.getElementById('starBtn');
