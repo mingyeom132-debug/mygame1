@@ -2,143 +2,673 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-<title>SEOUL WALL: GOLDEN DEFENSE</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>나만의 455 영단어장</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#080d17;color:#f7e9cc;font-family:system-ui,sans-serif;touch-action:manipulation}body{display:flex;flex-direction:column;padding:0;max-width:none;border:0}
-header{height:66px;flex:none;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:8px 22px;background:linear-gradient(110deg,#26364d,#111a2a);border-bottom:2px solid #bd9148}.logo{font-weight:1000;font-size:19px;letter-spacing:2px;color:#ffdc91;line-height:1.1}.logo span{font-size:10px!important;color:#b8c9dd}
-.stats{display:flex;gap:9px}.stat{font-size:14px;padding:8px 12px;border:1px solid #53627b;background:#0c1422;border-radius:7px;white-space:nowrap}.gold{color:#ffd15b}.wallhp{color:#ff9292}.wave{color:#b7d4ff}
-#msg{flex:none;min-height:34px;padding:8px 12px;text-align:center;background:#101a2a;color:#c3d0e0;font-size:13px;border-bottom:1px solid #35445c}
-#layout{flex:1;min-height:0;display:flex;gap:12px;padding:12px}#arena{flex:1;min-width:0;min-height:0;padding:0;background:radial-gradient(ellipse at center,#26354a,#101827);display:flex;justify-content:center;border:1px solid #43536c;border-radius:10px;overflow:hidden}canvas{height:100%;width:100%;display:block;image-rendering:pixelated;touch-action:manipulation}
-#panel{width:390px;flex:none;min-height:0;padding:12px;background:#101725;border:1px solid #59677d;border-radius:10px;display:flex;flex-direction:column;gap:10px}.panelhead{display:flex;justify-content:space-between;align-items:center;font-weight:900;color:#ffdc91}.panelhead small{font-size:11px;color:#93a6bf;font-weight:500}
-#roster{flex:1;min-height:0;overflow-y:auto;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-auto-rows:minmax(68px,auto);gap:6px;padding-right:3px;align-content:start}
-.unit{padding:7px 5px;border-radius:8px;background:#1b293c;color:#f5e8d0;border:1px solid #53647e;min-width:0;text-align:left;cursor:pointer}.unit.sel{border:2px solid #ffd15b;background:#34435b;box-shadow:0 0 12px #ffd15b33}.unit b{display:block;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.unit small{display:block;color:#b7c6d9;font-size:9px;margin-top:4px}.unit em{font-style:normal;color:#e7c47b;font-size:9px;display:block;margin-top:2px}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:none}.action{border:0;border-radius:8px;padding:13px 6px;font-weight:900;font-size:13px;cursor:pointer}.upgrade{background:linear-gradient(#edc45d,#a96e29);color:#281a08}.start{background:linear-gradient(#c64e50,#772d3c);color:#fff}.action:disabled{opacity:.45;filter:grayscale(1)}#hint{text-align:center;color:#8192aa;font-size:10px;line-height:1.4}
-@media(max-width:850px){#layout{flex-direction:column}#panel{width:100%;height:36%;min-height:230px}#arena{min-height:0}#roster{grid-template-columns:repeat(5,minmax(0,1fr))}header{height:58px;padding:6px 10px}.logo{font-size:14px}.stat{font-size:11px;padding:5px 6px}}
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif; }
+  body { background-color: #f0f2f5; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 20px; color: #333; }
+  .header { width: 100%; max-width: 480px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+  .title { font-size: 1.2rem; font-weight: 800; color: #1a1a1a; }
+  .counter { font-size: 0.95rem; font-weight: 600; color: #555; background: #fff; padding: 5px 12px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+  
+  .controls-top { width: 100%; max-width: 480px; display: flex; gap: 8px; margin-bottom: 15px; }
+  .btn-filter { flex: 1; padding: 10px; border: none; border-radius: 10px; background: #fff; color: #555; font-weight: 600; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); transition: 0.2s; font-size: 0.9rem; }
+  .btn-filter.active { background: #3b82f6; color: #fff; }
+  
+  .card-container { width: 100%; max-width: 480px; height: 320px; perspective: 1000px; margin-bottom: 20px; cursor: pointer; }
+  .card { width: 100%; height: 100%; position: relative; transition: transform 0.5s; transform-style: preserve-3d; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); }
+  .card.flipped { transform: rotateY(180deg); }
+  
+  .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; border-radius: 20px; background: #fff; text-align: center; }
+  .card-back { transform: rotateY(180deg); background: #f8fafc; border: 2px solid #e2e8f0; }
+  
+  .word-num { position: absolute; top: 20px; left: 24px; font-size: 0.85rem; color: #94a3b8; font-weight: 600; }
+  .star-btn { position: absolute; top: 16px; right: 20px; font-size: 1.6rem; background: none; border: none; cursor: pointer; color: #cbd5e1; transition: 0.2s; z-index: 10; }
+  .star-btn.starred { color: #f59e0b; }
+  
+  .word-front { font-size: 1.9rem; font-weight: 800; color: #0f172a; line-height: 1.4; word-break: keep-all; }
+  .pronunciation { display: block; font-size: 1.25rem; font-weight: 600; color: #3b82f6; margin-top: 8px; }
+  .hint-text { position: absolute; bottom: 20px; font-size: 0.8rem; color: #94a3b8; }
+  
+  .word-meaning { font-size: 1.6rem; font-weight: 700; color: #1e293b; line-height: 1.5; word-break: keep-all; }
+  
+  .nav-buttons { width: 100%; max-width: 480px; display: flex; gap: 12px; margin-bottom: 15px; }
+  .btn-nav { flex: 1; padding: 15px; border: none; border-radius: 12px; background: #1e293b; color: #fff; font-size: 1rem; font-weight: 700; cursor: pointer; transition: 0.2s; }
+  .btn-nav:active { transform: scale(0.98); }
+  .btn-prev { background: #64748b; }
+  
+  .jump-box { width: 100%; max-width: 480px; display: flex; gap: 8px; justify-content: center; align-items: center; }
+  .jump-input { width: 90px; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; text-align: center; font-size: 0.95rem; }
+  .btn-jump { padding: 8px 16px; border: none; border-radius: 8px; background: #e2e8f0; color: #334155; font-weight: 600; cursor: pointer; }
 </style>
 </head>
 <body>
-<header><div class="logo">SEOUL WALL<br><span style="font-size:9px;color:#b8c9dd">GOLDEN DEFENSE</span></div><div class="stats"><span class="stat wave">WAVE <b id="wave">1</b></span><span class="stat gold">◆ <b id="gold">60</b></span><span class="stat wallhp">성벽 <b id="wall">100</b>%</span></div></header>
-<div id="msg">대원을 선택하고 성벽 앞 배치 슬롯을 눌러 배치하세요.</div>
-<main id="layout"><div id="arena"><canvas id="game"></canvas></div><aside id="panel"><div class="panelhead">방어대 명부 <small>총 30종 · 12개 배치 슬롯</small></div><div id="roster"></div><div class="actions"><button id="upgrade" class="action upgrade">◆ 강화하기</button><button id="start" class="action start">웨이브 시작</button></div><div id="hint">대원을 선택한 뒤 전장 슬롯을 클릭해 배치하세요.<br>배치된 대원 클릭 후 강화 · 최대 3회 승급</div></aside></main>
-<script>
-'use strict';
-const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');
-const $=id=>document.getElementById(id);
-let W=900,H=700,dpr=1,gold=180,wall=100,wave=1,started=false,ended=false,selectedKind='unit0',selectedUnit=null,tick=0,spawnLeft=0,spawnClock=0;
-const slots=Array.from({length:12},(_,i)=>({x:[.13,.37,.63,.87][i%4],y:i<4?.69:.82}));
-const classNames=['성문 수호자','황혼 명궁','룬 대마도사','창벽 기사','숲의 치유사','그림자 척후병','폭풍 검사','빙결 사제','화염 연금술사','태양 성기사','월식 암살자','천둥 사수','수정 방패병','독안개 무희','별빛 소환사','사막 유랑검객','심연 주술사','백은 창기병','붉은 매 사냥꾼','달의 무녀','강철 파괴자','서리 추적자','황금 음유시인','흑요석 수호령','번개 권투가','장미 결투사','기계 공학자','새벽의 예언자','용혈 기사','천공의 대현자'];
-const classColors=['#d8a94f','#54b8db','#a77ae8','#d16c55','#65b987','#9b83bd','#e07845','#78bde2','#df704b','#e8c85f','#8c6ab5','#59a8d0','#9aa9bd','#bc6b9c','#b69ae8','#c68b54','#7454a2','#d4dbe5','#c75b51','#78a8c9','#9c6f59','#8bc5db','#d7b86b','#68748e','#e2a04d','#ce7693','#6da6a0','#a9c7ec','#bd5b47','#b69ae8'];
-const archetypes=['기사','궁수','마도사','창병','치유사','도적'];
-const roster=Object.fromEntries(classNames.map((name,i)=>{const role=i%6,color=classColors[i];return ['unit'+i,{name,cost:25+Math.floor(i/5)*4+role*2,hp:[190,100,105,155,115,90][role],damage:[17,26,23,21,12,29][role],range:[145,245,205,165,190,125][role],rate:[48,57,66,52,72,38][role],color,role,levelNames:[name,name+' · 숙련',name+' · 정예',name+' · 전설']}]}));
-let units=[],enemies=[],shots=[],sparks=[];
-function resize(){const r=canvas.getBoundingClientRect();dpr=Math.min(2,devicePixelRatio||1);W=Math.max(240,r.width);H=Math.max(320,r.height);canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0)}
-new ResizeObserver(resize).observe(canvas);resize();
-function say(s){$('msg').textContent=s}
-function sync(){$('gold').textContent=gold;$('wall').textContent=Math.max(0,wall);$('wave').textContent=wave}
-function stats(u){const d=roster[u.kind],lv=u.level;return{hp:d.hp*(1+(lv-1)*.48),damage:d.damage*(1+(lv-1)*.55),range:d.range+(lv-1)*12,rate:Math.max(22,d.rate-(lv-1)*5)}}
-function buildRoster(){$('roster').innerHTML=Object.entries(roster).map(([kind,d],i)=>'<button class="unit '+(i===0?'sel':'')+'" data-kind="'+kind+'"><b>'+(i+1)+'. '+d.name+'</b><small>'+archetypes[d.role]+' · 배치 ◆ '+d.cost+'</small><em>공격 '+d.damage+' / 사거리 '+d.range+'</em></button>').join('');document.querySelectorAll('.unit').forEach(b=>b.onclick=()=>choose(b.dataset.kind));}
-function choose(kind){selectedKind=kind;selectedUnit=null;document.querySelectorAll('.unit').forEach(b=>b.classList.toggle('sel',b.dataset.kind===kind));$('upgrade').textContent='◆ 강화하기';}
-buildRoster();
-function posSlot(i){return{x:W*slots[i].x,y:H*slots[i].y}}
-function pointer(e){const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;let nearest=null,dist=1e9;units.forEach(u=>{let d=Math.hypot(u.x-x,u.y-y);if(d<dist){dist=d;nearest=u}});if(nearest&&dist<Math.min(45,W*.12)){selectedUnit=nearest;selectedKind=nearest.kind;document.querySelectorAll('.unit').forEach(b=>b.classList.toggle('sel',b.dataset.kind===selectedKind));$('upgrade').textContent='◆ '+(nearest.level<4?[20,35,55][nearest.level-1]+' 금괴로 승급':'최고 단계');say(nearest.name+' 선택됨 · 승급 '+(nearest.level-1)+'/3');return}
- let best=-1;dist=1e9;slots.forEach((s,i)=>{const p=posSlot(i),d=Math.hypot(p.x-x,p.y-y);if(d<dist){dist=d;best=i}});if(dist<Math.min(58,W*.16))place(best)}
-canvas.addEventListener('pointerdown',pointer);
-function place(i){if(units.some(u=>u.slot===i)){selectedUnit=units.find(u=>u.slot===i);say(selectedUnit.name+' 선택됨. 아래 강화 버튼으로 승급하세요.');$('upgrade').textContent='◆ 강화하기';return}const d=roster[selectedKind];if(gold<d.cost){say('금괴가 부족합니다. 적을 막아 금괴를 모으세요.');return}gold-=d.cost;const p=posSlot(i),u={kind:selectedKind,slot:i,x:p.x,y:p.y,level:1,hp:d.hp,cd:10,name:d.name};units.push(u);selectedUnit=u;sync();say(d.name+' 배치 완료!');$('upgrade').textContent='◆ 강화하기'}
-$('upgrade').onclick=()=>{if(!selectedUnit||!units.includes(selectedUnit)){say('먼저 배치된 대원을 터치해 선택하세요.');return}const u=selectedUnit;if(u.level>=4){say('이미 최고 단계입니다.');return}const cost=[20,35,55][u.level-1];if(gold<cost){say('금괴가 부족합니다. 필요 금괴: '+cost);return}gold-=cost;const old=stats(u);u.level++;const d=stats(u);u.hp+=d.hp-old.hp;u.name=roster[u.kind].levelNames[u.level-1];say('승급 완료! '+u.name+' · 능력 강화');$('upgrade').textContent='◆ '+(u.level<4?[20,35,55][u.level-1]+' 금괴로 승급':'최고 단계');sync()};
-$('start').onclick=()=>{if(started||ended)return;started=true;spawnLeft=8+wave*2;spawnClock=20;$('start').disabled=true;$('start').textContent='전투 진행 중';say('웨이브 '+wave+' 시작! 성벽을 지켜라!')};
-function spawn(){const lane=W*(.15+Math.random()*.7);const boss=wave%4===0&&spawnLeft===1;enemies.push({x:lane,y:-25,hp:(boss?170:48)+wave*12,max:(boss?170:48)+wave*12,speed:boss?0.42:0.62+Math.min(1,wave*.025),size:boss?30:21,boss,hit:0});spawnLeft--;spawnClock=Math.max(35,90-wave*3)}
-function attack(){for(const u of units){const s=stats(u);if(u.cd>0){u.cd--;continue}let target=null,dist=s.range;for(const e of enemies){const d=Math.hypot(e.x-u.x,e.y-u.y);if(d<dist){dist=d;target=e}}if(target){target.hp-=s.damage;target.hit=5;shots.push({x:u.x,y:u.y-10,tx:target.x,ty:target.y,col:roster[u.kind].color,life:9});u.cd=s.rate}}}
-function update(){if(ended)return;tick++;if(started){if(spawnLeft>0&&--spawnClock<=0)spawn();attack();for(const e of enemies){e.y+=e.speed;if(e.hit>0)e.hit--}for(let i=enemies.length-1;i>=0;i--){const e=enemies[i];if(e.hp<=0){gold+=e.boss?18:5;sparks.push({x:e.x,y:e.y,t:18});enemies.splice(i,1)}else if(e.y>H*.93){wall-=e.boss?16:8;enemies.splice(i,1);say('적이 성벽에 도달했습니다! 방어선을 보강하세요.')}}if(wall<=0){wall=0;ended=true;started=false;$('start').textContent='방어 실패';say('성벽이 무너졌습니다. 새로고침해 다시 도전하세요.')}else if(spawnLeft===0&&enemies.length===0){started=false;wave++;gold+=15;$('start').disabled=false;$('start').textContent='다음 웨이브';say('방어 성공! 보너스 금괴 15개 획득. 다음 웨이브를 준비하세요.')}}sync()}
 
-function drawPixelSprite(x,y,kind,level,scale=1){
- const d=roster[kind],role=d.role,accent=level>=3?'#f7d979':d.color,px=3*scale,py=3*scale,ox=Math.round(x-9*px),oy=Math.round(y-12*py);
- const cell=(gx,gy,color,w=1,h=1)=>{ctx.fillStyle='#101521';ctx.fillRect(ox+gx*px-1,oy+gy*py-1,w*px+2,h*py+2);ctx.fillStyle=color;ctx.fillRect(ox+gx*px,oy+gy*py,w*px,h*py)};
- ctx.save();ctx.fillStyle='rgba(0,0,0,.38)';ctx.fillRect(x-13*scale,y+32*scale,26*scale,4*scale);
- for(let yy=9;yy<=18;yy++){let half=yy<13?3:Math.min(7,3+Math.floor((yy-12)*.65));for(let xx=9-half;xx<=9+half;xx++)if((xx+yy+role)%3!==0)cell(xx,yy,role===5?'#27253a':role===4?'#36594c':'#30394c')}
- for(let yy=16;yy<=21;yy++){cell(6,yy,yy>19?'#343b4a':accent,2,1);cell(11,yy,yy>19?'#343b4a':accent,2,1)}
- cell(5,21,'#111827',4,1);cell(10,21,'#111827',4,1);
- cell(5,9,accent,8,7);cell(4,10,accent,2,4);cell(12,10,accent,2,4);cell(6,10,'#e5d8bd',6,1);cell(7,12,'#111827',4,1);cell(8,11,'#fff0bf',2,2);cell(5,15,'#b58a52',8,1);cell(8,14,'#f3d58b',2,2);
- cell(3,11,'#d9b18b',2,4);cell(13,11,'#d9b18b',2,4);cell(3,15,'#343b4a',2,2);cell(13,15,'#343b4a',2,2);
- cell(6,3,'#101521',6,6);cell(7,4,'#d9aa83',4,4);cell(7,7,'#9b6250',4,1);cell(7,5,'#171a22',1,1);cell(10,5,'#171a22',1,1);cell(8,6,'#fff0d1',2,1);
- if(role===0||role===3){cell(6,2,accent,6,2);cell(8,0,'#e7d9bd',2,2);cell(5,4,accent,2,2);cell(11,4,accent,2,2)}
- else if(role===1){cell(5,2,'#27394d',8,2);cell(6,1,accent,6,1);cell(4,3,accent,2,1);cell(12,3,accent,2,1)}
- else if(role===2||role===4){cell(6,1,accent,6,2);cell(7,0,'#f8e5a0',4,1);cell(5,3,accent,2,2);cell(11,3,accent,2,2)}
- else{cell(6,2,'#252333',6,2);cell(5,3,accent,2,3);cell(11,3,accent,2,3);cell(8,1,'#e5d8bd',2,1)}
- if(role===0){cell(1,8,'#bfc9d5',2,11);cell(0,7,accent,4,2);cell(1,6,'#f5e4b8',2,1)}
- if(role===1){cell(15,5,'#b78b54',1,13);cell(14,4,'#e6d6b8',3,1);cell(14,6,'#e6d6b8',3,1);cell(15,3,accent,1,2)}
- if(role===2||role===4){cell(15,7,'#5b477d',1,12);cell(14,5,accent,3,3);cell(15,4,'#fff0a8',1,1);cell(14,9,'#fff0a8',3,1)}
- if(role===3){cell(15,2,'#c6d1dc',1,17);cell(14,1,accent,3,2);cell(14,18,'#c6d1dc',3,1)}
- if(role===5){cell(15,10,'#d4d9e3',2,5);cell(15,8,accent,2,2);cell(14,15,'#d4d9e3',3,1)}
- cell(8,13,accent,2,2);if(level>=2){cell(7,2,'#ffe49a',4,1);cell(8,0,'#fff0a8',2,1)}if(level>=4){cell(6,0,'#fff4bd',6,1);cell(8,-1,'#fff4bd',2,1)}ctx.restore();
+<div class="header">
+  <div class="title">📘 영단어 플래시카드</div>
+  <div class="counter" id="counter">1 / 455</div>
+</div>
+
+<div class="controls-top">
+  <button class="btn-filter active" id="btnAll" onclick="setMode('all')">전체 (455)</button>
+  <button class="btn-filter" id="btnStar" onclick="setMode('star')">⭐ 못 외운 단어 (<span id="starCount">0</span>)</button>
+  <button class="btn-filter" onclick="shuffleWords()">🔀 순서 섞기</button>
+</div>
+
+<div class="card-container" onclick="flipCard()">
+  <div class="card" id="card">
+    <div class="card-face card-front">
+      <span class="word-num" id="wordNum">#1</span>
+      <button class="star-btn" id="starBtn" onclick="toggleStar(event)">★</button>
+      <div class="word-front" id="wordFront">across<span class="pronunciation">[어크로스]</span></div>
+      <div class="hint-text">카드를 터치하면 뜻이 나옵니다</div>
+    </div>
+    <div class="card-face card-back">
+      <span class="word-num" id="wordNumBack">#1</span>
+      <div class="word-meaning" id="wordMeaning">가로질러, 건너서</div>
+    </div>
+  </div>
+</div>
+
+<div class="nav-buttons">
+  <button class="btn-nav btn-prev" onclick="prevCard()">◀ 이전 단어</button>
+  <button class="btn-nav" onclick="nextCard()">다음 단어 ▶</button>
+</div>
+
+<div class="jump-box">
+  <input type="number" id="jumpInput" class="jump-input" placeholder="번호 입력" min="1" max="455">
+  <button class="btn-jump" onclick="jumpToWord()">이동</button>
+  <button class="btn-jump" onclick="resetOrder()">원래 순서대로</button>
+</div>
+
+<script>
+const rawData = `
+1	across	어크로스	가로질러, 건너서
+2	action	액션	행동, 활동
+3	activity	액티비티	활동
+4	addiction	어딕션	중독
+5	addition	어디션	추가, 덧붙임
+6	adjust	어저스트	적응하다, 조정하다
+7	administrator	어드미니스트레이터	관리자, 행정관
+8	adopt	어답트	채택하다, 도입하다
+9	advance	어드밴스	발전하다, 나아가다
+10	advantage	어드밴티지	장점, 이점
+11	advertise	애드버타이즈	광고하다
+12	affect	어펙트	영향을 미치다
+13	aggressive	어그레시브	공격적인, 적극적인
+14	allow	얼라우	허락하다, 가능하게 하다
+15	along	얼롱	~을 따라서
+16	alternative	올터너티브	대안, 대체물
+17	among	어멍	~사이에, ~중에
+18	amount	어마운트	양, 액수
+19	angle	앵글	각도
+20	anxiety	애그자이어티	불안, 염려
+21	appreciate	어프리시에이트	감상하다, 진가를 알아보다
+22	arcade	아케이드	오락실
+23	argue	아규	주장하다
+24	argument	아규먼트	주장, 논쟁
+25	artificial	아티피셜	인공의
+26	assign	어사인	배정하다, 할당하다
+27	astronomy	어스트로노미	천문학
+28	attention	어텐션	관심, 주의
+29	attract	어트랙트	끌어들이다, 매료시키다
+30	audiobook	오디오북	오디오북(듣는 책)
+31	automate	오토메이트	자동화하다
+32	avoid	어보이드	피하다, 방지하다
+33	backdrop	백드롭	배경막, 배경
+34	ban	밴	금지, 금지하다
+35	banking	뱅킹	은행 업무, 금융
+36	based on	베이스드 온	~에 근거하여, ~을 바탕으로
+37	behavior	비헤이비어	행동
+38	behind the scenes	비하인드 더 씬즈	무대 뒤에서, 보이지 않는 곳에서
+39	beneficial	베네피셜	유익한, 이로운
+40	benefit	베너핏	혜택, 이점
+41	bin	빈	통, 쓰레기통
+42	blink	블링크	깜빡이다
+43	booth	부스	부스, 간이 천막
+44	boring	보링	지루한
+45	borrow	바로우	빌리다
+46	botanical	보태니컬	식물의
+47	brand	브랜드	브랜드, 상표
+48	brightness	브라이트니스	밝기
+49	buzz	버즈	윙윙거리다, 활기차다
+50	calm	캄	차분한, 고요한
+51	calorie	칼로리	열량, 칼로리
+52	campaign	캠페인	캠페인, 운동
+53	campus	캠퍼스	캠퍼스, 교정
+54	carbon	카본	탄소
+55	careful	케어풀	세심한, 신중한
+56	careless	케어리스	부주의한
+57	caring	케어링	돌보는, 배려하는
+58	cause	코즈	야기하다, 원인이 되다
+59	challenge	챌린지	어려움, 도전 과제
+60	charge	차지	충전하다
+61	cherish	체리시	소중히 여기다
+62	choice	초이스	선택
+63	chronic	크로닉	만성적인
+64	click	클릭	찰칵 소리를 내다, 클릭하다
+65	climate	클라이밋	기후
+66	cloth	클로스	천, 직물
+67	code	코드	코딩하다, 부호화하다
+68	coding	코딩	코딩
+69	combat	컴뱃	싸우다, 방지하다
+70	combine	컴바인	결합하다
+71	commercial	커머셜	상업의
+72	commitment	커미트먼트	헌신, 전념, 약속
+73	communicate	커뮤니케이트	의사소통하다
+74	community	커뮤니티	공동체, 지역 사회
+75	commute	커뮤트	통근하다, 통학하다
+76	companionship	컴패니언십	우정, 동반자 관계
+77	compare	컴페어	비교하다
+78	complete	컴플리트	완전한
+79	completely	컴플리틀리	완전히
+80	compost	콤포스트	퇴비를 만들다
+81	comprehension	컴프리헨션	이해, 독해
+82	concentration	컨센트레이션	집중력
+83	concept	컨셉	개념
+84	condition	컨디션	상태, 질환
+85	conflict	컨플릭트	충돌하다, 갈등
+86	confuse	컨퓨즈	혼란스럽게 하다
+87	congestion	컨제스천	혼잡
+88	connectivity	커넥티비티	연결성
+89	conscious	컨셔스	의식적인
+90	consequently	컨시퀀틀리	그 결과, 따라서
+91	consider	컨시더	고려하다, 숙고하다
+92	considerable	컨시더러블	상당한
+93	constant	콘스턴트	끊임없는, 지속적인
+94	construction	컨스트럭션	건설, 공사
+95	consume	컨슘	소비하다
+96	content	콘텐츠	내용물, 콘텐츠
+97	continue	컨티뉴	계속하다
+98	convenience	컨비니언스	편리함
+99	conventional	컨벤셔널	기존의, 전통적인
+100	conversation	컨버세이션	대화
+101	cooperation	코오퍼레이션	협력, 협동
+102	costly	코스트리	비용이 많이 드는
+103	courtyard	코트야드	안뜰, 운동장
+104	cozy	코지	아늑한, 포근한
+105	create	크리에이트	창조하다
+106	creation	크리에이션	창조, 창작
+107	creativity	크리에이티비티	창의성
+108	creature	크리처	생물, 생명체
+109	crisis	크라이시스	위기
+110	crowded	크라우디드	붐비는, 혼잡한
+111	curious	큐리어스	호기심이 많은
+112	curricular	커리큘러	교육 과정의
+113	customer	커스터머	손님, 고객
+114	debate	디베이트	논쟁, 토론
+115	debug	디버그	(오류를) 수정하다, 디버깅하다
+116	decision	디시전	결정
+117	decompose	디컴포즈	분해되다
+118	decrease	디크리스	감소시키다, 줄어들다
+119	delay	딜레이	지연시키다
+120	demand	디맨드	요구하다, 필요로 하다
+121	depend	디펜드	의존하다, 달려 있다
+122	designer	디자이너	디자이너, 유명 브랜드의
+123	develop	디벨롭	발달시키다, 개발하다
+124	development	디벨롭먼트	발달, 개발
+125	device	디바이스	기기, 장치
+126	diet	다이어트	식단, 식습관
+127	digital	디지털	디지털의
+128	digitally	디지털리	디지털 방식으로
+129	disadvantage	디스어드밴티지	단점, 불이익
+130	discover	디스커버	발견하다
+131	discussion	디스커션	토론
+132	display	디스플레이	전시, 진열
+133	disposable	디스포저블	일회용의
+134	disrupt	디스럽트	방해하다
+135	distinct	디스팅트	뚜렷한, 별개의
+136	distract	디스트랙트	산만하게 하다
+137	distraction-free	디스트랙션 프리	방해 요소가 없는
+138	dome	돔	돔, 반구형 지붕
+139	domestic	도메스틱	가정의, 길들여진
+140	download	다운로드	다운로드하다, 내려받다
+141	downtown	다운타운	시내의, 도심의
+142	dress code	드레스 코드	복장 규정
+143	e-reader	이리더	전자책 단말기
+144	ease	이즈	덜어주다, 완화하다
+145	eco	에코	생태, 친환경의
+146	ecosystem	에코시스템	생태계
+147	edit	에딧	편집하다, 수정하다
+148	educate	에듀케이트	교육하다
+149	educator	에듀케이터	교육자
+150	effect	이펙트	영향, 효과
+151	efficient	이피션트	효율적인
+152	effort	에포트	노력
+153	electric	일렉트릭	전기의
+154	electricity	일렉트리시티	전기
+155	electronic	일렉트로닉	전자의
+156	emergency	이머전시	비상, 응급
+157	emerge	이머지	나타나다, 부상하다
+158	emotional	이모셔널	정서적인, 감정적인
+159	empathy	엠퍼시	공감, 감정 이입
+160	encourage	엔커리지	격려하다
+161	energetic	에너제틱	활기찬
+162	enforce	인포스	시행하다, 집행하다
+163	enthusiastic	인뚜지애스틱	열정적인
+164	environment	인바이런먼트	환경
+165	environmental	인바이런멘털	환경의
+166	equality	이퀄리티	평등
+167	equipment	이큅먼트	장비
+168	especially	이스페셜리	특히
+169	exhibit	이그지빗	전시품, 전시하다
+170	expand	익스팬드	확장하다, 넓히다
+171	expensive	익스펜시브	비싼
+172	experience	익스피리언스	경험
+173	expert	엑스퍼트	전문가
+174	explore	익스플로어	탐험하다, 탐구하다
+175	exposure	익스포저	노출
+176	express	익스프레스	표현하다
+177	facility	퍼실리티	시설
+178	fashion	패션	패션, 유행
+179	fatigue	퍼티그	피로, 피곤
+180	feed	피드	먹이를 주다
+181	fence	펜스	울타리, 담장
+182	final	파이널	최종의, 마지막의
+183	flexible	플렉서블	유연한
+184	font	폰트	글꼴, 폰트
+185	format	포맷	형식, 형태
+186	fossil	포실	화석
+187	freedom	프리덤	자유
+188	freely	프릴리	자유롭게
+189	fuel	퓨얼	연료
+190	furthermore	퍼더모어	게다가, 더욱이
+191	futuristic	퓨처리스틱	미래 지향적인, 초현대적인
+192	gallery	갤러리	미술관, 화랑
+193	gaze	게이즈	응시하다, 바라보다
+194	generation	제너레이션	세대
+195	gentle	젠틀	부드러운, 온화한
+196	global	글로벌	세계적인, 지구의
+197	grammar	그래머	문법
+198	grant	그랜트	보조금
+199	greet	그리트	맞이하다, 인사하다
+200	groom	그룸	털을 손질하다
+201	growth	그로스	성장, 증가
+202	guidance	가이던스	지도, 안내
+203	habit	해빗	습관
+204	hands-on	핸즈온	직접 해보는, 체험하는
+205	harm	함	해치다, 해를 끼치다
+206	historical	히스토리컬	역사적인
+207	household	하우스홀드	가정, 가구
+208	hybrid	하이브리드	혼합의, 하이브리드
+209	ignore	이그노어	무시하다
+210	implement	임플리먼트	시행하다, 실행하다
+211	improve	임프루브	향상시키다
+212	incoming	인커밍	들어오는, 수신되는
+213	increase	인크리스	증가시키다
+214	incredible	인크레더블	놀라운, 믿을 수 없는
+215	independent	인디펜던트	독립적인
+216	individual	인디비주얼	개인, 개개인
+217	indoor	인도어	실내의
+218	infrastructure	인프라스트럭처	기반 시설, 인프라
+219	ingredient	인그리디언트	재료, 성분
+220	initial	이니셜	초기의
+221	innovation	이노베이션	혁신
+222	inspire	인스파이어	영감을 주다
+223	instant	인스턴트	즉각적인
+224	integrate	인티그레이트	통합하다
+225	intelligence	인텔리전스	지능
+226	interact	인터랙트	상호작용하다
+227	interactive	인터랙티브	상호 작용하는, 체험형의
+228	investment	인베스트먼트	투자
+229	involve	인볼브	수반하다, 포함하다
+230	judge	저지	판단하다
+231	jumper	점퍼	점퍼 (연결선)
+232	kit	키트	세트, 도구 모음
+233	lab	랩	실험실, 실습실
+234	lack	랙	부족, 결핍
+235	landfill	랜드필	쓰레기 매립지
+236	laziness	레이지니스	게으름
+237	lecture	렉처	강의
+238	lecture-style	렉처 스타일	강의 형식의
+239	lens	렌즈	렌즈
+240	librarian	라이브러리언	사서
+241	lifestyle	라이프스타일	생활 방식
+242	lighting	라이팅	조명
+243	lightweight	라이트웨이트	가벼운
+244	likely	라이클리	~할 것 같은, ~할 가능성이 있는
+245	limit	리밋	제한하다
+246	line-following	라인 팔로잉	선을 따라가는
+247	litter	리터	쓰레기
+248	lively	라이블리	활기찬
+249	local	로컬	지역의
+250	locker	로커	사물함
+251	logical	로지컬	논리적인
+252	lower	로어	낮추다, 줄이다
+253	lush	러시	무성한, 우거진
+254	major	메이저	주요한, 중대한
+255	manage	매니지	운영하다, 관리하다
+256	marine	마린	해양의
+257	massive	매시브	거대한, 엄청난
+258	meaningful	미닝풀	의미 있는
+259	media	미디어	미디어, 매체
+260	medical	메디컬	의료의, 의학의
+261	mental	멘털	정신의, 마음의
+262	method	메서드	방법, 방식
+263	microcontroller	마이크로컨트롤러	마이크로컨트롤러 (소형 제어 장치)
+264	mindful	마인드풀	유념하는
+265	minimize	미니마이즈	최소화하다
+266	monitor	모니터	감시하다, 추적 관찰하다
+267	mystery	미스터리	신비
+268	native	네이티브	토종의, 자생의
+269	natural	내추럴	자연의
+270	navigation	내비게이션	내비게이션, 길 안내
+271	negative	네거티브	부정적인
+272	neither	니더	어느 쪽도 ~아닌
+273	newly	뉼리	새롭게, 최근에
+274	notification	노티피케이션	알림
+275	nutrition	뉴트리션	영양
+276	oasis	오아시스	오아시스
+277	obesity	오비시티	비만
+278	observatory	옵저버토리	천문대, 관측소
+279	offer	오퍼	제공하다
+280	ongoing	온고잉	계속 진행 중인
+281	operate	오퍼레이트	운영하다, 작동하다
+282	opportunity	오퍼튜니티	기회
+283	organization	오거나이제이션	조직, 정리, 구성
+284	organize	오거나이즈	조직하다
+285	outdated	아웃데이티드	구식의, 낡은
+286	outdoor	아웃도어	야외의
+287	outfit	아웃핏	복장, 옷차림
+288	packaging	패키징	포장, 포장재
+289	participate	파티시페이트	참여하다
+290	path	패스	길, 오솔길
+291	patience	페이션스	인내심
+292	peaceful	피스풀	평화로운
+293	peer	피어	또래, 동료
+294	personal	퍼스널	개인의
+295	personality	퍼스낼리티	개성, 성격
+296	perspective	퍼스펙티브	관점, 시각
+297	photography	포토그래피	사진술, 사진 촬영
+298	physical	피지컬	신체의
+299	planning	플래닝	계획 세우기
+300	pollute	폴루트	오염시키다
+301	portability	포터빌리티	휴대성
+302	pose	포즈	(위협 등을) 제기하다, 일으키다
+303	potential	포텐셜	잠재적인, 예비의
+304	power	파워	힘, 능력
+305	practical	프랙티컬	실용적인, 현실적인
+306	prefer	프리퍼	선호하다
+307	preference	프레퍼런스	선호, 취향
+308	presence	프레즌스	존재, 있음
+309	present	프레젠트	제시하다, 야기하다
+310	preserve	프리저브	보존하다
+311	president	프레지던트	회장, 대표
+312	pressure	프레셔	압력, 혈압
+313	prevent	프리벤트	막다, 예방하다
+314	pride	프라이드	자부심, 자긍심
+315	prioritize	프라이오러타이즈	우선시하다
+316	problem-solving	프라블럼 솔빙	문제 해결의
+317	process	프로세스	가공하다, 처리하다
+318	productivity	프로덕티비티	생산성
+319	professional	프로페셔널	전문가, 직장인
+320	program	프로그램	프로그래밍하다
+321	project	프로젝트	프로젝트, 과제
+322	promote	프로모트	장려하다, 홍보하다
+323	proper	프로퍼	적절한, 올바른
+324	property	프로퍼티	재산, 소유물
+325	protect	프로텍트	보호하다
+326	provide	프로바이드	제공하다
+327	public	퍼블릭	공공의, 대중의
+328	punishment	퍼니시먼트	처벌, 벌
+329	ranger	레인저	공원 관리원, 산림 감시원
+330	rapid	래피드	빠른
+331	rather than	래더 댄	~하기보다는
+332	real-world	리얼 월드	현실 세계의
+333	realize	리얼라이즈	깨닫다
+334	recent	리슨트	최근의
+335	record	레코드	기록하다, 녹화하다
+336	recycle	리사이클	재활용하다
+337	reduce	리듀스	줄이다, 감소시키다
+338	regarding	리가딩	~에 관하여
+339	regular	레귤러	정규의, 규칙적인
+340	regulation	레귤레이션	규제, 규정
+341	relationship	릴레이션십	관계
+342	reliable	릴라이어블	믿을 수 있는, 신뢰할 만한
+343	reliance	릴라이언스	의존
+344	remote	리모트	원격의
+345	reorganize	리오거나이즈	재편성하다, 재구성하다
+346	repair	리페어	수리, 보수
+347	replace	리플레이스	대체하다
+348	responsibility	리스폰서빌리티	책임감
+349	responsible	리스폰시블	책임감 있는
+350	result	리절트	결과
+351	reusable	리유저블	재사용할 수 있는
+352	review	리뷰	복습하다, 검토하다
+353	reward	리워드	보상, 보상을 주다
+354	rewarding	리워딩	보람 있는
+355	ring	링	(종이) 울리다
+356	risk	리스크	위험
+357	robotic	로보틱	로봇의
+358	robotics	로보틱스	로봇 공학
+359	roof	루프	지붕, 옥상
+360	safely	세이플리	안전하게
+361	salary	샐러리	급여, 봉급
+362	scientific	사이언티픽	과학적인
+363	scroll	스크롤	(화면을) 위아래로 넘기다
+364	secondary	세컨더리	부차적인, 중등의
+365	secure	시큐어	확보하다, 안전한
+366	seedling	시들링	묘목, 모종
+367	self	셀프	자기 자신, 자아
+368	sense	센스	감각, 의식
+369	sensor	센서	센서, 감지기
+370	serve	서브	역할을 하다, 봉사하다
+371	session	세션	시간, 활동
+372	several	세버럴	몇몇의, 여러 가지의
+373	severe	시비어	심각한, 극심한
+374	shift	시프트	전환하다, 옮기다
+375	shorten	쇼튼	짧게 하다, 단축하다
+376	shutter	셔터	셔터
+377	significant	시그니피컨트	상당한, 중요한
+378	simplify	심플리파이	단순화하다, 간소화하다
+379	single	싱글	단 하나의, 단일의
+380	skill	스킬	기술, 능력
+381	skip	스킵	거르다, 건너뛰다
+382	social media	소셜 미디어	소셜 미디어, SNS
+383	society	소사이어티	사회
+384	software	소프트웨어	소프트웨어
+385	soil	소일	흙, 토양
+386	solar	솔라	태양의, 태양열을 이용하는
+387	solution	솔루션	해결책
+388	sort	소트	분류하다, 정리하다
+389	staff	스태프	직원
+390	stainless	스테인리스	녹슬지 않는, 스테인리스의
+391	stand	스탠드	받침대, 거치대
+392	station	스테이션	구역, 정거장
+393	step up	스텝 업	나서다, 조치를 취하다
+394	store	스토어	보관하다, 저장하다
+395	strain	스트레인	피로, 긴장, 부담
+396	straw	스트로	빨대
+397	stress	스트레스	스트레스
+398	strict	스트릭트	엄격한
+399	strongly	스트롱글리	강하게, 강력히
+400	structure	스트럭처	구조, 구조화하다
+401	struggle	스트러글	애쓰다, 고군분투하다
+402	substantial	서브스탠셜	상당한, 실질적인
+403	sugary	슈거리	설탕이 많이 든, 단
+404	suitable	수터블	적합한, 알맞은
+405	sunset	선셋	일몰, 노을
+406	support	서포트	지지하다, 응원하다
+407	surround	서라운드	둘러싸다
+408	sustainable	서스테이너블	지속 가능한
+409	tablet	태블릿	태블릿 PC
+410	tackle	태클	(문제 등을) 다루다, 해결하다
+411	tap	탭	가볍게 두드림, 터치
+412	task	태스크	일, 과업
+413	tech	테크	기술
+414	technical	테크니컬	기술적인
+415	technology	테크놀로지	기술
+416	telescope	텔레스코프	망원경
+417	temporary	템퍼러리	일시적인
+418	tempt	템프트	유혹하다
+419	thoughtful	소트풀	사려 깊은, 신중한
+420	threat	트렛트	위협
+421	topic	토픽	주제
+422	toward	토워드	~을 향하여, ~에 대하여
+423	track	트랙	트랙, 경로
+424	training	트레이닝	훈련, 교육
+425	transform	트랜스폼	변모시키다, 탈바꿈하다
+426	transition	트랜지션	전환, 변화
+427	transportation	트랜스포테이션	교통, 수송
+428	traveler	트래블러	여행자
+429	trend	트렌드	유행, 추세
+430	tripod	트라이포드	삼각대
+431	tumbler	텀블러	텀블러
+432	turn off	턴 오프	끄다
+433	tutor	튜터	개인 교사, 튜터
+434	typical	티피컬	전형적인, 일반적인
+435	ultimate	얼티밋	궁극적인
+436	unconditional	언컨디셔널	무조건적인
+437	understand	언더스탠드	이해하다
+438	unhealthy	언헬시	건강에 해로운
+439	unique	유니크	독특한, 유일무이한
+440	universe	유니버스	우주
+441	unlike	언라이크	~와는 달리
+442	user	유저	사용자
+443	usual	유주얼	평소의, 보통의
+444	utilize	유틸라이즈	활용하다, 이용하다
+445	vast	배스트	방대한, 막대한
+446	vertical	버티컬	수직의
+447	view	뷰	시야, 보다
+448	waste	웨이스트	쓰레기, 낭비
+449	whenever	웬에버	~할 때마다 언제든지
+450	whirring	워링	윙윙거리는
+451	whole	홀	전체의, 가공하지 않은
+452	wild	와일드	야생의
+453	wise	와이즈	현명한
+454	worth	워스	~의 가치가 있는
+455	zero	제로	영, 전무함
+`;
+
+const allWords = rawData.trim().split('\n').map(line => {
+  const parts = line.split('\t');
+  return { id: parseInt(parts), word: parts, pron: parts, mean: parts };
+});
+
+let currentList = [...allWords];
+let currentIndex = 0;
+let isFlipped = false;
+let mode = 'all';
+let starredIds = JSON.parse(localStorage.getItem('myWordStars') || '[]');
+
+function updateStarCount() {
+  document.getElementById('starCount').innerText = starredIds.length;
 }
-function drawEnemy(e){
- const x=Math.round(e.x),y=Math.round(e.y),s=e.boss?2.1:1.55;
- const rows=e.boss?[
- "....KKKKKK....","...KRRRRRRK...","..KRRRRRRRRK..","..KSSRRRRSSK..",".KSSKRRRRKSSK.",".KSSKKRRKKSSK.","..KRRK..KRRK..","..KRRRRRRRRK..","...KRRRRRRK...","..KKKRRRRKKK..",".KSSKRRRRKSSK.","KSSSKRRRRKSSSK","KSSSKRRRRKSSSK",".KKK......KKK.","..KK......KK.."
- ]:[
- "....KKKK....","...KRRRRK...","..KRRRRRRK..","..KSSRRSSK..","..KRRRRRRK..","...KRRRRK...","..KKRRRRKK..",".KSSKRRKSSK.","KSSSKRRKSSSK.","..KK....KK..","..KK....KK.."
- ];
- ctx.save();ctx.translate(x-rows[0].length*s/2,y-rows.length*s/2);
- const pal={K:'#171b2a',R:e.boss?'#9b3e50':'#79505f',S:e.boss?'#e07876':'#b77a82'};
- for(let j=0;j<rows.length;j++)for(let i=0;i<rows[j].length;i++){const c=rows[j][i];if(c!=='.'){ctx.fillStyle=pal[c];ctx.fillRect(i*s,j*s,s,s)}}
- ctx.fillStyle='#ffe18a';ctx.fillRect(4*s,3*s,s,s);ctx.fillRect(7*s,3*s,s,s);
- ctx.restore();
-}
-function drawRuinedCity(){
- // 먼지 낀 석양과 무너진 도심 실루엣
- const haze=ctx.createLinearGradient(0,H*.24,0,H*.78);
- haze.addColorStop(0,'rgba(211,139,103,0)');
- haze.addColorStop(.58,'rgba(177,105,83,.22)');
- haze.addColorStop(1,'rgba(37,43,55,.1)');
- ctx.fillStyle=haze;ctx.fillRect(0,H*.18,W,H*.62);
- // 먼 거리의 폐허 빌딩
- const skyline=[
-  [-.03,.43,.15,.22],[.09,.35,.12,.30],[.22,.40,.13,.25],
-  [.36,.31,.15,.34],[.53,.39,.12,.26],[.66,.33,.16,.32],
-  [.83,.40,.13,.25],[.94,.36,.12,.29]
- ];
- skyline.forEach(([fx,fy,fw,fh],i)=>{
-  const x=W*fx,y=H*fy,w=W*fw,h=H*fh;
-  ctx.fillStyle=i%2?'#273342':'#303744';ctx.fillRect(x,y,w,h);
-  ctx.fillStyle='#1b2634';ctx.fillRect(x+w*.12,y+h*.13,w*.76,h*.87);
-  // 깨진 옥상과 무너진 모서리
-  ctx.fillStyle='#3b4148';ctx.beginPath();ctx.moveTo(x,y+h*.12);ctx.lineTo(x+w*.2,y-h*.035);ctx.lineTo(x+w*.38,y+h*.08);ctx.lineTo(x+w*.62,y-h*.015);ctx.lineTo(x+w*.78,y+h*.1);ctx.lineTo(x+w,y+h*.04);ctx.lineTo(x+w,y+h*.18);ctx.closePath();ctx.fill();
-  ctx.fillStyle='#d49a69';
-  for(let wy=0;wy<4;wy++)for(let wx=0;wx<3;wx++){
-   if((wx*3+wy+i)%4!==1)ctx.fillRect(x+w*(.18+wx*.25),y+h*(.24+wy*.17),Math.max(2,w*.055),Math.max(3,H*.012));
+
+function renderCard() {
+  if (currentList.length === 0) {
+    document.getElementById('counter').innerText = '0 / 0';
+    document.getElementById('wordNum').innerText = '';
+    document.getElementById('wordNumBack').innerText = '';
+    document.getElementById('wordFront').innerHTML = '체크된 단어가 없습니다.<span class="pronunciation">별표(★)를 눌러 추가해보세요!</span>';
+    document.getElementById('wordMeaning').innerText = '';
+    document.getElementById('starBtn').style.display = 'none';
+    return;
   }
-  // 일부 건물의 부서진 외벽
-  ctx.fillStyle='#151f2b';ctx.fillRect(x+w*.48,y+h*.48,w*.18,h*.52);
- });
- // 먼지와 연기 기둥
- for(let i=0;i<4;i++){
-  const sx=W*(.16+i*.235),sy=H*(.34+(i%2)*.055),pulse=Math.sin(tick*.012+i)*H*.008;
-  ctx.fillStyle='rgba(28,35,44,.20)';
-  for(let j=0;j<4;j++){ctx.beginPath();ctx.ellipse(sx+(j-1.5)*W*.012,sy-j*H*.025+pulse,H*(.035+j*.009),H*(.018+j*.006),0,0,Math.PI*2);ctx.fill()}
- }
- // 전경의 잔해 더미와 깨진 도로
- ctx.fillStyle='#252d38';
- ctx.beginPath();ctx.moveTo(0,H*.79);ctx.lineTo(W*.08,H*.75);ctx.lineTo(W*.13,H*.79);ctx.lineTo(W*.19,H*.77);ctx.lineTo(W*.25,H*.83);ctx.lineTo(0,H*.85);ctx.fill();
- ctx.beginPath();ctx.moveTo(W,H*.78);ctx.lineTo(W*.91,H*.75);ctx.lineTo(W*.86,H*.80);ctx.lineTo(W*.79,H*.77);ctx.lineTo(W*.73,H*.84);ctx.lineTo(W,H*.86);ctx.fill();
- ctx.fillStyle='#59606a';
- for(let i=0;i<22;i++){
-  const side=i%2===0?1:-1,fx=i%2===0?.015+(i%7)*.018:.985-(i%7)*.018;
-  const x=W*fx,y=H*(.76+(i%4)*.025),sz=3+(i%4)*2;
-  ctx.fillRect(x,y,sz*1.8,sz);ctx.fillRect(x+sz*.5,y-sz*.55,sz,sz*.7);
- }
- // 멀리 깔린 잔해 먼지
- ctx.fillStyle='rgba(20,27,37,.35)';ctx.fillRect(0,H*.84,W,H*.07);
+  
+  document.getElementById('starBtn').style.display = 'block';
+  const item = currentList[currentIndex];
+  document.getElementById('counter').innerText = `${currentIndex + 1} / ${currentList.length}`;
+  document.getElementById('wordNum').innerText = `#${item.id}`;
+  document.getElementById('wordNumBack').innerText = `#${item.id}`;
+  document.getElementById('wordFront').innerHTML = `${item.word} <span class="pronunciation">[${item.pron}]</span>`;
+  document.getElementById('wordMeaning').innerText = item.mean;
+  
+  const starBtn = document.getElementById('starBtn');
+  if (starredIds.includes(item.id)) {
+    starBtn.classList.add('starred');
+  } else {
+    starBtn.classList.remove('starred');
+  }
+  
+  isFlipped = false;
+  document.getElementById('card').classList.remove('flipped');
 }
-function draw(){ctx.clearRect(0,0,W,H);const sky=ctx.createLinearGradient(0,0,0,H);sky.addColorStop(0,'#202b3b');sky.addColorStop(.42,'#8a6258');sky.addColorStop(.72,'#4a4548');sky.addColorStop(1,'#192435');ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);drawRuinedCity();
-ctx.fillStyle='#d4c18d';for(let i=0;i<8;i++){const x=i*W/7;ctx.fillRect(x,H*.1,2,H*.56)}
-ctx.fillStyle='#26364b';ctx.fillRect(0,H*.12,W,H*.06);for(let i=0;i<9;i++){ctx.fillStyle='#60718a';ctx.fillRect(i*W/8,H*.105,W/16,H*.09)}
-ctx.fillStyle='#53647a';ctx.fillRect(0,H*.91,W,H*.09);ctx.fillStyle='#8795a8';ctx.fillRect(0,H*.91,W,6);for(let i=0;i<15;i++){ctx.fillStyle='#34465d';ctx.fillRect(i*W/14,H*.925,W/28,H*.075)}ctx.fillStyle='#d6b66e';ctx.font='bold 15px system-ui';ctx.textAlign='center';ctx.fillText('SEOUL LAST WALL',W/2,H*.975);
-slots.forEach((s,i)=>{const p=posSlot(i),u=units.find(v=>v.slot===i);ctx.fillStyle=u?'rgba(238,197,102,.12)':'rgba(170,190,215,.12)';ctx.strokeStyle=u?'#e5bd68':'#91a5bf';ctx.lineWidth=2;ctx.beginPath();ctx.roundRect(p.x-34,p.y-38,68,76,7);ctx.fill();ctx.stroke();if(u){drawPixelSprite(p.x,p.y-4,u.kind,u.level,1.0);ctx.fillStyle='#fff';ctx.font='bold 10px system-ui';ctx.fillText(u.name,p.x,p.y+43);ctx.fillStyle='#111';ctx.fillRect(p.x-25,p.y+47,50,5);ctx.fillStyle='#68d69a';ctx.fillRect(p.x-25,p.y+47,50*Math.max(0,u.hp/stats(u).hp),5);if(selectedUnit===u){ctx.strokeStyle='#ffe18b';ctx.lineWidth=3;ctx.strokeRect(p.x-39,p.y-43,78,94)}}else{ctx.fillStyle='#b9c9dc';ctx.font='bold 11px system-ui';ctx.fillText('배치 '+(i+1),p.x,p.y+4)}})
-for(const e of enemies){drawEnemy(e);ctx.fillStyle='#111';ctx.fillRect(e.x-e.size/2,e.y-e.size*.72,e.size,4);ctx.fillStyle='#f16e79';ctx.fillRect(e.x-e.size/2,e.y-e.size*.72,e.size*Math.max(0,e.hp/e.max),4)}
-for(const p of shots){ctx.strokeStyle=p.col;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(p.x,p.y);ctx.lineTo(p.tx,p.ty);ctx.stroke();p.life--}shots=shots.filter(p=>p.life>0);for(const s of sparks){ctx.fillStyle='#ffd76a';ctx.fillRect(s.x-3,s.y-3,6,6);s.t--}sparks=sparks.filter(s=>s.t>0);
-if(!started&&!ended){ctx.fillStyle='rgba(4,9,17,.35)';ctx.fillRect(8,H*.28,W-16,35);ctx.fillStyle='#f8e4b4';ctx.font='bold 12px system-ui';ctx.fillText('30종의 방어대를 편성하고 성벽을 지키세요',W/2,H*.28+22)}}
-function loop(){update();draw();requestAnimationFrame(loop)}sync();loop();
+
+function flipCard() {
+  if (currentList.length === 0) return;
+  isFlipped = !isFlipped;
+  document.getElementById('card').classList.toggle('flipped', isFlipped);
+}
+
+function nextCard() {
+  if (currentList.length === 0) return;
+  currentIndex = (currentIndex + 1) % currentList.length;
+  renderCard();
+}
+
+function prevCard() {
+  if (currentList.length === 0) return;
+  currentIndex = (currentIndex - 1 + currentList.length) % currentList.length;
+  renderCard();
+}
+
+function toggleStar(e) {
+  e.stopPropagation();
+  if (currentList.length === 0) return;
+  const id = currentList[currentIndex].id;
+  if (starredIds.includes(id)) {
+    starredIds = starredIds.filter(item => item !== id);
+  } else {
+    starredIds.push(id);
+  }
+  localStorage.setItem('myWordStars', JSON.stringify(starredIds));
+  updateStarCount();
+  
+  if (mode === 'star') {
+    currentList = allWords.filter(w => starredIds.includes(w.id));
+    if (currentIndex >= currentList.length) currentIndex = Math.max(0, currentList.length - 1);
+  }
+  renderCard();
+}
+
+function setMode(newMode) {
+  mode = newMode;
+  document.getElementById('btnAll').classList.toggle('active', mode === 'all');
+  document.getElementById('btnStar').classList.toggle('active', mode === 'star');
+  
+  if (mode === 'all') {
+    currentList = [...allWords];
+  } else {
+    currentList = allWords.filter(w => starredIds.includes(w.id));
+  }
+  currentIndex = 0;
+  renderCard();
+}
+
+function shuffleWords() {
+  for (let i = currentList.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [currentList[i], currentList[j]] = [currentList[j], currentList[i]];
+  }
+  currentIndex = 0;
+  renderCard();
+}
+
+function resetOrder() {
+  setMode(mode);
+}
+
+function jumpToWord() {
+  const num = parseInt(document.getElementById('jumpInput').value);
+  if (!num || num < 1 || num > 455) return alert('1에서 455 사이의 번호를 입력하세요.');
+  if (mode === 'star') setMode('all');
+  const idx = currentList.findIndex(w => w.id === num);
+  if (idx !== -1) {
+    currentIndex = idx;
+    renderCard();
+  }
+}
+
+document.addEventListener('keydown', (e) => {
+  if (document.activeElement.tagName === 'INPUT') return;
+  if (e.code === 'Space') { e.preventDefault(); flipCard(); }
+  else if (e.code === 'ArrowRight') nextCard();
+  else if (e.code === 'ArrowLeft') prevCard();
+});
+
+updateStarCount();
+renderCard();
 </script>
 </body>
 </html>
