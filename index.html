@@ -44,12 +44,15 @@
   .stage { width: 100%; max-width: 480px; flex: 1; display: flex; flex-direction: column; justify-content: center; }
   .card-box { background: var(--surface); border: 1px solid var(--border); border-radius: 22px; padding: 32px 22px; min-height: 280px; box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: relative; cursor: pointer; transition: 0.15s; touch-action: pan-y; }
   .card-box:active { transform: scale(0.995); }
-  .star-toggle { position: absolute; top: 16px; right: 16px; background: var(--bg); border: 1px solid var(--border); width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #cbd5e1; cursor: pointer; transition: 0.15s; }
-  .star-toggle svg { width: 18px; height: 18px; }
+  .card-top-actions { position: absolute; top: 16px; right: 16px; display: flex; gap: 6px; align-items: center; }
+  .icon-action-btn { background: var(--bg); border: 1px solid var(--border); width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #64748b; cursor: pointer; transition: 0.15s; }
+  .icon-action-btn:active { transform: scale(0.92); background: var(--primary-soft); color: var(--primary); }
+  .icon-action-btn svg { width: 18px; height: 18px; }
+  .star-toggle { color: #cbd5e1; }
   .star-toggle.starred { background: var(--warning-soft); border-color: #fcd34d; color: #f59e0b; }
   .star-toggle.starred svg { fill: #f59e0b; }
   .card-tag { position: absolute; top: 20px; left: 20px; font-size: 0.75rem; font-weight: 700; color: var(--primary); background: var(--primary-soft); padding: 4px 10px; border-radius: 8px; }
-  .word-display { font-size: 1.65rem; font-weight: 800; color: var(--text-main); line-height: 1.4; word-break: keep-all; letter-spacing: -0.02em; }
+  .word-display { font-size: 1.65rem; font-weight: 800; color: var(--text-main); line-height: 1.4; word-break: keep-all; letter-spacing: -0.02em; margin-top: 12px; }
   .pron-text { color: var(--primary); font-weight: 700; }
   .meaning-display { font-size: 1.4rem; font-weight: 700; color: var(--success); margin-top: 20px; padding-top: 20px; border-top: 1px dashed var(--border); width: 100%; line-height: 1.4; word-break: keep-all; }
   .meaning-display.hidden { visibility: hidden; }
@@ -72,10 +75,10 @@
   .btn-unknown { background: #f59e0b; }
   .btn-known { background: var(--success); }
   .btn-next-full { grid-column: span 2; background: var(--primary); }
-  .jump-row { width: 100%; max-width: 480px; display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-top: 16px; padding-bottom: 20px; }
-  .jump-right { display: flex; gap: 6px; align-items: center; }
-  .jump-row input { width: 95px; padding: 8px; border: 1px solid var(--border); border-radius: 9px; text-align: center; font-size: 0.85rem; background: var(--surface); }
-  .jump-row button { padding: 8px 14px; border: 1px solid var(--border); border-radius: 9px; background: var(--surface); font-size: 0.85rem; font-weight: 600; color: var(--text-sub); cursor: pointer; transition: 0.15s; }
+  .jump-row { width: 100%; max-width: 480px; display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-top: 16px; padding-bottom: 20px; flex-wrap: wrap; }
+  .jump-left, .jump-right { display: flex; gap: 5px; align-items: center; }
+  .jump-row input { width: 85px; padding: 8px; border: 1px solid var(--border); border-radius: 9px; text-align: center; font-size: 0.82rem; background: var(--surface); }
+  .jump-row button { padding: 8px 10px; border: 1px solid var(--border); border-radius: 9px; background: var(--surface); font-size: 0.8rem; font-weight: 600; color: var(--text-sub); cursor: pointer; transition: 0.15s; }
   .jump-row button.active { background: var(--primary-soft); border-color: var(--primary); color: var(--primary); font-weight: 700; }
   body.mobile-mode { padding: 10px 12px 92px 12px; }
   body.mobile-mode .stage { justify-content: flex-start; }
@@ -138,9 +141,12 @@
 <div class="stage" id="stage"></div>
 
 <div class="jump-row" id="jumpRow">
-  <button id="alwaysShowBtn" onclick="toggleAlwaysShow()">뜻 전체 확인</button>
+  <div class="jump-left">
+    <button id="alwaysShowBtn" onclick="toggleAlwaysShow()">뜻 전체 확인</button>
+    <button id="autoSpeakBtn" onclick="toggleAutoSpeak()">자동 발음</button>
+  </div>
   <div class="jump-right">
-    <input type="number" id="jumpNum" placeholder="번호 (1~455)" min="1" max="455">
+    <input type="number" id="jumpNum" placeholder="번호" min="1" max="455">
     <button onclick="jumpTo()">이동</button>
   </div>
 </div>
@@ -617,6 +623,7 @@ let idx = 0;
 let currentMode = 'flash';
 let isRevealed = false;
 let alwaysShowMean = false;
+let autoSpeak = false;
 let onlyStarred = false;
 let starredIds = JSON.parse(localStorage.getItem('cc_starred_455') || '[]');
 let autoNextTimer = null;
@@ -629,6 +636,28 @@ let examWrongList = [];
 let examFinished = false;
 
 const starSvg = `<svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+const speakerSvg = `<svg viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>`;
+
+function speakWord(text) {
+  if (!('speechSynthesis' in window)) return;
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'en-US';
+  utter.rate = 0.92;
+  const voices = window.speechSynthesis.getVoices();
+  const enVoice = voices.find(v => v.lang === 'en-US' && (v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Natural'))) || voices.find(v => v.lang.startsWith('en-US'));
+  if (enVoice) utter.voice = enVoice;
+  window.speechSynthesis.speak(utter);
+}
+
+function toggleAutoSpeak() {
+  autoSpeak = !autoSpeak;
+  const btn = document.getElementById('autoSpeakBtn');
+  if (btn) btn.classList.toggle('active', autoSpeak);
+  if (autoSpeak && currentList.length > 0 && currentMode !== 'exam' && currentMode !== 'recall-word') {
+    speakWord(currentList.at(idx).word);
+  }
+}
 
 function clearTimer() {
   if (autoNextTimer) {
@@ -732,6 +761,9 @@ function switchMode(mode) {
 
   const alwaysBtn = document.getElementById('alwaysShowBtn');
   if (alwaysBtn) alwaysBtn.style.visibility = (mode === 'flash') ? 'visible' : 'hidden';
+
+  const speakBtn = document.getElementById('autoSpeakBtn');
+  if (speakBtn) speakBtn.style.visibility = (mode === 'recall-word') ? 'hidden' : 'visible';
 
   if (isExam) {
     examType = null;
@@ -872,7 +904,8 @@ function render() {
     stage.innerHTML = `
       <div class="card-box" style="cursor:default; min-height:auto; padding-bottom:24px;">
         <span class="card-tag">${titleMap[examType]}</span>
-        <div class="word-display" style="margin-top:20px; font-size:1.45rem; color:${askWordToMean ? '#0f172a' : '#059669'};">
+        ${askWordToMean ? `<div class="card-top-actions"><button class="icon-action-btn" onclick="speakWord('${item.word.replace(/'/g, "\\'")}')">${speakerSvg}</button></div>` : ''}
+        <div class="word-display" style="margin-top:24px; font-size:1.45rem; color:${askWordToMean ? '#0f172a' : '#059669'};">
           ${askWordToMean ? `${item.id}. ${item.word} <span class="pron-text">[${item.pron}]</span>` : item.mean}
         </div>
         <div class="choices-grid" id="choices">
@@ -901,13 +934,17 @@ function render() {
   const item = currentList.at(idx);
   const isStarred = starredIds.includes(item.id);
   const frontTitle = `${item.id}. ${item.word} <span class="pron-text">[${item.pron}]</span>`;
+  const safeWord = item.word.replace(/'/g, "\\'");
 
   if (currentMode === 'flash') {
     const showMean = isRevealed || alwaysShowMean;
     stage.innerHTML = `
       <div class="card-box" onclick="if(!alwaysShowMean){ isRevealed = !isRevealed; render(); }">
         <span class="card-tag">암기학습</span>
-        <button class="star-toggle ${isStarred ? 'starred' : ''}" onclick="event.stopPropagation(); toggleStar(${item.id})">${starSvg}</button>
+        <div class="card-top-actions">
+          <button class="icon-action-btn" onclick="event.stopPropagation(); speakWord('${safeWord}')">${speakerSvg}</button>
+          <button class="icon-action-btn star-toggle ${isStarred ? 'starred' : ''}" onclick="event.stopPropagation(); toggleStar(${item.id})">${starSvg}</button>
+        </div>
         <div class="word-display">${frontTitle}</div>
         <div class="meaning-display ${showMean ? '' : 'hidden'}">${item.mean}</div>
         <div class="tap-guide">${showMean ? '아래 버튼으로 암기 여부를 선택하세요' : '카드를 터치해 뜻 확인'}</div>
@@ -917,14 +954,18 @@ function render() {
         <button class="action-btn btn-known" onclick="markKnownAndNext(${item.id})">알아요</button>
       </div>
     `;
+    if (autoSpeak && !isRevealed) speakWord(item.word);
   } else if (currentMode === 'recall-mean') {
     const others = allWords.filter(w => w.id !== item.id).sort(() => 0.5 - Math.random()).slice(0, 3);
     const options = [item, ...others].sort(() => 0.5 - Math.random());
     stage.innerHTML = `
       <div class="card-box" style="cursor:default; min-height:auto; padding-bottom:24px;">
         <span class="card-tag">뜻 리콜</span>
-        <button class="star-toggle ${isStarred ? 'starred' : ''}" onclick="toggleStar(${item.id})">${starSvg}</button>
-        <div class="word-display" style="margin-top:20px; font-size:1.45rem;">${frontTitle}</div>
+        <div class="card-top-actions">
+          <button class="icon-action-btn" onclick="speakWord('${safeWord}')">${speakerSvg}</button>
+          <button class="icon-action-btn star-toggle ${isStarred ? 'starred' : ''}" onclick="toggleStar(${item.id})">${starSvg}</button>
+        </div>
+        <div class="word-display" style="margin-top:24px; font-size:1.45rem;">${frontTitle}</div>
         <div class="choices-grid" id="choices">
           ${options.map(opt => `<button class="choice-btn" data-id="${opt.id}" onclick="checkRecall(this, ${opt.id === item.id}, ${item.id})">${opt.mean}</button>`).join('')}
         </div>
@@ -933,14 +974,17 @@ function render() {
         <button class="action-btn btn-next-full" onclick="nextCard()">건너뛰기</button>
       </div>
     `;
+    if (autoSpeak) speakWord(item.word);
   } else if (currentMode === 'recall-word') {
     const others = allWords.filter(w => w.id !== item.id).sort(() => 0.5 - Math.random()).slice(0, 3);
     const options = [item, ...others].sort(() => 0.5 - Math.random());
     stage.innerHTML = `
       <div class="card-box" style="cursor:default; min-height:auto; padding-bottom:24px;">
         <span class="card-tag">영단어 리콜</span>
-        <button class="star-toggle ${isStarred ? 'starred' : ''}" onclick="toggleStar(${item.id})">${starSvg}</button>
-        <div class="word-display" style="margin-top:20px; font-size:1.45rem; color:#059669;">${item.mean}</div>
+        <div class="card-top-actions">
+          <button class="icon-action-btn star-toggle ${isStarred ? 'starred' : ''}" onclick="toggleStar(${item.id})">${starSvg}</button>
+        </div>
+        <div class="word-display" style="margin-top:24px; font-size:1.45rem; color:#059669;">${item.mean}</div>
         <div class="choices-grid" id="choices">
           ${options.map(opt => `<button class="choice-btn" data-id="${opt.id}" onclick="checkRecall(this, ${opt.id === item.id}, ${item.id})">${opt.id}. ${opt.word} <span style="color:#4f46e5;">[${opt.pron}]</span></button>`).join('')}
         </div>
@@ -955,10 +999,15 @@ function checkRecall(btn, isCorrect, id) {
   const buttons = document.querySelectorAll('.choice-btn');
   buttons.forEach(b => b.disabled = true);
   clearTimer();
+  const currentItem = currentList.at(idx);
+
+  if (currentMode === 'recall-word') {
+    speakWord(currentItem.word);
+  }
 
   if (isCorrect) {
     btn.classList.add('correct');
-    autoNextTimer = setTimeout(() => nextCard(), 600);
+    autoNextTimer = setTimeout(() => nextCard(), 750);
   } else {
     btn.classList.add('wrong');
     buttons.forEach(b => {
@@ -968,7 +1017,7 @@ function checkRecall(btn, isCorrect, id) {
       starredIds.push(id);
       saveStars();
     }
-    autoNextTimer = setTimeout(() => nextCard(), 1200);
+    autoNextTimer = setTimeout(() => nextCard(), 1300);
   }
 }
 
@@ -1062,6 +1111,10 @@ document.getElementById('stage').addEventListener('touchend', e => {
     }
   }
 }, { passive: true });
+
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.getVoices();
+}
 
 initDeviceCheck();
 saveStars();
