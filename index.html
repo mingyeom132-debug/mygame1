@@ -958,7 +958,7 @@ function checkRecall(btn, isCorrect, id) {
 
   if (isCorrect) {
     btn.classList.add('correct');
-    autoNextTimer = setTimeout(() => markKnownAndNext(id), 600);
+    autoNextTimer = setTimeout(() => nextCard(), 600);
   } else {
     btn.classList.add('wrong');
     buttons.forEach(b => {
