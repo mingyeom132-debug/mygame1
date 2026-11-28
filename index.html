@@ -85,6 +85,8 @@
 body.mobile-mode .bottom-actions { position: fixed; bottom: 0; left: 0; right: 0; max-width: 100%; background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(8px); padding: 10px 14px calc(10px + env(safe-area-inset-bottom)); margin-top: 0; border-top: 1px solid var(--border); z-index: 100; box-shadow: 0 -4px 16px rgba(15, 23, 42, 0.06); }
 body.mobile-mode .action-btn { padding: 16px; font-size: 1.02rem; }
 
+</style>
+
 <body>
 
 <div class="mobile-banner" id="mobileBanner">
@@ -888,6 +890,62 @@ function startExam(type) {
   examFinished = false;
   render();
 }
+function render() {
+  const stage = document.getElementById('stage');
+  if (currentMode === 'fast') {
+    if (!fastRunning) {
+      document.getElementById('counter').innerText = '고속 암기';
+      stage.innerHTML = `
+        <div class="card-box" style="cursor:default; min-height:auto;">
+          <span class="card-tag">고속 암기</span>
+          <div class="word-display" style="font-size:1.25rem;">빠르게 여러 번 반복해서 암기하세요</div>
+          <div class="fast-setup-box">
+            <div class="fast-row">시작 번호 <input type="number" id="fastStartInput" min="1" max="455" value="${fastStartNum}"></div>
+            <div class="fast-row">끝 번호 <input type="number" id="fastEndInput" min="1" max="455" value="${fastEndNum}"></div>
+            <div class="fast-row">회독 횟수 <input type="number" id="fastRoundInput" min="1" max="999" value="${fastTargetRounds}"></div>
+          </div>
+        </div>
+        <div class="bottom-actions">
+          <button class="action-btn btn-next-full" onclick="startFastMode(false)">선택 범위 시작</button>
+          <button class="action-btn btn-unknown" onclick="startFastMode(true)">미암기만 시작</button>
+        </div>`;
+      return;
+    }
+    const fastItem = fastPool[fastIdx];
+    if (!fastItem) return;
+    document.getElementById('counter').innerText = `${fastCurrentRound}회독 · ${fastIdx + 1}/${fastPool.length}`;
+    stage.innerHTML = `
+      <div class="card-box" style="cursor:default;">
+        <span class="card-tag">고속 암기 · ${fastPhase === 'word' ? '단어' : '뜻'}</span>
+        <div class="word-display">${fastPhase === 'word' ? `${fastItem.id}. ${fastItem.word} <span class="pron-text">[${fastItem.pron}]</span>` : fastItem.mean}</div>
+      </div>
+      <div class="bottom-actions"><button class="action-btn btn-unknown btn-next-full" onclick="stopFastMode()">고속 암기 중단</button></div>`;
+    return;
+  }
+  if (currentMode === 'exam') {
+    if (!examType) {
+      document.getElementById('counter').innerText = '시험 선택';
+      stage.innerHTML = `
+        <div class="exam-menu">
+          <button class="exam-option-card" onclick="startExam('all')"><div><div class="exam-option-title">기본 시험</div><div class="exam-option-desc">전체 455개 단어에서 출제</div></div><span class="exam-count-pill">455개</span></button>
+          <button class="exam-option-card" onclick="startExam('unmemorized')"><div><div class="exam-option-title">미암기 시험</div><div class="exam-option-desc">별표 표시한 단어만 출제</div></div><span class="exam-count-pill">${allWords.filter(w => starredIds.includes(w.id)).length}개</span></button>
+          <button class="exam-option-card" onclick="startExam('memorized')"><div><div class="exam-option-title">암기 시험</div><div class="exam-option-desc">별표 표시하지 않은 단어 출제</div></div><span class="exam-count-pill">${allWords.filter(w => !starredIds.includes(w.id)).length}개</span></button>
+        </div>`;
+      return;
+    }
+    if (examFinished) {
+      const percent = examList.length ? Math.round(examScore / examList.length * 100) : 0;
+      document.getElementById('counter').innerText = `${examScore} / ${examList.length}`;
+      stage.innerHTML = `
+        <div class="card-box" style="cursor:default; min-height:auto;">
+          <span class="card-tag">시험 결과</span>
+          <div class="word-display" style="font-size:2rem;">${percent}점</div>
+          <div class="meaning-display">${examScore}개 정답 · ${examList.length - examScore}개 오답</div>
+          <div class="wrong-list">${examWrongList.length ? examWrongList.map(w => `<div class="wrong-item"><span><b>${w.id}. ${w.word}</b><br><span style="color:#64748b;">${w.mean}</span></span><span style="color:#dc2626;">오답</span></div>`).join('') : '<div class="wrong-item">모든 문제를 맞혔습니다!</div>'}</div>
+        </div>
+        <div class="bottom-actions"><button class="action-btn btn-next-full" onclick="examType=null; examFinished=false; render()">시험 메뉴로</button></div>`;
+      return;
+    }
     const item = examList.at(examIdx);
     const titleMap = { all: '기본 시험', unmemorized: '미암기 시험', memorized: '암기 시험' };
     document.getElementById('counter').innerText = `${examIdx + 1} / ${examList.length}`;
