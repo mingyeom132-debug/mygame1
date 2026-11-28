@@ -28,9 +28,16 @@
   .top-right { display: flex; align-items: center; gap: 6px; }
   .view-switch-btn { background: var(--primary-soft); color: var(--primary); border: 1px solid #c7d2fe; padding: 5px 10px; border-radius: 99px; font-size: 0.75rem; font-weight: 700; cursor: pointer; display: none; }
   .progress-badge { background: var(--surface); border: 1px solid var(--border); padding: 5px 12px; border-radius: 99px; font-size: 0.85rem; font-weight: 700; color: var(--text-sub); }
-  .mode-tabs { width: 100%; max-width: 480px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; background: #e2e8f0; padding: 4px; border-radius: 12px; margin-bottom: 12px; }
-  .mode-btn { border: none; background: transparent; padding: 9px 2px; border-radius: 9px; font-size: 0.76rem; font-weight: 700; color: var(--text-sub); cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 2px; white-space: nowrap; }
+  .mode-tabs { width: 100%; max-width: 480px; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 3px; background: #e2e8f0; padding: 4px; border-radius: 12px; margin-bottom: 12px; }
+  .mode-btn { min-width: 0; border: none; background: transparent; padding: 9px 2px; border-radius: 9px; font-size: 0.76rem; font-weight: 700; color: var(--text-sub); cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 2px; white-space: nowrap; }
   .mode-btn.active { background: var(--surface); color: var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+  .all-words-list { width: 100%; max-width: 480px; max-height: calc(100vh - 220px); overflow-y: auto; display: flex; flex-direction: column; gap: 7px; padding: 2px 2px 18px; }
+  .all-word-row { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 11px 13px; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 9px; align-items: center; text-align: left; }
+  .all-word-number { color: var(--text-sub); font-size: 0.78rem; font-weight: 800; }
+  .all-word-main { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .all-word-en { font-size: 0.98rem; font-weight: 800; color: var(--text-main); overflow-wrap: anywhere; }
+  .all-word-pron { font-size: 0.78rem; color: var(--primary); font-weight: 650; }
+  .all-word-mean { font-size: 0.88rem; color: var(--success); font-weight: 650; line-height: 1.35; }
   .filter-bar { width: 100%; max-width: 480px; display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 14px; }
   .chip-btn { border: 1px solid var(--border); background: var(--surface); padding: 7px 11px; border-radius: 10px; font-size: 0.8rem; font-weight: 600; color: var(--text-sub); cursor: pointer; display: flex; align-items: center; gap: 5px; transition: 0.15s; }
   .chip-btn:active { transform: scale(0.97); }
@@ -109,6 +116,7 @@ body.mobile-mode .action-btn { padding: 16px; font-size: 1.02rem; }
 </div>
 
 <div class="mode-tabs">
+  <button class="mode-btn" id="tab-all-words" onclick="switchMode('all-words')">전체 단어</button>
   <button class="mode-btn active" id="tab-flash" onclick="switchMode('flash')">암기</button>
   <button class="mode-btn" id="tab-fast" onclick="switchMode('fast')">고속 암기</button>
   <button class="mode-btn" id="tab-recall-mean" onclick="switchMode('recall-mean')">뜻 리콜</button>
@@ -752,12 +760,12 @@ function switchMode(mode) {
   clearTimer();
   fastRunning = false;
   currentMode = mode;
-  ['flash', 'fast', 'recall-mean', 'recall-word', 'exam'].forEach(m => {
+  ['all-words', 'flash', 'fast', 'recall-mean', 'recall-word', 'exam'].forEach(m => {
     const el = document.getElementById('tab-' + m);
     if (el) el.classList.toggle('active', m === mode);
   });
 
-  const hideBars = (mode === 'exam' || mode === 'fast');
+  const hideBars = (mode === 'exam' || mode === 'fast' || mode === 'all-words');
   document.getElementById('filterBar').style.display = hideBars ? 'none' : 'flex';
   document.getElementById('jumpRow').style.display = hideBars ? 'none' : 'flex';
 
@@ -892,6 +900,22 @@ function startExam(type) {
 }
 function render() {
   const stage = document.getElementById('stage');
+  if (currentMode === 'all-words') {
+    document.getElementById('counter').innerText = '전체 ' + allWords.length + '개';
+    stage.style.justifyContent = 'flex-start';
+    stage.innerHTML = '<div class="all-words-list">' + allWords.map(w =>
+      '<div class="all-word-row">' +
+        '<span class="all-word-number">' + w.id + '</span>' +
+        '<div class="all-word-main">' +
+          '<span class="all-word-en">' + w.word + '</span>' +
+          '<span class="all-word-pron">[' + w.pron + ']</span>' +
+          '<span class="all-word-mean">' + w.mean + '</span>' +
+        '</div>' +
+      '</div>'
+    ).join('') + '</div>';
+    return;
+  }
+  stage.style.justifyContent = 'center';
   if (currentMode === 'fast') {
     if (!fastRunning) {
       document.getElementById('counter').innerText = '고속 암기';
